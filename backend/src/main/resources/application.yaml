@@ -1,3 +1,9 @@
 spring:
-  application:
-    name: demo
+  jpa:
+    open-in-view: false
+
+
+  management:
+    endpoint:
+      health:
+        show-details: when-authorized
