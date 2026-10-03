@@ -24,3 +24,4 @@ app:
     access-token-ttl: 15m
     refresh-token-sliding-ttl: 4h
     refresh-token-absolute-ttl: 12h
+    cookie-secure: false

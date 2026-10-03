@@ -45,7 +45,7 @@ public class RefreshTokenService {
      * presented, that's a reuse signal (possible theft) — the whole family
      * is revoked as a precaution.
      */
-    @Transactional
+    @Transactional(noRollbackFor = InvalidRefreshTokenException.class)
     public IssuedToken rotate(String presentedRawToken) {
         String presentedHash = hash(presentedRawToken);
         RefreshToken existing = repository.findByTokenHash(presentedHash)
@@ -78,6 +78,13 @@ public class RefreshTokenService {
         return new IssuedToken(newRaw, newExpiresAt);
     }
 
+    @Transactional(readOnly = true)
+    public User userFor(String rawToken) {
+        return repository.findByTokenHash(hash(rawToken))
+                .map(RefreshToken::getUser)
+                .orElseThrow(() -> new InvalidRefreshTokenException("Unknown refresh token"));
+    }
+
     @Transactional
     public void revoke(String presentedRawToken) {
         repository.findByTokenHash(hash(presentedRawToken))
@@ -102,7 +109,7 @@ public class RefreshTokenService {
     private String hash(String rawToken) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashed = digest.digest(rawToken.getBytes());
+            byte[] hashed = digest.digest(rawToken.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             return Base64.getUrlEncoder().withoutPadding().encodeToString(hashed);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 not available", e);
