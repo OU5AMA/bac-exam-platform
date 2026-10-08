@@ -1,125 +1,99 @@
 package com.examplatform.auth;
 
-import com.examplatform.user.AccountStatus;
-import com.examplatform.user.User;
-import com.examplatform.user.UserRepository;
-import com.examplatform.user.UserRole;
-import jakarta.servlet.http.HttpServletResponse;
+import com.examplatform.auth.dto.AuthResponse;
+import com.examplatform.auth.dto.LoginRequest;
+import com.examplatform.auth.dto.RegisterRequest;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.ResponseCookie;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
-import java.util.Locale;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private static final String REFRESH_COOKIE = "refresh_token";
-    private static final String ACCESS_COOKIE = CookieBearerTokenResolver.ACCESS_TOKEN_COOKIE;
 
-    private final UserRepository users;
-    private final PasswordEncoder passwords;
-    private final JwtService jwt;
-    private final RefreshTokenService refreshTokens;
-    private final JwtProperties properties;
+    private final AuthService authService;
+    private final CurrentUserService currentUserService;
+    private final JwtProperties jwtProperties;
 
-    public AuthController(UserRepository users, PasswordEncoder passwords, JwtService jwt,
-                          RefreshTokenService refreshTokens, JwtProperties properties) {
-        this.users = users;
-        this.passwords = passwords;
-        this.jwt = jwt;
-        this.refreshTokens = refreshTokens;
-        this.properties = properties;
-    }
-
-    public record Credentials(@NotBlank @Email @Size(max = 255) String email,
-                              @NotBlank @Size(min = 12, max = 72) String password) {}
-
-    @GetMapping("/csrf")
-    public Map<String, String> csrf(CsrfToken token) {
-        return Map.of("token", token.getToken());
+    public AuthController(AuthService authService, CurrentUserService currentUserService,
+                          JwtProperties jwtProperties) {
+        this.authService = authService;
+        this.currentUserService = currentUserService;
+        this.jwtProperties = jwtProperties;
     }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @Transactional
-    public Map<String, String> register(@Valid @RequestBody Credentials credentials) {
-        String email = normalize(credentials.email());
-        if (users.existsByEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "An account with this email already exists");
-        }
-        // Public registration never accepts a caller-selected role.
-        users.save(new User(email, passwords.encode(credentials.password()), UserRole.STUDENT));
-        return Map.of("message", "Account created. You can now sign in.");
+    public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
+        return authService.register(request);
     }
 
     @PostMapping("/login")
-    @Transactional
-    public Map<String, String> login(@Valid @RequestBody Credentials credentials,
-                                     HttpServletResponse response) {
-        User user = users.findByEmail(normalize(credentials.email()))
-                .orElseThrow(AuthController::invalidCredentials);
-        if (!passwords.matches(credentials.password(), user.getPasswordHash())) {
-            throw invalidCredentials();
-        }
-        if (!user.isEnabled() || user.getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "This account is not active");
-        }
-        RefreshTokenService.IssuedToken refresh = refreshTokens.issueNewSession(user);
-        setCookie(response, ACCESS_COOKIE, jwt.createAccessToken(user), jwt.accessTokenTtl());
-        setCookie(response, REFRESH_COOKIE, refresh.rawToken(), Duration.between(java.time.Instant.now(), refresh.expiresAt()));
-        return Map.of("message", "Signed in");
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+        AuthService.TokenPair tokens = authService.login(request);
+        return withAuthCookies(tokens);
     }
 
     @PostMapping("/refresh")
-    public Map<String, String> refresh(@CookieValue(name = REFRESH_COOKIE, required = false) String raw,
-                                       HttpServletResponse response) {
-        if (raw == null || raw.isBlank()) throw invalidCredentials();
-        try {
-            RefreshTokenService.IssuedToken rotated = refreshTokens.rotate(raw);
-            // Resolve the user through a short-lived helper on the service to avoid trusting client claims.
-            User user = refreshTokens.userFor(rotated.rawToken());
-            setCookie(response, ACCESS_COOKIE, jwt.createAccessToken(user), jwt.accessTokenTtl());
-            setCookie(response, REFRESH_COOKIE, rotated.rawToken(), Duration.between(java.time.Instant.now(), rotated.expiresAt()));
-            return Map.of("message", "Session refreshed");
-        } catch (InvalidRefreshTokenException ex) {
-            clearCookies(response);
-            throw invalidCredentials();
-        }
+    public ResponseEntity<AuthResponse> refresh(
+            @CookieValue(name = AuthCookies.REFRESH_TOKEN) String refreshToken) {
+        AuthService.TokenPair tokens = authService.refresh(refreshToken);
+        return withAuthCookies(tokens);
     }
 
     @PostMapping("/logout")
-    public Map<String, String> logout(@CookieValue(name = REFRESH_COOKIE, required = false) String raw,
-                                      HttpServletResponse response) {
-        if (raw != null && !raw.isBlank()) refreshTokens.revoke(raw);
-        clearCookies(response);
-        return Map.of("message", "Signed out");
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> logout(
+            @CookieValue(name = AuthCookies.REFRESH_TOKEN, required = false) String refreshToken) {
+        authService.logout(refreshToken);
+
+        ResponseCookie clearedAccess = ResponseCookie.from(AuthCookies.ACCESS_TOKEN, "")
+                .httpOnly(true).secure(jwtProperties.secureCookies()).sameSite("Strict")
+                .path("/").maxAge(0).build();
+        ResponseCookie clearedRefresh = ResponseCookie.from(AuthCookies.REFRESH_TOKEN, "")
+                .httpOnly(true).secure(jwtProperties.secureCookies()).sameSite("Strict")
+                .path("/api/auth").maxAge(0).build();
+
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, clearedAccess.toString())
+                .header(HttpHeaders.SET_COOKIE, clearedRefresh.toString())
+                .build();
     }
 
-    private void setCookie(HttpServletResponse response, String name, String value, Duration maxAge) {
-        ResponseCookie cookie = ResponseCookie.from(name, value).httpOnly(true).secure(properties.cookieSecure())
-                .sameSite("Lax").path("/").maxAge(maxAge.isNegative() ? Duration.ZERO : maxAge).build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+    @GetMapping("/me")
+    public AuthResponse me() {
+        return AuthResponse.from(currentUserService.getCurrentUser());
     }
 
-    private void clearCookies(HttpServletResponse response) {
-        setCookie(response, ACCESS_COOKIE, "", Duration.ZERO);
-        setCookie(response, REFRESH_COOKIE, "", Duration.ZERO);
-    }
+    private ResponseEntity<AuthResponse> withAuthCookies(AuthService.TokenPair tokens) {
+        ResponseCookie accessCookie = ResponseCookie.from(AuthCookies.ACCESS_TOKEN, tokens.accessToken())
+                .httpOnly(true)
+                .secure(jwtProperties.secureCookies())
+                .sameSite("Strict")
+                .path("/")
+                .maxAge(jwtProperties.accessTokenTtl())
+                .build();
 
-    private static String normalize(String email) { return email.trim().toLowerCase(Locale.ROOT); }
-    private static ResponseStatusException invalidCredentials() {
-        return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        // Scoped to /api/auth only — the refresh token never needs to be
+        // sent on every request, just on refresh/logout. Smaller exposure
+        // surface than sending it alongside the access token on every call.
+        ResponseCookie refreshCookie = ResponseCookie.from(AuthCookies.REFRESH_TOKEN, tokens.refreshToken())
+                .httpOnly(true)
+                .secure(jwtProperties.secureCookies())
+                .sameSite("Strict")
+                .path("/api/auth")
+                .maxAge(Duration.ofHours(12)) // absolute cap; cookie itself can outlive it, server enforces the real limit
+                .build();
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(tokens.body());
     }
 }

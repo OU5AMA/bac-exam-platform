@@ -30,9 +30,11 @@ public class RefreshToken {
     @Column(name = "token_family_id", nullable = false)
     private UUID tokenFamilyId;
 
+    /** Sliding expiry — reset to now+4h on every successful rotation. */
     @Column(name = "expires_at", nullable = false)
     private Instant expiresAt;
 
+    /** Hard cap — copied unchanged across every rotation in a family. */
     @Column(name = "absolute_expires_at", nullable = false)
     private Instant absoluteExpiresAt;
 
@@ -42,28 +44,23 @@ public class RefreshToken {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    /** New session: fresh family id, starts sliding + absolute clocks. */
+    /** First token of a new login session (new family). */
     public RefreshToken(User user, String tokenHash, Instant expiresAt, Instant absoluteExpiresAt) {
         this.user = user;
         this.tokenHash = tokenHash;
         this.tokenFamilyId = UUID.randomUUID();
         this.expiresAt = expiresAt;
         this.absoluteExpiresAt = absoluteExpiresAt;
-        this.revoked = false;
     }
 
-    /** Rotation: same family, new sliding window, same absolute cap. */
-    public RefreshToken(User user,
-                        String tokenHash,
-                        UUID tokenFamilyId,
-                        Instant expiresAt,
-                        Instant absoluteExpiresAt) {
+    /** A rotated continuation of an existing family. */
+    public RefreshToken(User user, String tokenHash, UUID tokenFamilyId,
+                        Instant expiresAt, Instant absoluteExpiresAt) {
         this.user = user;
         this.tokenHash = tokenHash;
         this.tokenFamilyId = tokenFamilyId;
         this.expiresAt = expiresAt;
         this.absoluteExpiresAt = absoluteExpiresAt;
-        this.revoked = false;
     }
 
     @PrePersist
@@ -73,8 +70,6 @@ public class RefreshToken {
 
     public boolean isUsable() {
         Instant now = Instant.now();
-        return !revoked
-                && now.isBefore(expiresAt)
-                && now.isBefore(absoluteExpiresAt);
+        return !revoked && now.isBefore(expiresAt) && now.isBefore(absoluteExpiresAt);
     }
 }

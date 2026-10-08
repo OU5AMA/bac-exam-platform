@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,31 +33,33 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder(JwtProperties properties) {
-        byte[] secret = properties.secret().getBytes(StandardCharsets.UTF_8);
-        if (secret.length < 32) {
-            throw new IllegalStateException("app.jwt.secret must be at least 32 bytes (256 bits) for HS256");
-        }
         SecretKeySpec key = new SecretKeySpec(
-                secret, "HmacSHA256");
+                properties.secret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(key).build();
     }
 
+    /**
+     * CORRECTION (found while building Part 3): without this, hasRole("ADMIN")
+     * in the filter chain below silently never matches. Spring's default JWT
+     * converter reads OAuth2 "scope"/"scp" claims for authorities — it has no
+     * idea our tokens carry a custom "roles" claim unless told explicitly.
+     */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter roles = new JwtGrantedAuthoritiesConverter();
-        roles.setAuthoritiesClaimName("roles");
-        roles.setAuthorityPrefix("ROLE_");
+        JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        authoritiesConverter.setAuthorityPrefix("ROLE_");
+        authoritiesConverter.setAuthoritiesClaimName("roles");
+
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-        converter.setJwtGrantedAuthoritiesConverter(roles);
+        converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
         return converter;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Spring Security's default CSRF token handler defers reading the
-        // token until something asks for it, which breaks the plain
-        // cookie-read-by-Angular pattern. Forcing eager resolution here is
-        // required for XSRF-TOKEN/X-XSRF-TOKEN to work with an SPA.
+    public SecurityFilterChain filterChain(
+            HttpSecurity http,
+            JwtAuthenticationConverter jwtAuthenticationConverter
+    ) throws Exception {
         CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
         csrfHandler.setCsrfRequestAttributeName(null);
 
@@ -72,14 +75,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .bearerTokenResolver(new CookieBearerTokenResolver())
-                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))
                 );
 
         return http.build();

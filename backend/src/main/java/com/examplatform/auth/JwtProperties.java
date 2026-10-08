@@ -10,6 +10,6 @@ public record JwtProperties(
         Duration accessTokenTtl,
         Duration refreshTokenSlidingTtl,
         Duration refreshTokenAbsoluteTtl,
-        boolean cookieSecure
+        boolean secureCookies
 ) {
 }

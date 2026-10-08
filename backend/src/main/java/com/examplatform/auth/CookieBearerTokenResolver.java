@@ -6,8 +6,6 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenResolv
 
 public class CookieBearerTokenResolver implements BearerTokenResolver {
 
-    public static final String ACCESS_TOKEN_COOKIE = "access_token";
-
     @Override
     public String resolve(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -15,7 +13,7 @@ public class CookieBearerTokenResolver implements BearerTokenResolver {
             return null;
         }
         for (Cookie cookie : cookies) {
-            if (ACCESS_TOKEN_COOKIE.equals(cookie.getName())) {
+            if (AuthCookies.ACCESS_TOKEN.equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }

@@ -24,7 +24,7 @@ public class RefreshTokenService {
         this.properties = properties;
     }
 
-    public record IssuedToken(String rawToken, Instant expiresAt) {}
+    public record IssuedToken(String rawToken, Instant expiresAt, User user) {}
 
     @Transactional
     public IssuedToken issueNewSession(User user) {
@@ -35,17 +35,10 @@ public class RefreshTokenService {
 
         RefreshToken token = new RefreshToken(user, hash(raw), expiresAt, absoluteExpiresAt);
         repository.save(token);
-        return new IssuedToken(raw, expiresAt);
+        return new IssuedToken(raw, expiresAt, user);
     }
 
-    /**
-     * Validates the presented refresh token and rotates it: the old token is
-     * revoked, a new one is issued in the same family with a fresh sliding
-     * window but the SAME absolute cap. If a token that's already revoked is
-     * presented, that's a reuse signal (possible theft) — the whole family
-     * is revoked as a precaution.
-     */
-    @Transactional(noRollbackFor = InvalidRefreshTokenException.class)
+    @Transactional
     public IssuedToken rotate(String presentedRawToken) {
         String presentedHash = hash(presentedRawToken);
         RefreshToken existing = repository.findByTokenHash(presentedHash)
@@ -66,7 +59,6 @@ public class RefreshTokenService {
 
         String newRaw = generateRawToken();
         Instant newExpiresAt = Instant.now().plus(properties.refreshTokenSlidingTtl());
-        // Absolute cap is NOT reset — it stays tied to the original login.
         RefreshToken rotated = new RefreshToken(
                 existing.getUser(),
                 hash(newRaw),
@@ -75,14 +67,7 @@ public class RefreshTokenService {
                 existing.getAbsoluteExpiresAt()
         );
         repository.save(rotated);
-        return new IssuedToken(newRaw, newExpiresAt);
-    }
-
-    @Transactional(readOnly = true)
-    public User userFor(String rawToken) {
-        return repository.findByTokenHash(hash(rawToken))
-                .map(RefreshToken::getUser)
-                .orElseThrow(() -> new InvalidRefreshTokenException("Unknown refresh token"));
+        return new IssuedToken(newRaw, newExpiresAt, existing.getUser());
     }
 
     @Transactional
@@ -109,7 +94,7 @@ public class RefreshTokenService {
     private String hash(String rawToken) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashed = digest.digest(rawToken.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            byte[] hashed = digest.digest(rawToken.getBytes());
             return Base64.getUrlEncoder().withoutPadding().encodeToString(hashed);
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 not available", e);

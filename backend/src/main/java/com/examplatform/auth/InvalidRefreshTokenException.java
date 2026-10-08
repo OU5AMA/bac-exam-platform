@@ -1,4 +1,3 @@
-
 package com.examplatform.auth;
 
 public class InvalidRefreshTokenException extends RuntimeException {
