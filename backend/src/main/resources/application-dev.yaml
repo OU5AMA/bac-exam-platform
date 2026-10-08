@@ -1,4 +1,7 @@
 spring:
+  app:
+    jwt:
+      secure-cookies: false
   datasource:
     url: jdbc:postgresql://localhost:5432/examplatform
     username: ${DB_USER:postgres}
