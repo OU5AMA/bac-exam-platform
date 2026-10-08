@@ -1,17 +1,17 @@
 package com.examplatform.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -20,14 +20,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 class AuthFlowIntegrationTest {
 
-    @Autowired MockMvc mockMvc;
-    @Autowired ObjectMapper objectMapper;
+    @Autowired
+    MockMvc mockMvc;
 
     @Test
     void studentCanRegisterLoginAndAccessProtectedEndpoint() throws Exception {
         String email = "student1@example.com";
 
         mockMvc.perform(post("/api/auth/register")
+                        .with(csrf())
                         .contentType("application/json")
                         .content("""
                                 {"email":"%s","password":"password123","role":"STUDENT"}
@@ -36,6 +37,7 @@ class AuthFlowIntegrationTest {
                 .andExpect(jsonPath("$.accountStatus").value("ACTIVE"));
 
         MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
+                        .with(csrf())
                         .contentType("application/json")
                         .content("""
                                 {"email":"%s","password":"password123"}
@@ -57,14 +59,17 @@ class AuthFlowIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value(email));
 
-        MvcResult refreshResult = mockMvc.perform(post("/api/auth/refresh").cookie(refreshCookie))
+        MvcResult refreshResult = mockMvc.perform(post("/api/auth/refresh")
+                        .with(csrf())
+                        .cookie(refreshCookie))
                 .andExpect(status().isOk())
                 .andReturn();
         Cookie rotatedRefreshCookie = refreshResult.getResponse().getCookie("refresh_token");
         assertThat(rotatedRefreshCookie.getValue()).isNotEqualTo(refreshCookie.getValue());
 
-        // Old refresh token must now be rejected (rotation worked)
-        mockMvc.perform(post("/api/auth/refresh").cookie(refreshCookie))
+        mockMvc.perform(post("/api/auth/refresh")
+                        .with(csrf())
+                        .cookie(refreshCookie))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -73,6 +78,7 @@ class AuthFlowIntegrationTest {
         String email = "teacher1@example.com";
 
         mockMvc.perform(post("/api/auth/register")
+                        .with(csrf())
                         .contentType("application/json")
                         .content("""
                                 {"email":"%s","password":"password123","role":"TEACHER"}
@@ -81,6 +87,7 @@ class AuthFlowIntegrationTest {
                 .andExpect(jsonPath("$.accountStatus").value("PENDING_APPROVAL"));
 
         mockMvc.perform(post("/api/auth/login")
+                        .with(csrf())
                         .contentType("application/json")
                         .content("""
                                 {"email":"%s","password":"password123"}
@@ -88,10 +95,6 @@ class AuthFlowIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accountStatus").value("PENDING_APPROVAL"));
 
-        // Admin-only endpoint rejects anyone without ADMIN role — exercised
-        // indirectly here by confirming it requires auth at all; a full
-        // admin-token test needs an ADMIN test fixture, which this chat's
-        // scope doesn't create a seeding mechanism for yet (flagged below).
         mockMvc.perform(get("/api/admin/teachers/pending"))
                 .andExpect(status().isUnauthorized());
     }
