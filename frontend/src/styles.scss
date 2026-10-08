@@ -1,1 +1,132 @@
+@import "tailwindcss";
+
 /* You can add global styles to this file, and also import other style files */
+
+/* ---------- Fonts ---------- */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #F7F5F0;
+  margin: 0;
+  color: #4B5B5B;
+}
+
+/* ---------- Auth form primitives ---------- */
+.font-display {
+  font-family: 'Montserrat', 'Poppins', system-ui, sans-serif;
+}
+
+.auth-label {
+  display: block;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  font-weight: 650;
+  color: #12302F;
+}
+
+.auth-help {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #4B5B5B;
+}
+
+.auth-error {
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  font-weight: 500;
+  color: #B42318;
+}
+
+.auth-input {
+  display: block;
+  width: 100%;
+  border-radius: 0.625rem;
+  border: 1px solid #C9D1CF;
+  background: #fff;
+  padding: 0.8125rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #12302F;
+  box-shadow: 0 1px 2px rgba(11, 59, 59, 0.06);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.auth-input:hover {
+  border-color: #9FB0AD;
+}
+
+.auth-input:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: #0A6B6B;
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.42), 0 2px 5px rgba(11, 59, 59, 0.08);
+}
+
+.auth-input[aria-invalid='true'] {
+  border-color: #B42318;
+}
+
+.auth-input[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px rgba(180, 35, 24, 0.16);
+}
+
+.auth-btn {
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.625rem;
+  background: #0A6B6B;
+  color: #fff;
+  min-height: 3rem;
+  padding: 0.8rem 1rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  box-shadow: 0 3px 7px rgba(8, 79, 79, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: background-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.auth-btn:hover:not(:disabled) {
+  background: #084F4F;
+  box-shadow: 0 5px 12px rgba(8, 79, 79, 0.22);
+  transform: translateY(-1px);
+}
+
+.auth-btn:active:not(:disabled) { transform: translateY(0); }
+
+.auth-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-btn:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 2px #0A6B6B, 0 0 0 4px #F5A623;
+}
+
+.auth-link {
+  color: #0A6B6B;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  border-radius: 2px;
+}
+
+.auth-link:hover {
+  color: #084848;
+}
+
+.auth-link:focus-visible {
+  outline: 2px solid #0A6B6B;
+  outline-offset: 3px;
+  background: rgba(245, 166, 35, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-input, .auth-btn { transition: none; }
+}
