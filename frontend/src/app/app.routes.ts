@@ -1,6 +1,15 @@
 import { Routes } from '@angular/router';
 
+import { authGuard } from './auth/auth.guard';
+import { ShellComponent } from './shell/shell.component';
+
 export const routes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    title: '9issemi · My class. Learn. Grow. Shine.',
+    loadComponent: () => import('./home/home.component').then((m) => m.HomeComponent),
+  },
   {
     path: 'sign-in',
     title: 'Sign in · 9issemi',
@@ -12,11 +21,17 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/sign-up.component').then((m) => m.SignUpComponent),
   },
   {
-    path: 'dashboard', // throwaway, replace with the real app shell
-    title: '9issemi',
-    loadComponent: () =>
-      import('./dashboard-placeholder.component').then((m) => m.DashboardPlaceholderComponent),
+    path: '',
+    component: ShellComponent,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'dashboard',
+        title: 'Dashboard · 9issemi',
+        loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
+      },
+      // future feature routes go here
+    ],
   },
-  { path: '', pathMatch: 'full', redirectTo: 'sign-in' },
   { path: '**', redirectTo: 'sign-in' },
 ];
