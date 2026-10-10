@@ -8,9 +8,9 @@ import { RouterLink } from '@angular/router';
   template: `
     <div class="min-h-screen bg-[#F7F5F0] text-[#4B5B5B]">
       <header class="sticky top-0 z-20 border-b border-[#E5E7E5] bg-[#F7F5F0]/95 backdrop-blur">
-        <nav aria-label="Main navigation" class="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
+        <nav aria-label="Main navigation" class="mx-auto flex h-32 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
           <a routerLink="/" aria-label="9issemi home" class="inline-flex items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
-            <img src="tiny_logo.png" alt="" class="h-9 w-9 object-contain" />
+            <img src="tiny_logo.svg" alt="" class="h-[108px] w-[108px] object-contain" />
             <span class="font-display text-xl font-extrabold tracking-[-0.04em] text-[#0B3B3B]">9issemi</span>
           </a>
           <div class="flex items-center gap-3 sm:gap-6">
