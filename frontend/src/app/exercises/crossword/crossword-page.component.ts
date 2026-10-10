@@ -3,6 +3,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { catchError, combineLatest, distinctUntilChanged, EMPTY, switchMap, tap } from 'rxjs';
 
+import { CrosswordGridComponent } from './crossword-grid.component';
 import { CrosswordService } from './crossword.service';
 import { Crossword, Difficulty } from './crossword.model';
 
@@ -11,9 +12,9 @@ const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'difficult', 'master'];
 @Component({
   selector: 'app-crossword-page',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CrosswordGridComponent, RouterLink],
   template: `
-    <main class="min-h-screen bg-[#F7F5F0] px-5 py-8 text-[#4B5B5B] sm:px-8 sm:py-12">
+    <main class="min-h-screen bg-[#F7F5F0] px-4 py-8 text-[#4B5B5B] sm:px-8 sm:py-12">
       <div class="mx-auto max-w-5xl">
         <a routerLink="/" class="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-[#0A6B6B] hover:text-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
           <span aria-hidden="true" class="mr-2 text-lg">←</span> Back to home
@@ -27,10 +28,7 @@ const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'difficult', 'master'];
             }
           </header>
 
-          <section aria-label="Crossword preview" class="mt-8 rounded-lg border border-[#E5E7E5] bg-white p-6 sm:p-8">
-            <p class="font-semibold text-[#0B3B3B]">Grid: {{ puzzle.grid.rows }}×{{ puzzle.grid.cols }}</p>
-            <p class="mt-2 text-sm">Words: {{ puzzle.words.length }}</p>
-          </section>
+          <app-crossword-grid [crossword]="puzzle" />
         } @else if (loading()) {
           <p class="mt-8" role="status">Loading crossword…</p>
         } @else if (error()) {
