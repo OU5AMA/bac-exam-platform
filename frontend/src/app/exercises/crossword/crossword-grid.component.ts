@@ -1,6 +1,6 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 
-import { Crossword, CrosswordWord, Direction } from './crossword.model';
+import { Crossword, Direction, PlacedWord } from './crossword.model';
 
 interface CrosswordCell {
   key: string;
@@ -8,14 +8,14 @@ interface CrosswordCell {
   col: number;
   open: boolean;
   number: number | null;
-  words: Partial<Record<Direction, CrosswordWord>>;
+  words: Partial<Record<Direction, PlacedWord>>;
 }
 
 @Component({
   selector: 'app-crossword-grid',
   standalone: true,
   template: `
-    <section aria-label="Crossword grid" class="mt-8 rounded-lg border border-[#E5E7E5] bg-white p-0 sm:p-6">
+    <section aria-label="Crossword grid" class="rounded-lg border border-[#E5E7E5] bg-white p-0 sm:p-6">
       <h2 class="sr-only">Crossword grid</h2>
       <div class="flex w-full justify-center">
         <div
@@ -28,73 +28,102 @@ interface CrosswordCell {
           @for (row of layout().rows; track $index) {
             <div role="row" class="contents">
               @for (cell of row; track cell.key) {
-                <div
-                  role="gridcell"
-                  [attr.aria-label]="cell.open ? 'Row ' + (cell.row + 1) + ', column ' + (cell.col + 1) + ', open cell' : 'Row ' + (cell.row + 1) + ', column ' + (cell.col + 1) + ', blocked cell'"
-                  class="relative aspect-square min-w-0 select-none touch-manipulation"
-                  [style.background-color]="cell.open ? '#FFFFFF' : '#0B3B3B'"
-                  [style.border]="cell.open ? '1px solid #E5E7E5' : '0'"
-                >
-                  @if (cell.number !== null) {
-                    <span class="absolute left-[2px] top-[2px] text-[10px] leading-none text-[#0A6B6B] sm:left-[3px] sm:top-[3px]">{{ cell.number }}</span>
-                  }
-                </div>
+                @if (cell.open) {
+                  <button
+                    type="button"
+                    role="gridcell"
+                    [attr.aria-label]="cellLabel(cell)"
+                    class="relative flex aspect-square min-w-0 cursor-pointer select-none items-center justify-center p-0 text-base font-bold leading-none text-[#0B3B3B] touch-manipulation focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#0A6B6B]"
+                    [style.background-color]="cellBackground(cell)"
+                    [style.border]="'1px solid #E5E7E5'"
+                    (click)="selectCell(cell)"
+                  >
+                    @if (cell.number !== null) {
+                      <span class="pointer-events-none absolute left-[2px] top-[2px] text-[10px] font-normal leading-none text-[#0A6B6B] sm:left-[3px] sm:top-[3px]">{{ cell.number }}</span>
+                    }
+                    {{ filledLetters().get(cell.key) ?? '' }}
+                  </button>
+                } @else {
+                  <div role="gridcell" [attr.aria-label]="'Row ' + (cell.row + 1) + ', column ' + (cell.col + 1) + ', blocked cell'" class="aspect-square min-w-0 bg-[#0B3B3B]"></div>
+                }
               }
             </div>
           }
         </div>
       </div>
+      <ng-content select="app-crossword-input-panel" />
     </section>
   `,
 })
 export class CrosswordGridComponent {
   readonly crossword = input.required<Crossword>();
+  readonly placedWords = input.required<PlacedWord[]>();
+  readonly selectedWord = input<PlacedWord | null>(null);
+  readonly filledLetters = input.required<Map<string, string>>();
+  readonly revealedCells = input.required<Set<string>>();
+
+  @Output() readonly wordSelected = new EventEmitter<PlacedWord>();
 
   readonly layout = computed(() => {
     const puzzle = this.crossword();
-    const startCells = new Map<string, { row: number; col: number }>();
-    const wordMap = new Map<string, Partial<Record<Direction, CrosswordWord>>>();
+    const words = this.placedWords();
+    const wordMap = new Map<string, Partial<Record<Direction, PlacedWord>>>();
 
-    for (const word of puzzle.words) {
-      const startKey = `${word.row},${word.col}`;
-      startCells.set(startKey, { row: word.row, col: word.col });
-
-      for (let index = 0; index < word.answer.length; index += 1) {
-        const row = word.row + (word.direction === 'down' ? index : 0);
-        const col = word.col + (word.direction === 'across' ? index : 0);
-        const key = `${row},${col}`;
-        const words = wordMap.get(key) ?? {};
-        words[word.direction] = word;
-        wordMap.set(key, words);
+    for (const word of words) {
+      for (const cell of word.cells) {
+        const key = `${cell.row},${cell.col}`;
+        const crossingWords = wordMap.get(key) ?? {};
+        crossingWords[word.direction] = word;
+        wordMap.set(key, crossingWords);
       }
     }
 
     const numberMap = new Map<string, number>();
-    [...startCells.entries()]
-      .sort(([, first], [, second]) => first.row - second.row || first.col - second.col)
-      .forEach(([key], index) => numberMap.set(key, index + 1));
+    for (const word of words) numberMap.set(`${word.row},${word.col}`, word.number);
 
-    const cells: CrosswordCell[] = [];
     const rows: CrosswordCell[][] = [];
     for (let row = 0; row < puzzle.grid.rows; row += 1) {
       const rowCells: CrosswordCell[] = [];
       for (let col = 0; col < puzzle.grid.cols; col += 1) {
         const key = `${row},${col}`;
-        const words = wordMap.get(key) ?? {};
-        const cell: CrosswordCell = {
+        const crossingWords = wordMap.get(key) ?? {};
+        rowCells.push({
           key,
           row,
           col,
-          open: Boolean(words.across || words.down),
+          open: Boolean(crossingWords.across || crossingWords.down),
           number: numberMap.get(key) ?? null,
-          words,
-        };
-        cells.push(cell);
-        rowCells.push(cell);
+          words: crossingWords,
+        });
       }
       rows.push(rowCells);
     }
 
-    return { rows, cells, cellMap: new Map(cells.map((cell) => [cell.key, cell.open])), numberMap, wordMap };
+    return { rows, wordMap, numberMap };
   });
+
+  cellLabel(cell: CrosswordCell): string {
+    const letter = this.filledLetters().get(cell.key);
+    return `Row ${cell.row + 1}, column ${cell.col + 1}${letter ? `, letter ${letter}` : ''}`;
+  }
+
+  cellBackground(cell: CrosswordCell): string {
+    if (this.revealedCells().has(cell.key)) return '#FDF2DC';
+    if (this.selectedWord()?.cells.some(({ row, col }) => row === cell.row && col === cell.col)) return '#E0F2F2';
+    return '#FFFFFF';
+  }
+
+  selectCell(cell: CrosswordCell): void {
+    const options = [cell.words.across, cell.words.down].filter((word): word is PlacedWord => Boolean(word));
+    if (options.length === 0) return;
+
+    const selected = this.selectedWord();
+    const currentIndex = selected ? options.findIndex((word) => this.isSameWord(word, selected)) : -1;
+    const word = options.length > 1 && currentIndex >= 0 ? options[(currentIndex + 1) % options.length] : options[0];
+    this.wordSelected.emit(word);
+  }
+
+  private isSameWord(first: PlacedWord, second: PlacedWord): boolean {
+    return first.number === second.number && first.direction === second.direction;
+  }
 }
