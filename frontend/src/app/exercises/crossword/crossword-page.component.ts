@@ -32,12 +32,22 @@ const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'difficult', 'master'];
 
           <div class="mt-8 grid items-start gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(18rem,1fr)]">
             <div class="min-w-0">
+              @if (solved()) {
+                <div role="status" class="mb-4 flex items-center gap-3 rounded-lg border border-[#0A6B6B] bg-[#DCF2E8] p-4 text-sm font-semibold text-[#084F4F]">
+                  <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="m5 12.5 4.5 4.5L19 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" />
+                  </svg>
+                  <span>Puzzle solved! Well done.</span>
+                </div>
+              }
               <app-crossword-grid
                 [crossword]="puzzle"
                 [placedWords]="placedWords()"
                 [selectedWord]="selectedWord()"
                 [filledLetters]="filledLetters()"
                 [revealedCells]="revealedCells()"
+                [checkedCells]="checkedCells()"
                 (wordSelected)="selectWord($event)"
               >
                 <app-crossword-input-panel
@@ -46,6 +56,14 @@ const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'difficult', 'master'];
                   (confirmed)="confirmAnswer($event)"
                   (clueRequested)="requestClue($event)"
                 />
+                @if (!solved()) {
+                  <div class="border-t border-[#E5E7E5] p-4 sm:p-6">
+                    <button type="button" class="auth-btn w-full sm:max-w-[220px]" (click)="checkAnswers()">Check Answers</button>
+                    @if (checkMessage()) {
+                      <p class="mt-2 text-sm text-[#4B5B5B]" role="status">{{ checkMessage() }}</p>
+                    }
+                  </div>
+                }
               </app-crossword-grid>
             </div>
             <app-crossword-clues
@@ -78,6 +96,9 @@ export class CrosswordPageComponent {
   readonly filledLetters = signal<Map<string, string>>(new Map());
   readonly revealedCells = signal<Set<string>>(new Set());
   readonly lengthMismatch = signal<string | null>(null);
+  readonly checkedCells = signal<Map<string, 'correct' | 'wrong'>>(new Map());
+  readonly checkMessage = signal<string | null>(null);
+  readonly answersChecked = signal(false);
   readonly placedWords = computed(() => {
     const puzzle = this.crossword();
     if (!puzzle) return [];
@@ -98,6 +119,14 @@ export class CrosswordPageComponent {
         col: word.col + (word.direction === 'across' ? index : 0),
       })),
     }));
+  });
+  readonly solved = computed(() => {
+    if (!this.answersChecked()) return false;
+    const words = this.placedWords();
+    const letters = this.filledLetters();
+    return words.length > 0 && words.every((word) =>
+      word.cells.every((cell, index) => letters.get(`${cell.row},${cell.col}`)?.toUpperCase() === word.answer[index].toUpperCase()),
+    );
   });
   private readonly retryToken = signal(0);
   private readonly service = inject(CrosswordService);
@@ -140,6 +169,9 @@ export class CrosswordPageComponent {
   }
 
   confirmAnswer(event: { word: PlacedWord; answer: string }): void {
+    this.checkedCells.set(new Map());
+    this.checkMessage.set(null);
+    this.answersChecked.set(false);
     const answer = event.answer.trim().toUpperCase();
     if (answer.length !== event.word.answer.length) {
       this.lengthMismatch.set(`That doesn't fit — the answer has ${event.word.answer.length} letters.`);
@@ -153,6 +185,9 @@ export class CrosswordPageComponent {
   }
 
   requestClue(word: PlacedWord): void {
+    this.checkedCells.set(new Map());
+    this.checkMessage.set(null);
+    this.answersChecked.set(false);
     const firstCell = word.cells[0];
     if (!firstCell) return;
 
@@ -164,5 +199,35 @@ export class CrosswordPageComponent {
     const revealed = new Set(this.revealedCells());
     revealed.add(key);
     this.revealedCells.set(revealed);
+  }
+
+  checkAnswers(): void {
+    const letters = this.filledLetters();
+    if (letters.size === 0) {
+      this.checkMessage.set('Place at least one answer before checking.');
+      return;
+    }
+
+    const expectedLetters = new Map<string, string[]>();
+    for (const word of this.placedWords()) {
+      word.cells.forEach((cell, index) => {
+        const key = `${cell.row},${cell.col}`;
+        const expected = expectedLetters.get(key) ?? [];
+        expected.push(word.answer[index].toUpperCase());
+        expectedLetters.set(key, expected);
+      });
+    }
+
+    const checked = new Map<string, 'correct' | 'wrong'>();
+    for (const [key, letter] of letters) {
+      if (!letter) continue;
+      const expected = expectedLetters.get(key);
+      if (!expected) continue;
+      checked.set(key, expected.every((correctLetter) => correctLetter === letter.toUpperCase()) ? 'correct' : 'wrong');
+    }
+
+    this.checkedCells.set(checked);
+    this.checkMessage.set(null);
+    this.answersChecked.set(true);
   }
 }

@@ -35,6 +35,7 @@ interface CrosswordCell {
                     [attr.aria-label]="cellLabel(cell)"
                     class="relative flex aspect-square min-w-0 cursor-pointer select-none items-center justify-center p-0 text-base font-bold leading-none text-[#0B3B3B] touch-manipulation focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#0A6B6B]"
                     [style.background-color]="cellBackground(cell)"
+                    [style.color]="cellColor(cell)"
                     [style.border]="'1px solid #E5E7E5'"
                     (click)="selectCell(cell)"
                   >
@@ -51,7 +52,7 @@ interface CrosswordCell {
           }
         </div>
       </div>
-      <ng-content select="app-crossword-input-panel" />
+      <ng-content />
     </section>
   `,
 })
@@ -61,6 +62,7 @@ export class CrosswordGridComponent {
   readonly selectedWord = input<PlacedWord | null>(null);
   readonly filledLetters = input.required<Map<string, string>>();
   readonly revealedCells = input.required<Set<string>>();
+  readonly checkedCells = input.required<Map<string, 'correct' | 'wrong'>>();
 
   @Output() readonly wordSelected = new EventEmitter<PlacedWord>();
 
@@ -104,13 +106,24 @@ export class CrosswordGridComponent {
 
   cellLabel(cell: CrosswordCell): string {
     const letter = this.filledLetters().get(cell.key);
-    return `Row ${cell.row + 1}, column ${cell.col + 1}${letter ? `, letter ${letter}` : ''}`;
+    const checked = this.checkedCells().get(cell.key);
+    return `Row ${cell.row + 1}, column ${cell.col + 1}${letter ? `, letter ${letter}` : ''}${checked ? `, ${checked}` : ''}`;
   }
 
   cellBackground(cell: CrosswordCell): string {
+    const checked = this.checkedCells().get(cell.key);
+    if (checked === 'correct') return '#DCF2E8';
+    if (checked === 'wrong') return '#FDECEA';
     if (this.revealedCells().has(cell.key)) return '#FDF2DC';
     if (this.selectedWord()?.cells.some(({ row, col }) => row === cell.row && col === cell.col)) return '#E0F2F2';
     return '#FFFFFF';
+  }
+
+  cellColor(cell: CrosswordCell): string {
+    const checked = this.checkedCells().get(cell.key);
+    if (checked === 'correct') return '#0E8A5F';
+    if (checked === 'wrong') return '#B42318';
+    return '#0B3B3B';
   }
 
   selectCell(cell: CrosswordCell): void {
