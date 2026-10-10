@@ -1,0 +1,20 @@
+{
+  "id": "2bac-unit1-vocabulary-easy",
+  "title": "The Gifts of Youth — Vocabulary",
+  "subtitle": "Unit 1 · 2 Bac · Easy",
+  "units": ["unit-1"],
+  "difficulty": "easy",
+  "grid": { "rows": 13, "cols": 13 },
+  "words": [
+    { "answer": "YOUTH", "clue": "The period of being young.", "row": 2, "col": 2, "direction": "across" },
+    { "answer": "TALENT", "clue": "A natural ability to do something well.", "row": 2, "col": 5, "direction": "down" },
+    { "answer": "SKILL", "clue": "An ability that comes from training or practice.", "row": 0, "col": 11, "direction": "down" },
+    { "answer": "HOPE", "clue": "A feeling of expectation for the future.", "row": 0, "col": 0, "direction": "down" },
+    { "answer": "DREAM", "clue": "Something you wish to achieve in the future.", "row": 8, "col": 0, "direction": "across" },
+    { "answer": "ENERGY", "clue": "The strength and vitality required for activity.", "row": 10, "col": 0, "direction": "across" },
+    { "answer": "FUTURE", "clue": "The time yet to come.", "row": 0, "col": 8, "direction": "down" },
+    { "answer": "CHALLENGE", "clue": "A task that tests your abilities.", "row": 12, "col": 0, "direction": "across" },
+    { "answer": "PASSION", "clue": "A strong feeling of enthusiasm.", "row": 6, "col": 12, "direction": "down" },
+    { "answer": "GROWTH", "clue": "The process of developing or increasing.", "row": 7, "col": 10, "direction": "down" }
+  ]
+}

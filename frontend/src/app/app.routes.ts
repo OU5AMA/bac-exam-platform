@@ -21,6 +21,11 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/sign-up.component').then((m) => m.SignUpComponent),
   },
   {
+    path: '2-bac/exercices/unit-1/vocabulary/crossword',
+    loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
+    title: 'Crossword · Unit 1 · 9issemi',
+  },
+  {
     path: '',
     component: ShellComponent,
     canActivate: [authGuard],
