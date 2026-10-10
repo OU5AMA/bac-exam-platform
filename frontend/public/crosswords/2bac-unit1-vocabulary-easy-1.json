@@ -1,0 +1,25 @@
+{
+  "id": "2bac-unit1-vocabulary-easy",
+  "title": "The Gifts of Youth — Vocabulary",
+  "subtitle": "Unit 1 · 2 Bac · Easy",
+  "units": ["unit-1"],
+  "difficulty": "easy",
+  "grid": { "rows": 15, "cols": 15 },
+  "words": [
+    { "answer": "RESPONSIBLE", "clue": "Trustworthy in completing duties and accepting consequences.", "row": 0, "col": 2, "direction": "across" },
+    { "answer": "SKILL", "clue": "The ability gained through practice or training.", "row": 0, "col": 4, "direction": "down" },
+    { "answer": "OPTIMISTIC", "clue": "Expecting good things to happen.", "row": 1, "col": 0, "direction": "down" },
+    { "answer": "INNOVATIVE", "clue": "Introducing new ideas or methods.", "row": 2, "col": 4, "direction": "across" },
+    { "answer": "TOLERANCE", "clue": "Acceptance of differences in beliefs, backgrounds, or behavior.", "row": 2, "col": 2, "direction": "down" },
+    { "answer": "ADVENTURE", "clue": "An exciting experience, often involving something unfamiliar.", "row": 2, "col": 9, "direction": "down" },
+    { "answer": "IMAGINATION", "clue": "The ability to form ideas or pictures in the mind.", "row": 2, "col": 11, "direction": "down" },
+    { "answer": "ENERGY", "clue": "The strength needed for physical or mental activity.", "row": 5, "col": 7, "direction": "across" },
+    { "answer": "PATIENT", "clue": "Able to stay calm while waiting.", "row": 6, "col": 14, "direction": "down" },
+    { "answer": "TALENT", "clue": "A natural ability that helps someone do something well.", "row": 7, "col": 4, "direction": "across" },
+    { "answer": "AMBITION", "clue": "A strong desire to achieve a goal.", "row": 7, "col": 5, "direction": "down" },
+    { "answer": "CREATIVE", "clue": "Able to produce original ideas or useful things.", "row": 10, "col": 0, "direction": "across" },
+    { "answer": "MATURITY", "clue": "The state of being fully developed in behavior or judgment.", "row": 12, "col": 0, "direction": "across" },
+    { "answer": "HONEST", "clue": "Truthful and fair in what one says and does.", "row": 12, "col": 9, "direction": "across" },
+    { "answer": "INTELLIGENT", "clue": "Able to learn, understand, and solve problems well.", "row": 14, "col": 4, "direction": "across" }
+  ]
+}
