@@ -1,5 +1,5 @@
 package com.examplatform.auth.dto;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
-public record LoginRequest(@NotNull String email, @NotNull String password) {}
+public record LoginRequest(@NotBlank String identifier, @NotBlank String password) {}

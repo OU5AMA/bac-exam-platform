@@ -2,6 +2,7 @@ package com.examplatform.common;
 
 import com.examplatform.auth.InvalidCredentialsException;
 import com.examplatform.auth.InvalidRefreshTokenException;
+import com.examplatform.auth.UsernameAlreadyExistsException;
 import com.examplatform.common.exception.AccountNotActiveException;
 import com.examplatform.common.exception.DuplicateResourceException;
 import com.examplatform.common.exception.ResourceNotFoundException;
@@ -17,6 +18,12 @@ import java.time.Instant;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleUsernameAlreadyExists(
+            UsernameAlreadyExistsException ex, HttpServletRequest req) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), "username", req);
+    }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicate(DuplicateResourceException ex, HttpServletRequest req) {
@@ -70,8 +77,13 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String message, HttpServletRequest req) {
+        return build(status, message, null, req);
+    }
+
+    private ResponseEntity<ErrorResponse> build(
+            HttpStatus status, String message, String field, HttpServletRequest req) {
         ErrorResponse body = new ErrorResponse(
-                Instant.now(), status.value(), status.getReasonPhrase(), message, req.getRequestURI());
+                Instant.now(), status.value(), status.getReasonPhrase(), message, field, req.getRequestURI());
         return ResponseEntity.status(status).body(body);
     }
 }
