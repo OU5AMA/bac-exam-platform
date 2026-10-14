@@ -11,7 +11,7 @@ import { AuthService } from '../auth/auth.service';
         <div class="mb-8">
           <p class="text-sm font-semibold text-[#0A6B6B]">Your learning space</p>
           <h1 id="dashboard-title" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">Welcome back</h1>
-          <p class="mt-2 text-base text-[#4B5B5B]">{{ user.email }}</p>
+          <p class="mt-2 text-base text-[#4B5B5B]">{{ user.displayName || user.username || user.email }}</p>
         </div>
 
         @if (user.accountStatus === 'PENDING_APPROVAL') {
