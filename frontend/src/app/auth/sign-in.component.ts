@@ -40,19 +40,20 @@ import { AuthService, AuthUser } from './auth.service';
 
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="mt-8 space-y-6">
           <div>
-            <label for="email" class="auth-label">Email</label>
+            <label for="identifier" class="auth-label">Email or username</label>
             <input
-              id="email"
-              type="email"
-              formControlName="email"
-              autocomplete="email"
-              inputmode="email"
+              id="identifier"
+              type="text"
+              formControlName="identifier"
+              autocomplete="username"
+              autocapitalize="none"
+              spellcheck="false"
               class="auth-input mt-1.5"
-              [attr.aria-invalid]="invalid('email')"
-              [attr.aria-describedby]="invalid('email') ? 'email-error' : null"
+              [attr.aria-invalid]="invalid('identifier')"
+              [attr.aria-describedby]="invalid('identifier') ? 'identifier-error' : null"
             />
-            @if (invalid('email')) {
-              <p id="email-error" class="auth-error">{{ emailMessage() }}</p>
+            @if (invalid('identifier')) {
+              <p id="identifier-error" class="auth-error">{{ identifierMessage() }}</p>
             }
           </div>
 
@@ -126,19 +127,17 @@ export class SignInComponent {
   protected readonly notice = signal<string | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    identifier: ['', [Validators.required]],
     password: ['', [Validators.required]],
   });
 
-  protected invalid(name: 'email' | 'password'): boolean {
+  protected invalid(name: 'identifier' | 'password'): boolean {
     const control = this.form.controls[name];
     return control.invalid && (control.touched || this.submitted());
   }
 
-  protected emailMessage(): string {
-    return this.form.controls.email.hasError('required')
-      ? 'Enter your email address.'
-      : 'Enter a valid email address, like name@example.com.';
+  protected identifierMessage(): string {
+    return 'Enter your email address or username.';
   }
 
   protected submit(): void {
@@ -187,7 +186,7 @@ export class SignInComponent {
       return "We can't reach the server. Check your connection and try again.";
     }
     if (err.status === 401 || err.status === 400) {
-      return err.error?.message ?? 'Invalid email or password.';
+      return err.error?.message ?? 'Invalid email or username, or password.';
     }
     if (err.status === 403) {
       // Almost always a missing/stale CSRF token.

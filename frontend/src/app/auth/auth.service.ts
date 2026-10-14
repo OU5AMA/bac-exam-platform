@@ -8,17 +8,22 @@ export type AccountStatus = 'ACTIVE' | 'PENDING_APPROVAL' | 'REJECTED';
 
 export interface AuthUser {
   id: number;
+  username: string;
+  displayName?: string;
   email: string;
   roles: string[];
   accountStatus: AccountStatus;
 }
 
 export interface LoginPayload {
-  email: string;
+  identifier: string;
   password: string;
 }
 
-export interface RegisterPayload extends LoginPayload {
+export interface RegisterPayload {
+  username: string;
+  email: string;
+  password: string;
   role: UserRole;
 }
 

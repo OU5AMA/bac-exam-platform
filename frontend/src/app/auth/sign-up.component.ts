@@ -107,6 +107,25 @@ const passwordsMatch: ValidatorFn = (group: AbstractControl): ValidationErrors |
             </fieldset>
 
             <div>
+              <label for="username" class="auth-label">Username</label>
+              <input
+                id="username"
+                type="text"
+                formControlName="username"
+                placeholder="your.name"
+                autocomplete="username"
+                autocapitalize="none"
+                spellcheck="false"
+                class="auth-input mt-1.5"
+                [attr.aria-invalid]="invalid('username')"
+                [attr.aria-describedby]="invalid('username') ? 'username-error' : null"
+              />
+              @if (invalid('username')) {
+                <p id="username-error" class="auth-error">{{ usernameMessage() }}</p>
+              }
+            </div>
+
+            <div>
               <label for="email" class="auth-label">Email</label>
               <input
                 id="email"
@@ -213,6 +232,7 @@ export class SignUpComponent {
   protected readonly form = this.fb.nonNullable.group(
     {
       role: this.fb.nonNullable.control<UserRole>('STUDENT'),
+      username: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_.]{3,30}$/)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]],
@@ -220,9 +240,16 @@ export class SignUpComponent {
     { validators: passwordsMatch },
   );
 
-  protected invalid(name: 'email' | 'password'): boolean {
+  protected invalid(name: 'username' | 'email' | 'password'): boolean {
     const control = this.form.controls[name];
     return control.invalid && (control.touched || this.submitted());
+  }
+
+  protected usernameMessage(): string {
+    const username = this.form.controls.username;
+    if (username.hasError('taken')) return 'Username is already taken.';
+    if (username.hasError('required')) return 'Choose a username.';
+    return '3–30 characters: letters, numbers, underscores, dots.';
   }
 
   protected confirmInvalid(): boolean {
@@ -260,10 +287,10 @@ export class SignUpComponent {
       return;
     }
 
-    const { email, password, role } = this.form.getRawValue();
+    const { username, email, password, role } = this.form.getRawValue();
     this.loading.set(true);
     this.auth
-      .register({ email, password, role })
+      .register({ username, email, password, role })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (user) => this.registered.set(user),
@@ -273,8 +300,11 @@ export class SignUpComponent {
 
   private onError(err: HttpErrorResponse): void {
     if (err.status === 409) {
-      // Field-level error; it clears itself as soon as the user edits the email.
-      this.form.controls.email.setErrors({ taken: true });
+      if (err.error?.field === 'username') {
+        this.form.controls.username.setErrors({ taken: true });
+      } else {
+        this.form.controls.email.setErrors({ taken: true });
+      }
       this.focusFirstInvalid();
       return;
     }

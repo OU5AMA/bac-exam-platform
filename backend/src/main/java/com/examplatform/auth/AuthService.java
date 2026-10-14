@@ -3,6 +3,7 @@ package com.examplatform.auth;
 import com.examplatform.auth.dto.AuthResponse;
 import com.examplatform.auth.dto.LoginRequest;
 import com.examplatform.auth.dto.RegisterRequest;
+import com.examplatform.auth.UsernameAlreadyExistsException;
 import com.examplatform.common.exception.DuplicateResourceException;
 import com.examplatform.user.User;
 import com.examplatform.user.UserRepository;
@@ -37,16 +38,24 @@ public class AuthService {
         if (userRepository.existsByEmail(request.email())) {
             throw new DuplicateResourceException("An account with this email already exists");
         }
+        if (userRepository.existsByUsernameIgnoreCase(request.username())) {
+            throw new UsernameAlreadyExistsException();
+        }
 
         User user = new User(request.email(), passwordEncoder.encode(request.password()), request.role());
+        user.setUsername(request.username());
         userRepository.save(user);
         return AuthResponse.from(user);
     }
 
     @Transactional
     public TokenPair login(LoginRequest request) {
-        User user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
+        String identifier = request.identifier().trim();
+        User user = (identifier.contains("@"))
+                ? userRepository.findByEmail(identifier)
+                    .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"))
+                : userRepository.findByUsernameIgnoreCase(identifier)
+                    .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
 
         if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
             throw new InvalidCredentialsException("Invalid email or password");

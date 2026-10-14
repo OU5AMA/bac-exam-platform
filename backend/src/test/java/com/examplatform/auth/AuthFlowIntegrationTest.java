@@ -24,28 +24,49 @@ class AuthFlowIntegrationTest {
     MockMvc mockMvc;
 
     @Test
-    void studentCanRegisterLoginAndAccessProtectedEndpoint() throws Exception {
+    void studentCanRegisterLoginByEmailAndUsernameAndAccessProtectedEndpoint() throws Exception {
         String email = "student1@example.com";
 
         mockMvc.perform(post("/api/auth/register")
                         .with(csrf())
                         .contentType("application/json")
                         .content("""
-                                {"email":"%s","password":"password123","role":"STUDENT"}
+                                {"username":"student1","email":"%s","password":"password123","role":"STUDENT"}
                                 """.formatted(email)))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.username").value("student1"))
                 .andExpect(jsonPath("$.accountStatus").value("ACTIVE"));
 
         MvcResult loginResult = mockMvc.perform(post("/api/auth/login")
                         .with(csrf())
                         .contentType("application/json")
                         .content("""
-                                {"email":"%s","password":"password123"}
+                                {"identifier":"%s","password":"password123"}
                                 """.formatted(email)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("student1"))
                 .andExpect(header().string("Set-Cookie", containsString("access_token=")))
                 .andExpect(header().string("Set-Cookie", containsString("HttpOnly")))
                 .andReturn();
+
+        mockMvc.perform(post("/api/auth/login")
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content("""
+                                {"identifier":"STUDENT1","password":"password123"}
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username").value("student1"));
+
+        mockMvc.perform(post("/api/auth/register")
+                        .with(csrf())
+                        .contentType("application/json")
+                        .content("""
+                                {"username":"STUDENT1","email":"other-student@example.com","password":"password123","role":"STUDENT"}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.field").value("username"))
+                .andExpect(jsonPath("$.message").value("Username is already taken"));
 
         Cookie accessCookie = loginResult.getResponse().getCookie("access_token");
         Cookie refreshCookie = loginResult.getResponse().getCookie("refresh_token");
@@ -57,7 +78,8 @@ class AuthFlowIntegrationTest {
 
         mockMvc.perform(get("/api/auth/me").cookie(accessCookie))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(email));
+                .andExpect(jsonPath("$.email").value(email))
+                .andExpect(jsonPath("$.username").value("student1"));
 
         MvcResult refreshResult = mockMvc.perform(post("/api/auth/refresh")
                         .with(csrf())
@@ -81,7 +103,7 @@ class AuthFlowIntegrationTest {
                         .with(csrf())
                         .contentType("application/json")
                         .content("""
-                                {"email":"%s","password":"password123","role":"TEACHER"}
+                                {"username":"teacher1","email":"%s","password":"password123","role":"TEACHER"}
                                 """.formatted(email)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.accountStatus").value("PENDING_APPROVAL"));
@@ -90,7 +112,7 @@ class AuthFlowIntegrationTest {
                         .with(csrf())
                         .contentType("application/json")
                         .content("""
-                                {"email":"%s","password":"password123"}
+                                {"identifier":"%s","password":"password123"}
                                 """.formatted(email)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accountStatus").value("PENDING_APPROVAL"));
