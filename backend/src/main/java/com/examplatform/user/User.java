@@ -24,8 +24,17 @@ public class User {
     @Column(name = "username", nullable = false, length = 30)
     private String username;
 
+    @Column(name = "display_name", length = 255)
+    private String displayName;
+
     @Column(name = "password_hash")
     private String passwordHash;
+
+    @Column(name = "oauth_provider", length = 32)
+    private String oauthProvider;
+
+    @Column(name = "oauth_subject")
+    private String oauthSubject;
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled = true;
