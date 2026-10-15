@@ -3,15 +3,17 @@ package com.examplatform.auth;
 import com.examplatform.auth.dto.AuthResponse;
 import com.examplatform.auth.dto.LoginRequest;
 import com.examplatform.auth.dto.RegisterRequest;
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.Duration;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,13 +21,13 @@ public class AuthController {
 
     private final AuthService authService;
     private final CurrentUserService currentUserService;
-    private final JwtProperties jwtProperties;
+    private final AuthCookieWriter authCookieWriter;
 
     public AuthController(AuthService authService, CurrentUserService currentUserService,
-                          JwtProperties jwtProperties) {
+                          AuthCookieWriter authCookieWriter) {
         this.authService = authService;
         this.currentUserService = currentUserService;
-        this.jwtProperties = jwtProperties;
+        this.authCookieWriter = authCookieWriter;
     }
 
     @PostMapping("/register")
@@ -35,65 +37,34 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request,
+                                               HttpServletResponse response) {
         AuthService.TokenPair tokens = authService.login(request);
-        return withAuthCookies(tokens);
+        authCookieWriter.setAuthCookies(response, tokens.accessToken(), tokens.refreshToken());
+        return ResponseEntity.ok(tokens.body());
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(
-            @CookieValue(name = AuthCookies.REFRESH_TOKEN) String refreshToken) {
+            @CookieValue(name = AuthCookies.REFRESH_TOKEN) String refreshToken,
+            HttpServletResponse response) {
         AuthService.TokenPair tokens = authService.refresh(refreshToken);
-        return withAuthCookies(tokens);
+        authCookieWriter.setAuthCookies(response, tokens.accessToken(), tokens.refreshToken());
+        return ResponseEntity.ok(tokens.body());
     }
 
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<Void> logout(
-            @CookieValue(name = AuthCookies.REFRESH_TOKEN, required = false) String refreshToken) {
+            @CookieValue(name = AuthCookies.REFRESH_TOKEN, required = false) String refreshToken,
+            HttpServletResponse response) {
         authService.logout(refreshToken);
-
-        ResponseCookie clearedAccess = ResponseCookie.from(AuthCookies.ACCESS_TOKEN, "")
-                .httpOnly(true).secure(jwtProperties.secureCookies()).sameSite("Strict")
-                .path("/").maxAge(0).build();
-        ResponseCookie clearedRefresh = ResponseCookie.from(AuthCookies.REFRESH_TOKEN, "")
-                .httpOnly(true).secure(jwtProperties.secureCookies()).sameSite("Strict")
-                .path("/api/auth").maxAge(0).build();
-
-        return ResponseEntity.noContent()
-                .header(HttpHeaders.SET_COOKIE, clearedAccess.toString())
-                .header(HttpHeaders.SET_COOKIE, clearedRefresh.toString())
-                .build();
+        authCookieWriter.clearAuthCookies(response);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/me")
     public AuthResponse me() {
         return AuthResponse.from(currentUserService.getCurrentUser());
-    }
-
-    private ResponseEntity<AuthResponse> withAuthCookies(AuthService.TokenPair tokens) {
-        ResponseCookie accessCookie = ResponseCookie.from(AuthCookies.ACCESS_TOKEN, tokens.accessToken())
-                .httpOnly(true)
-                .secure(jwtProperties.secureCookies())
-                .sameSite("Strict")
-                .path("/")
-                .maxAge(jwtProperties.accessTokenTtl())
-                .build();
-
-        // Scoped to /api/auth only — the refresh token never needs to be
-        // sent on every request, just on refresh/logout. Smaller exposure
-        // surface than sending it alongside the access token on every call.
-        ResponseCookie refreshCookie = ResponseCookie.from(AuthCookies.REFRESH_TOKEN, tokens.refreshToken())
-                .httpOnly(true)
-                .secure(jwtProperties.secureCookies())
-                .sameSite("Strict")
-                .path("/api/auth")
-                .maxAge(Duration.ofHours(12)) // absolute cap; cookie itself can outlive it, server enforces the real limit
-                .build();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, accessCookie.toString())
-                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .body(tokens.body());
     }
 }
