@@ -47,16 +47,11 @@ import { GoogleButtonComponent } from '../auth/google-button.component';
               9issemi brings students and teachers together to practice, teach, and follow progress in one clear, welcoming space.
             </p>
             <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-              @if (sessionLoading()) {
-                <span class="h-12 w-48 animate-pulse rounded-md bg-[#E5E7E5]" aria-hidden="true"></span>
-              } @else if (auth.currentUser()) {
-                <a routerLink="/dashboard" class="auth-btn w-auto px-6 sm:max-w-[240px]">Go to your dashboard</a>
-              } @else {
-                <a routerLink="/sign-up" class="auth-btn w-auto px-6 sm:max-w-[220px]">Get started</a>
-                <a routerLink="/sign-in" class="inline-flex min-h-12 items-center gap-2 self-start whitespace-nowrap rounded-sm px-2 font-semibold text-[#0A6B6B] underline decoration-[#0A6B6B]/40 underline-offset-4 hover:decoration-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">
-                  Sign in <span aria-hidden="true">→</span>
-                </a>
-                <app-google-button class="w-full sm:max-w-[240px]" />
+              <a routerLink="/2-bac" class="auth-btn w-auto px-6 sm:max-w-[240px]">Explore 2 Bac</a>
+              @if (!sessionLoading() && auth.currentUser()) {
+                <a routerLink="/dashboard" class="inline-flex min-h-12 items-center gap-2 self-start rounded-sm px-2 font-semibold text-[#0A6B6B] underline decoration-[#0A6B6B]/40 underline-offset-4 hover:decoration-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Go to your dashboard <span aria-hidden="true">→</span></a>
+              } @else if (!sessionLoading()) {
+                <a routerLink="/sign-up" class="inline-flex min-h-12 items-center gap-2 self-start rounded-sm px-2 font-semibold text-[#0A6B6B] underline decoration-[#0A6B6B]/40 underline-offset-4 hover:decoration-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Create an account <span aria-hidden="true">→</span></a>
               }
             </div>
           </div>

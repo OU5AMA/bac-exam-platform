@@ -21,9 +21,29 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/sign-up.component').then((m) => m.SignUpComponent),
   },
   {
-    path: '2-bac/exercices/unit-1/vocabulary/crossword',
+    path: '2-bac',
+    loadComponent: () => import('./pages/2bac/grade-hub.component').then((m) => m.GradeHubComponent),
+    title: '2 Baccalaureate · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId',
+    loadComponent: () => import('./pages/2bac/unit-hub.component').then((m) => m.UnitHubComponent),
+    title: 'Unit · 2 Bac · 9issemi',
+  },
+  {
+    path: '2-bac/national-exam',
+    loadComponent: () => import('./pages/2bac/national-exam.component').then((m) => m.NationalExamComponent),
+    title: 'National Exam Prep · 9issemi',
+  },
+  {
+    path: '2-bac/exercices/unit-1/vocabulary/crosswords',
     loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
     title: 'Crossword · Unit 1 · 9issemi',
+  },
+  {
+    path: '2-bac/exercices/unit-1/vocabulary/crossword',
+    redirectTo: '2-bac/exercices/unit-1/vocabulary/crosswords',
+    pathMatch: 'full',
   },
   {
     path: '',
