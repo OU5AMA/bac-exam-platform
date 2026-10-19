@@ -50,7 +50,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             String accessToken = jwtService.createAccessToken(user);
             String refreshToken = refreshTokenService.issueNewSession(user).rawToken();
             authCookieWriter.setAuthCookies(response, accessToken, refreshToken);
-            response.sendRedirect(frontendUrl + "/dashboard");
+            response.sendRedirect(frontendUrl + "/");
         } catch (RuntimeException exception) {
             response.sendRedirect(frontendUrl + "/sign-in?error=google_auth_failed");
         }

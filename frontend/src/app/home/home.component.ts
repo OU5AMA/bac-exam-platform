@@ -1,10 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { catchError, finalize, of } from 'rxjs';
+
+import { AuthService } from '../auth/auth.service';
+import { GoogleButtonComponent } from '../auth/google-button.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, GoogleButtonComponent],
   template: `
     <div class="min-h-screen bg-[#F7F5F0] text-[#4B5B5B]">
       <header class="sticky top-0 z-20 border-b border-[#E5E7E5] bg-[#F7F5F0]/95 backdrop-blur">
@@ -14,8 +18,17 @@ import { RouterLink } from '@angular/router';
             <span class="font-display text-xl font-extrabold tracking-[-0.04em] text-[#0B3B3B]">9issemi</span>
           </a>
           <div class="flex items-center gap-3 sm:gap-6">
-            <a routerLink="/sign-in" class="hidden whitespace-nowrap rounded-sm text-sm font-semibold text-[#4B5B5B] transition-colors hover:text-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B] sm:inline">Sign in</a>
-            <a routerLink="/sign-up" class="auth-btn w-auto px-5 py-2.5 text-sm">Get started</a>
+            @if (sessionLoading()) {
+              <span role="status" aria-label="Checking sign-in status" class="h-10 w-36 animate-pulse rounded-full bg-white"></span>
+            } @else if (auth.currentUser(); as user) {
+              <a routerLink="/dashboard" aria-label="Open dashboard" class="inline-flex min-h-11 max-w-[min(48vw,20rem)] items-center gap-2 rounded-full border border-[#E5E7E5] bg-white px-4 text-sm font-semibold text-[#12302F] transition-colors hover:border-[#0A6B6B]/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0A6B6B] text-xs font-bold text-white" aria-hidden="true">{{ user.username.charAt(0).toUpperCase() }}</span>
+                <span class="truncate">{{ user.username }}</span>
+              </a>
+            } @else {
+              <a routerLink="/sign-in" class="hidden whitespace-nowrap rounded-sm text-sm font-semibold text-[#4B5B5B] transition-colors hover:text-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B] sm:inline">Sign in</a>
+              <app-google-button class="w-auto min-w-48" />
+            }
           </div>
         </nav>
       </header>
@@ -34,10 +47,17 @@ import { RouterLink } from '@angular/router';
               9issemi brings students and teachers together to practice, teach, and follow progress in one clear, welcoming space.
             </p>
             <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-              <a routerLink="/sign-up" class="auth-btn w-auto px-6 sm:max-w-[220px]">Get started</a>
-              <a routerLink="/sign-in" class="inline-flex min-h-12 items-center gap-2 self-start whitespace-nowrap rounded-sm px-2 font-semibold text-[#0A6B6B] underline decoration-[#0A6B6B]/40 underline-offset-4 hover:decoration-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">
-                Sign in <span aria-hidden="true">→</span>
-              </a>
+              @if (sessionLoading()) {
+                <span class="h-12 w-48 animate-pulse rounded-md bg-[#E5E7E5]" aria-hidden="true"></span>
+              } @else if (auth.currentUser()) {
+                <a routerLink="/dashboard" class="auth-btn w-auto px-6 sm:max-w-[240px]">Go to your dashboard</a>
+              } @else {
+                <a routerLink="/sign-up" class="auth-btn w-auto px-6 sm:max-w-[220px]">Get started</a>
+                <a routerLink="/sign-in" class="inline-flex min-h-12 items-center gap-2 self-start whitespace-nowrap rounded-sm px-2 font-semibold text-[#0A6B6B] underline decoration-[#0A6B6B]/40 underline-offset-4 hover:decoration-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">
+                  Sign in <span aria-hidden="true">→</span>
+                </a>
+                <app-google-button class="w-full sm:max-w-[240px]" />
+              }
             </div>
           </div>
 
@@ -99,4 +119,17 @@ import { RouterLink } from '@angular/router';
     </div>
   `,
 })
-export class HomeComponent {}
+export class HomeComponent {
+  protected readonly auth = inject(AuthService);
+  protected readonly sessionLoading = signal(true);
+
+  constructor() {
+    this.auth
+      .me()
+      .pipe(
+        catchError(() => of(null)),
+        finalize(() => this.sessionLoading.set(false)),
+      )
+      .subscribe();
+  }
+}

@@ -1,16 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AuthShellComponent } from './auth-shell.component';
+import { GoogleButtonComponent } from './google-button.component';
 import { AuthService, AuthUser } from './auth.service';
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, AuthShellComponent],
+  imports: [ReactiveFormsModule, RouterLink, AuthShellComponent, GoogleButtonComponent],
   template: `
     <app-auth-shell>
       <div class="w-full">
@@ -35,6 +36,12 @@ import { AuthService, AuthUser } from './auth.service';
             class="mt-6 rounded-md border border-[#B42318]/40 bg-[#FDECEA] px-4 py-3 text-sm text-[#7A1810]"
           >
             {{ message }}
+          </div>
+        }
+
+        @if (googleAuthFailed()) {
+          <div role="alert" class="mt-6 rounded-md border border-[#B42318]/40 bg-[#FDECEA] px-4 py-3 text-sm text-[#7A1810]">
+            We couldn't sign you in with Google. Please try again.
           </div>
         }
 
@@ -106,6 +113,11 @@ import { AuthService, AuthUser } from './auth.service';
           </button>
         </form>
 
+        <div class="my-6 flex items-center gap-4" aria-hidden="true">
+          <span class="h-px flex-1 bg-[#D8DEDC]"></span><span class="text-xs font-medium uppercase tracking-wide text-[#667575]">or</span><span class="h-px flex-1 bg-[#D8DEDC]"></span>
+        </div>
+        <app-google-button />
+
         <p class="mt-8 text-center text-sm text-[#4B5B5B]">
           New to 9issemi?
           <a routerLink="/sign-up" class="auth-link">Create an account</a>
@@ -118,6 +130,7 @@ export class SignInComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected readonly loading = signal(false);
@@ -125,6 +138,13 @@ export class SignInComponent {
   protected readonly showPassword = signal(false);
   protected readonly serverError = signal<string | null>(null);
   protected readonly notice = signal<string | null>(null);
+  protected readonly googleAuthFailed = signal(false);
+
+  constructor() {
+    this.route.queryParamMap.subscribe((params) => {
+      this.googleAuthFailed.set(params.get('error') === 'google_auth_failed');
+    });
+  }
 
   protected readonly form = this.fb.nonNullable.group({
     identifier: ['', [Validators.required]],

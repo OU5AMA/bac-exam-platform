@@ -12,6 +12,7 @@ import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AuthShellComponent } from './auth-shell.component';
+import { GoogleButtonComponent } from './google-button.component';
 import { AuthService, AuthUser, UserRole } from './auth.service';
 
 const passwordsMatch: ValidatorFn = (group: AbstractControl): ValidationErrors | null => {
@@ -23,7 +24,7 @@ const passwordsMatch: ValidatorFn = (group: AbstractControl): ValidationErrors |
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, AuthShellComponent],
+  imports: [ReactiveFormsModule, RouterLink, AuthShellComponent, GoogleButtonComponent],
   template: `
     <app-auth-shell>
       <div class="w-full max-w-md">
@@ -203,6 +204,11 @@ const passwordsMatch: ValidatorFn = (group: AbstractControl): ValidationErrors |
               }
             </button>
           </form>
+
+          <div class="my-6 flex items-center gap-4" aria-hidden="true">
+            <span class="h-px flex-1 bg-[#D8DEDC]"></span><span class="text-xs font-medium uppercase tracking-wide text-[#667575]">or</span><span class="h-px flex-1 bg-[#D8DEDC]"></span>
+          </div>
+          <app-google-button />
 
           <p class="mt-8 text-center text-sm text-[#4B5B5B]">
             Already have an account?
