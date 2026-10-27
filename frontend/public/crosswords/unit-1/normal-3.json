@@ -1,0 +1,116 @@
+{
+  "id": "unit-1_normal_3",
+  "title": "Unit 1 · Gifts of Youth · Normal 3",
+  "difficulty": "normal",
+  "grid": {
+    "rows": 13,
+    "cols": 13
+  },
+  "words": [
+    {
+      "answer": "COMPETENT",
+      "clue": "Having the skills needed to do something well.",
+      "row": 5,
+      "col": 2,
+      "direction": "across"
+    },
+    {
+      "answer": "SKILLED",
+      "clue": "Having the ability gained through practice.",
+      "row": 0,
+      "col": 8,
+      "direction": "down"
+    },
+    {
+      "answer": "CURIOSITY",
+      "clue": "A strong desire to learn or discover.",
+      "row": 2,
+      "col": 2,
+      "direction": "across"
+    },
+    {
+      "answer": "PATIENCE",
+      "clue": "The ability to wait calmly without becoming upset.",
+      "row": 0,
+      "col": 9,
+      "direction": "down"
+    },
+    {
+      "answer": "VITALITY",
+      "clue": "A state of being full of life and energy.",
+      "row": 3,
+      "col": 4,
+      "direction": "across"
+    },
+    {
+      "answer": "CURIOUS",
+      "clue": "Eager to learn or know more about something.",
+      "row": 1,
+      "col": 3,
+      "direction": "down"
+    },
+    {
+      "answer": "PERSUASIVE",
+      "clue": "Good at convincing others to accept an idea.",
+      "row": 7,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "INSPIRE",
+      "clue": "To encourage someone to act or create.",
+      "row": 0,
+      "col": 6,
+      "direction": "across"
+    },
+    {
+      "answer": "ACHIEVE",
+      "clue": "To succeed in reaching a goal.",
+      "row": 1,
+      "col": 1,
+      "direction": "down"
+    },
+    {
+      "answer": "EFFICIENCY",
+      "clue": "The ability to work well without waste.",
+      "row": 0,
+      "col": 12,
+      "direction": "down"
+    },
+    {
+      "answer": "CREATIVITY",
+      "clue": "The ability to produce original ideas.",
+      "row": 9,
+      "col": 3,
+      "direction": "across"
+    },
+    {
+      "answer": "ENTHUSIASTIC",
+      "clue": "Showing strong interest and excitement.",
+      "row": 8,
+      "col": 1,
+      "direction": "across"
+    },
+    {
+      "answer": "EMPOWER",
+      "clue": "To give someone the confidence or ability to act.",
+      "row": 5,
+      "col": 0,
+      "direction": "down"
+    },
+    {
+      "answer": "RELIABLE",
+      "clue": "Able to be trusted to do what is expected.",
+      "row": 11,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "EFFICIENT",
+      "clue": "Doing a task well without wasting time or effort.",
+      "row": 10,
+      "col": 0,
+      "direction": "across"
+    }
+  ]
+}

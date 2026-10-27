@@ -1,0 +1,18 @@
+{
+  "id": "unit-1_hard_1",
+  "title": "Unit 1 · Gifts of Youth · Hard",
+  "difficulty": "hard",
+  "grid": {
+    "rows": 15,
+    "cols": 15
+  },
+  "words": [
+    {
+      "answer": "AMBITION",
+      "clue": "A strong desire to achieve a goal.",
+      "row": 0,
+      "col": 0,
+      "direction": "across"
+    }
+  ]
+}

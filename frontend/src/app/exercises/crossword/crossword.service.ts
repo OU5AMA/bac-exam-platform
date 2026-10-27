@@ -2,13 +2,24 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Crossword, Difficulty } from './crossword.model';
+import { Crossword } from './crossword.model';
+
+const CROSSWORD_FILES: Record<string, string> = {
+  'unit-1_easy_1': 'easy-1.json',
+  'unit-1_normal_1': 'normal-1.json',
+  'unit-1_normal_2': 'normal-2.json',
+  'unit-1_normal_3': 'normal-3.json',
+  'unit-1_normal_4': 'normal-4.json',
+  'unit-1_hard_1': 'hard-1.json',
+};
 
 @Injectable({ providedIn: 'root' })
 export class CrosswordService {
   private readonly http = inject(HttpClient);
 
-  load(difficulty: Difficulty): Observable<Crossword> {
-    return this.http.get<Crossword>(`/crosswords/2bac-unit1-vocabulary-${difficulty}-1.json`);
+  loadById(id: string): Observable<Crossword> {
+    const file = CROSSWORD_FILES[id];
+    if (!file) throw new Error(`Unknown crossword id: ${id}`);
+    return this.http.get<Crossword>(`/crosswords/unit-1/${file}`);
   }
 }

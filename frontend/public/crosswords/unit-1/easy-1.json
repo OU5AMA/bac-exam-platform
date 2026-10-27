@@ -1,0 +1,25 @@
+{
+  "id": "unit-1_easy_1",
+  "title": "Unit 1 · Gifts of Youth · Easy",
+  "difficulty": "easy",
+  "grid": {
+    "rows": 10,
+    "cols": 10
+  },
+  "words": [
+    {
+      "answer": "YOUTH",
+      "clue": "The period of being young.",
+      "row": 0,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "TALENT",
+      "clue": "A natural ability.",
+      "row": 1,
+      "col": 0,
+      "direction": "across"
+    }
+  ]
+}
