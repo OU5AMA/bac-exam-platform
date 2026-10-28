@@ -1,0 +1,81 @@
+{
+  "id": "unit-1_easy_2",
+  "title": "Unit 1 · Gifts of Youth · Easy 2",
+  "difficulty": "easy",
+  "grid": {
+    "rows": 10,
+    "cols": 10
+  },
+  "words": [
+    {
+      "answer": "ADVENTURE",
+      "clue": "An exciting experience, often involving something unfamiliar.",
+      "row": 4,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "VITAL",
+      "clue": "Necessary for life or success.",
+      "row": 1,
+      "col": 0,
+      "direction": "down"
+    },
+    {
+      "answer": "AUDACITY",
+      "clue": "Boldness in taking risks or facing difficulty.",
+      "row": 2,
+      "col": 1,
+      "direction": "down"
+    },
+    {
+      "answer": "VIGOUR",
+      "clue": "Physical or mental energy and strength.",
+      "row": 4,
+      "col": 2,
+      "direction": "down"
+    },
+    {
+      "answer": "ENERGY",
+      "clue": "The strength needed for physical or mental activity.",
+      "row": 4,
+      "col": 3,
+      "direction": "down"
+    },
+    {
+      "answer": "HONEST",
+      "clue": "Truthful and fair in what one says and does.",
+      "row": 2,
+      "col": 4,
+      "direction": "down"
+    },
+    {
+      "answer": "YOUTH",
+      "clue": "The period of being young.",
+      "row": 1,
+      "col": 5,
+      "direction": "down"
+    },
+    {
+      "answer": "FULFIL",
+      "clue": "To complete or achieve something desired.",
+      "row": 3,
+      "col": 6,
+      "direction": "down"
+    },
+    {
+      "answer": "STRONG",
+      "clue": "Having great physical or mental power.",
+      "row": 2,
+      "col": 7,
+      "direction": "down"
+    },
+    {
+      "answer": "TALENT",
+      "clue": "A natural ability that helps someone do something well.",
+      "row": 1,
+      "col": 8,
+      "direction": "down"
+    }
+  ]
+}

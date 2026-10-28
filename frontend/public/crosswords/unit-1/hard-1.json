@@ -3,13 +3,181 @@
   "title": "Unit 1 · Gifts of Youth · Hard",
   "difficulty": "hard",
   "grid": {
-    "rows": 15,
-    "cols": 15
+    "rows": 17,
+    "cols": 17
   },
   "words": [
     {
-      "answer": "AMBITION",
-      "clue": "A strong desire to achieve a goal.",
+      "answer": "RESPONSIBILITY",
+      "clue": "A duty to take care of someone or something.",
+      "row": 8,
+      "col": 1,
+      "direction": "across"
+    },
+    {
+      "answer": "DETERMINATION",
+      "clue": "Firmness in continuing toward a goal.",
+      "row": 2,
+      "col": 10,
+      "direction": "down"
+    },
+    {
+      "answer": "ENTHUSIASTIC",
+      "clue": "Showing strong interest and excitement.",
+      "row": 3,
+      "col": 3,
+      "direction": "down"
+    },
+    {
+      "answer": "PERSEVERANT",
+      "clue": "Continuing despite difficulty or delay.",
+      "row": 11,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "PERSEVERANCE",
+      "clue": "Continuing to try despite obstacles.",
+      "row": 4,
+      "col": 2,
+      "direction": "down"
+    },
+    {
+      "answer": "VOLUNTEERING",
+      "clue": "Offering time or help without expecting payment.",
+      "row": 4,
+      "col": 6,
+      "direction": "down"
+    },
+    {
+      "answer": "PASSIONATE",
+      "clue": "Showing powerful interest in an activity or cause.",
+      "row": 4,
+      "col": 8,
+      "direction": "down"
+    },
+    {
+      "answer": "COMPETENCE",
+      "clue": "The ability to do something successfully.",
+      "row": 5,
+      "col": 4,
+      "direction": "down"
+    },
+    {
+      "answer": "MOTIVATION",
+      "clue": "A reason or desire that encourages action.",
+      "row": 7,
+      "col": 5,
+      "direction": "down"
+    },
+    {
+      "answer": "PATIENCE",
+      "clue": "The ability to wait calmly without becoming upset.",
+      "row": 4,
+      "col": 8,
+      "direction": "across"
+    },
+    {
+      "answer": "INTELLIGENCE",
+      "clue": "The ability to learn, understand, and solve problems.",
+      "row": 4,
+      "col": 11,
+      "direction": "down"
+    },
+    {
+      "answer": "FLEXIBILITY",
+      "clue": "The ability to adapt to different situations.",
+      "row": 2,
+      "col": 12,
+      "direction": "down"
+    },
+    {
+      "answer": "INNOVATIVE",
+      "clue": "Introducing new ideas or methods.",
+      "row": 2,
+      "col": 13,
+      "direction": "down"
+    },
+    {
+      "answer": "PUNCTUAL",
+      "clue": "Arriving or acting at the expected time.",
+      "row": 14,
+      "col": 8,
+      "direction": "across"
+    },
+    {
+      "answer": "INDEPENDENCE",
+      "clue": "The state of relying on oneself.",
+      "row": 1,
+      "col": 15,
+      "direction": "down"
+    },
+    {
+      "answer": "INSPIRE",
+      "clue": "To encourage someone to act or create.",
+      "row": 6,
+      "col": 7,
+      "direction": "down"
+    },
+    {
+      "answer": "INTELLIGENT",
+      "clue": "Able to learn, understand, and solve problems well.",
+      "row": 16,
+      "col": 4,
+      "direction": "across"
+    },
+    {
+      "answer": "OPTIMISTIC",
+      "clue": "Expecting good things to happen.",
+      "row": 1,
+      "col": 7,
+      "direction": "across"
+    },
+    {
+      "answer": "COOPERATIVE",
+      "clue": "Willing to work with others to reach a goal.",
+      "row": 1,
+      "col": 16,
+      "direction": "down"
+    },
+    {
+      "answer": "TOLERANCE",
+      "clue": "Acceptance of differences in beliefs, backgrounds, or behavior.",
+      "row": 3,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "ADVENTURE",
+      "clue": "An exciting experience, often involving something unfamiliar.",
+      "row": 15,
+      "col": 8,
+      "direction": "across"
+    },
+    {
+      "answer": "COMPETENT",
+      "clue": "Having the skills needed to do something well.",
+      "row": 8,
+      "col": 0,
+      "direction": "down"
+    },
+    {
+      "answer": "MOTIVATED",
+      "clue": "Having a strong reason to act or work.",
+      "row": 2,
+      "col": 2,
+      "direction": "across"
+    },
+    {
+      "answer": "EMPOWER",
+      "clue": "To give someone the confidence or ability to act.",
+      "row": 0,
+      "col": 1,
+      "direction": "down"
+    },
+    {
+      "answer": "RESPONSIBLE",
+      "clue": "Trustworthy in completing duties and accepting consequences.",
       "row": 0,
       "col": 0,
       "direction": "across"
