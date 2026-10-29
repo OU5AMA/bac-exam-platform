@@ -36,6 +36,16 @@ export const routes: Routes = [
     title: 'National Exam Prep · 9issemi',
   },
   {
+    path: '2-bac/reading',
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading Practice · 2 Bac · 9issemi',
+  },
+  {
+    path: '2-bac/reading/:slug',
+    loadComponent: () => import('./reading/reading-exam.component').then((m) => m.ReadingExamComponent),
+    title: 'Reading Exam · 2 Bac · 9issemi',
+  },
+  {
     path: '2-bac/exercices/unit-1/vocabulary/crosswords',
     loadComponent: () => import('./exercises/crossword/crossword-list.component').then((m) => m.CrosswordListComponent),
     title: 'Crosswords · Unit 1 · 9issemi',

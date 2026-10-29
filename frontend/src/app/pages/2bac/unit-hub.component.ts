@@ -46,7 +46,18 @@ import { COURSE_UNITS } from './unit-data';
               }
 
               @for (skill of comingSoonSkills; track skill) {
-                <article class="flex min-h-40 items-start gap-4 rounded-2xl border border-[#E5E7E5] bg-white p-6">
+                @if (skill === 'Reading' && selectedUnit.id === 1) {
+                  <a routerLink="/2-bac/reading" class="group flex min-h-40 items-start gap-4 rounded-2xl border border-[#0A6B6B]/30 bg-white p-6 transition hover:-translate-y-0.5 hover:border-[#0A6B6B] hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">
+                    <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E8F2F0] text-[#0A6B6B]" aria-hidden="true"><svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20M8 7h8m-8 4h8"/></svg></span>
+                    <span>
+                      <span class="block text-xs font-bold uppercase tracking-[0.14em] text-[#0A6B6B]">Available now</span>
+                      <span class="font-display mt-2 block text-xl font-bold text-[#0B3B3B]">Reading</span>
+                      <span class="mt-2 block text-sm leading-6">Practice the Unit 1 reading exam in Standard or SEN format.</span>
+                      <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#0A6B6B]">Open reading practice <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span></span>
+                    </span>
+                  </a>
+                } @else {
+                  <article class="flex min-h-40 items-start gap-4 rounded-2xl border border-[#E5E7E5] bg-white p-6">
                   <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#F7F5F0] text-[#667575]" aria-hidden="true">
                     @switch (skill) {
                       @case ('Grammar') { <span class="text-lg font-bold">Aa</span> }
@@ -59,7 +70,8 @@ import { COURSE_UNITS } from './unit-data';
                     <span class="font-display mt-2 block text-xl font-bold text-[#0B3B3B]">{{ skill }}</span>
                     <span class="mt-2 block text-sm leading-6">{{ skill }} practice for this unit is on the way.</span>
                   </span>
-                </article>
+                  </article>
+                }
               }
             </div>
           </section>
