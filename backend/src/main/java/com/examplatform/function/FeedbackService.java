@@ -30,7 +30,7 @@ public class FeedbackService {
     public FeedbackService(
             ObjectMapper objectMapper,
             @Value("${openrouter.api-key:}") String apiKey,
-            @Value("${openrouter.model:meta-llama/llama-3.1-8b-instruct:free}") String model
+            @Value("${openrouter.model:meta-llama/llama-3.1-8b-instruct}") String model
     ) {
         this.objectMapper = objectMapper;
         this.apiKey = apiKey;
