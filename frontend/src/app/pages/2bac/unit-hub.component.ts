@@ -3,63 +3,83 @@ import { RouterLink } from '@angular/router';
 
 import { COURSE_UNITS } from './unit-data';
 
+const UNIT_DATA: Record<number, { title: string; function: string }> = {
+  1: { title: 'The Gifts of Youth', function: 'Expressing Opinion' },
+  2: { title: 'Humour', function: 'Expressing Opinion' },
+  3: { title: 'Education', function: 'Expressing Opinion' },
+  4: { title: 'Cultural Issues and Values', function: 'Expressing Opinion' },
+  5: { title: 'Citizenship', function: 'Expressing Opinion' },
+  6: { title: 'Women and Power', function: 'Expressing Opinion' },
+  7: { title: 'Science and Technology', function: 'Expressing Opinion' },
+  8: { title: 'The Media', function: 'Expressing Opinion' },
+  9: { title: 'Global Issues', function: 'Expressing Opinion' },
+  10: { title: 'Cultural Values (Review)', function: 'Expressing Opinion' },
+};
+
+interface UnitCard {
+  title: string;
+  icon: string;
+  description: string;
+  subtitle?: string;
+  action: string;
+  available: boolean;
+  featured?: boolean;
+  link: string[] | null;
+}
+
 @Component({
   selector: 'app-unit-hub',
   standalone: true,
   imports: [RouterLink],
   template: `
     <main class="min-h-screen bg-[#F7F5F0] px-5 py-8 text-[#4B5B5B] sm:px-8 sm:py-12 lg:px-12">
-      <div class="mx-auto max-w-5xl">
+      <div class="mx-auto max-w-6xl">
         <a routerLink="/2-bac" class="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-[#0A6B6B] hover:text-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
           <span aria-hidden="true" class="mr-2 text-lg">←</span> Back to 2 Bac
         </a>
 
         @if (unit(); as selectedUnit) {
-          <header class="mt-8 rounded-2xl border border-[#E5E7E5] bg-white p-6 sm:p-10">
-            <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#0A6B6B]">2nd Year Baccalaureate · Unit {{ selectedUnit.id }}</p>
-            <h1 class="font-display mt-3 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">{{ selectedUnit.title }}</h1>
-            <p class="mt-4 max-w-2xl leading-7">Choose a skill to practice. More activities will be added as the course grows.</p>
+          <header class="mt-8">
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#0A6B6B]">2nd Year Baccalaureate</p>
+            <h1 class="font-display mt-3 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">Unit {{ selectedUnit.id }}: {{ selectedUnit.title }}</h1>
+            <p class="mt-3 max-w-2xl leading-7">Choose a skill to practice and build your confidence in this unit.</p>
           </header>
 
-          <section aria-labelledby="skills-title" class="mt-10">
-            <h2 id="skills-title" class="font-display text-2xl font-extrabold tracking-[-0.03em] text-[#0B3B3B]">Practice a skill</h2>
-            <div class="mt-5 grid gap-4 sm:grid-cols-2">
-              @if (selectedUnit.id === 1) {
-                <a [routerLink]="crosswordLink(selectedUnit.id)" class="group flex min-h-40 items-start gap-4 rounded-2xl border border-[#0A6B6B]/30 bg-white p-6 transition hover:-translate-y-0.5 hover:border-[#0A6B6B] hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">
-                  <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E8F2F0] text-[#0A6B6B]" aria-hidden="true"><svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zm4 4h3v3h-3z"/></svg></span>
-                  <span class="flex-1">
-                    <span class="block text-xs font-bold uppercase tracking-[0.14em] text-[#0A6B6B]">Available now</span>
-                    <span class="font-display mt-2 block text-xl font-bold text-[#0B3B3B]">Vocabulary</span>
-                    <span class="mt-2 block text-sm leading-6">Build your word knowledge with the Unit 1 crossword.</span>
-                    <span class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-[#0A6B6B]">Open crosswords <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span></span>
-                  </span>
-                </a>
-              } @else {
-                <article class="flex min-h-40 items-start gap-4 rounded-2xl border border-[#E5E7E5] bg-white p-6">
-                  <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E8F2F0] text-[#0A6B6B]" aria-hidden="true"><span class="text-xl font-bold">Aa</span></span>
-                  <span>
-                    <span class="block text-xs font-bold uppercase tracking-[0.14em] text-[#667575]">Coming soon</span>
-                    <span class="font-display mt-2 block text-xl font-bold text-[#0B3B3B]">Vocabulary</span>
-                    <span class="mt-2 block text-sm leading-6">Vocabulary activities for this unit are on the way.</span>
-                  </span>
-                </article>
-              }
-
-              @for (skill of comingSoonSkills; track skill) {
-                <article class="flex min-h-40 items-start gap-4 rounded-2xl border border-[#E5E7E5] bg-white p-6">
-                  <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#F7F5F0] text-[#667575]" aria-hidden="true">
-                    @switch (skill) {
-                      @case ('Grammar') { <span class="text-lg font-bold">Aa</span> }
-                      @case ('Reading') { <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5v-16Z"/><path d="M4 18.5A2.5 2.5 0 0 1 6.5 16H20M8 7h8m-8 4h8"/></svg> }
-                      @default { <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg> }
-                    }
-                  </span>
-                  <span>
-                    <span class="block text-xs font-bold uppercase tracking-[0.14em] text-[#667575]">Coming soon</span>
-                    <span class="font-display mt-2 block text-xl font-bold text-[#0B3B3B]">{{ skill }}</span>
-                    <span class="mt-2 block text-sm leading-6">{{ skill }} practice for this unit is on the way.</span>
-                  </span>
-                </article>
+          <section aria-labelledby="skills-title" class="mt-8 sm:mt-10">
+            <h2 id="skills-title" class="font-display text-2xl font-extrabold tracking-[-0.03em] text-[#0B3B3B]">Explore this unit</h2>
+            <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+              @for (card of cards(selectedUnit.id); track card.title) {
+                @if (card.link) {
+                  <a [routerLink]="card.link" [attr.aria-label]="card.title + ': ' + card.description" [class]="card.featured ? 'group flex min-h-48 items-start gap-4 rounded-2xl bg-gradient-to-br from-[#5B3FA3] to-[#39246F] p-6 text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#5B3FA3]' : 'group flex min-h-48 items-start gap-4 rounded-2xl border border-[#E5E7E5] bg-white p-6 transition hover:-translate-y-0.5 hover:border-[#0A6B6B]/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]'">
+                    <span [class]="card.featured ? 'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/15 text-2xl' : 'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E8F2F0] text-2xl text-[#0A6B6B]'" aria-hidden="true">{{ card.icon }}</span>
+                    <span class="flex-1">
+                      @if (card.featured) {
+                        <span class="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Featured skill</span>
+                      } @else if (card.available) {
+                        <span class="block text-xs font-bold uppercase tracking-[0.14em] text-[#0A6B6B]">Available now</span>
+                      } @else {
+                        <span class="block text-xs font-bold uppercase tracking-[0.14em] text-[#667575]">Coming soon</span>
+                      }
+                      <span [class]="card.featured ? 'font-display mt-3 block text-2xl font-bold text-white sm:text-3xl' : 'font-display mt-2 block text-xl font-bold text-[#0B3B3B]'">{{ card.title }}</span>
+                      @if (card.featured) {
+                        <span class="mt-1 block text-lg font-semibold text-white">{{ card.subtitle }}</span>
+                      }
+                      <span [class]="card.featured ? 'mt-3 block max-w-xl text-sm leading-6 text-white/90' : 'mt-2 block text-sm leading-6 text-[#4B5B5B]'">{{ card.description }}</span>
+                      <span [class]="card.featured ? 'mt-5 inline-flex items-center gap-2 text-sm font-semibold text-white' : 'mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#0A6B6B]'">{{ card.action }} <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span></span>
+                    </span>
+                  </a>
+                } @else {
+                  <article [class]="card.featured ? 'flex min-h-48 items-start gap-4 rounded-2xl bg-gradient-to-br from-[#5B3FA3] to-[#39246F] p-6 text-white shadow-lg' : 'flex min-h-48 items-start gap-4 rounded-2xl border border-[#E5E7E5] bg-white p-6'" aria-label="{{ card.title }}: Coming soon">
+                    <span [class]="card.featured ? 'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/15 text-2xl' : 'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E8F2F0] text-2xl text-[#0A6B6B]'" aria-hidden="true">{{ card.icon }}</span>
+                    <span>
+                      @if (card.featured) { <span class="inline-flex rounded-full bg-white/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">Featured skill</span> }
+                      @else { <span class="block text-xs font-bold uppercase tracking-[0.14em] text-[#667575]">Coming soon</span> }
+                      <span [class]="card.featured ? 'font-display mt-3 block text-2xl font-bold text-white' : 'font-display mt-2 block text-xl font-bold text-[#0B3B3B]'">{{ card.title }}</span>
+                      @if (card.subtitle) { <span [class]="card.featured ? 'mt-1 block text-lg font-semibold text-white' : 'mt-1 block font-semibold text-[#5B3FA3]'">{{ card.subtitle }}</span> }
+                      <span [class]="card.featured ? 'mt-3 block text-sm leading-6 text-white/90' : 'mt-2 block text-sm leading-6'">{{ card.description }}</span>
+                    </span>
+                  </article>
+                }
               }
             </div>
           </section>
@@ -76,10 +96,21 @@ import { COURSE_UNITS } from './unit-data';
 })
 export class UnitHubComponent {
   readonly unitId = input.required<string>();
-  protected readonly unit = computed(() => COURSE_UNITS.find((item) => item.id === Number(this.unitId())) ?? null);
-  protected readonly comingSoonSkills = ['Grammar', 'Reading', 'Writing'];
+  protected readonly unit = computed(() => {
+    const id = Number(this.unitId());
+    const courseUnit = COURSE_UNITS.find((item) => item.id === id);
+    return courseUnit ? { ...courseUnit, ...UNIT_DATA[id] } : null;
+  });
 
-  protected crosswordLink(unitId: number): string[] {
-    return ['/2-bac/exercices', `unit-${unitId}`, 'vocabulary', 'crosswords'];
+  protected cards(unitId: number): UnitCard[] {
+    const unitOne = unitId === 1;
+    return [
+      { title: 'Vocabulary', icon: 'Aa', description: unitOne ? 'Practice new words with the Unit 1 crosswords.' : 'Practice new words from this unit.', action: 'Open crosswords', available: unitOne, link: unitOne ? ['/2-bac/exercices/unit-1/vocabulary/crosswords'] : null },
+      { title: 'Grammar', icon: '✎', description: unitOne ? 'Review full infinitives, bare infinitives, and gerunds.' : 'Review the rules and strengthen your grammar.', action: 'Open grammar lesson', available: unitOne, link: unitOne ? ['/2-bac/unit/1/grammar'] : null },
+      { title: 'Reading', icon: '▤', description: unitOne ? 'Read and comprehend texts with Unit 1 exam practice.' : 'Read and comprehend texts related to this unit.', action: 'Open reading practice', available: unitOne, link: unitOne ? ['/2-bac/reading'] : null },
+      { title: 'Function', icon: '✦', description: 'Master the communication skill for this unit.', subtitle: UNIT_DATA[unitId]?.function ?? 'Expressing Opinion', action: 'Coming soon', available: false, link: null },
+      { title: 'Writing', icon: '↗', description: 'Practice your essays and express your ideas clearly.', action: 'Coming soon', available: false, link: null },
+      { title: 'Exam Simulator', icon: '▣', description: "Take a mock exam based on this unit's lessons.", action: 'Coming soon', available: false, featured: true, link: null },
+    ];
   }
 }
