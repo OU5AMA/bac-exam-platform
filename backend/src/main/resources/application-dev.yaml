@@ -30,6 +30,10 @@ spring:
     console:
       enabled: false
 
+openrouter:
+  api-key: ${OPENROUTER_API_KEY:}
+  model: ${OPENROUTER_MODEL:meta-llama/llama-3.1-8b-instruct:free}
+
 logging:
   level:
     com.examplatform: DEBUG
