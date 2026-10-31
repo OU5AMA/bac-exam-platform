@@ -26,6 +26,11 @@ export const routes: Routes = [
     title: '2 Baccalaureate · 9issemi',
   },
   {
+    path: '2-bac/unit/1/grammar',
+    loadComponent: () => import('./pages/2bac/unit-1/grammar-lesson.component').then((m) => m.GrammarLessonComponent),
+    title: 'Grammar · Unit 1 · 9issemi',
+  },
+  {
     path: '2-bac/unit/:unitId',
     loadComponent: () => import('./pages/2bac/unit-hub.component').then((m) => m.UnitHubComponent),
     title: 'Unit · 2 Bac · 9issemi',
