@@ -26,6 +26,11 @@ export const routes: Routes = [
     title: '2 Baccalaureate · 9issemi',
   },
   {
+    path: '2-bac/unit/1/function',
+    loadComponent: () => import('./pages/2bac/function-lesson.component').then((m) => m.FunctionLessonComponent),
+    title: 'Expressing Opinion · Unit 1 · 9issemi',
+  },
+  {
     path: '2-bac/unit/:unitId',
     loadComponent: () => import('./pages/2bac/unit-hub.component').then((m) => m.UnitHubComponent),
     title: 'Unit · 2 Bac · 9issemi',
