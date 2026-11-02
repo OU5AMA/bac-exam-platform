@@ -1,0 +1,81 @@
+{
+  "id": "unit-1_easy_7",
+  "title": "Unit 1 · Gifts of Youth · Easy 7",
+  "difficulty": "easy",
+  "grid": {
+    "rows": 10,
+    "cols": 10
+  },
+  "words": [
+    {
+      "answer": "MOTIVATED",
+      "clue": "Having a strong reason to act or work.",
+      "row": 4,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "EMPOWER",
+      "clue": "To give someone the confidence or ability to act.",
+      "row": 3,
+      "col": 0,
+      "direction": "down"
+    },
+    {
+      "answer": "YOUTH",
+      "clue": "The period of being young.",
+      "row": 3,
+      "col": 1,
+      "direction": "down"
+    },
+    {
+      "answer": "VITAL",
+      "clue": "Necessary for life or success.",
+      "row": 2,
+      "col": 2,
+      "direction": "down"
+    },
+    {
+      "answer": "SKILL",
+      "clue": "The ability gained through practice or training.",
+      "row": 2,
+      "col": 3,
+      "direction": "down"
+    },
+    {
+      "answer": "VIGOUR",
+      "clue": "Physical or mental energy and strength.",
+      "row": 4,
+      "col": 4,
+      "direction": "down"
+    },
+    {
+      "answer": "TALENT",
+      "clue": "A natural ability that helps someone do something well.",
+      "row": 3,
+      "col": 5,
+      "direction": "down"
+    },
+    {
+      "answer": "STRONG",
+      "clue": "Having great physical or mental power.",
+      "row": 3,
+      "col": 6,
+      "direction": "down"
+    },
+    {
+      "answer": "ENERGY",
+      "clue": "The strength needed for physical or mental activity.",
+      "row": 4,
+      "col": 7,
+      "direction": "down"
+    },
+    {
+      "answer": "AUDACITY",
+      "clue": "Boldness in taking risks or facing difficulty.",
+      "row": 2,
+      "col": 8,
+      "direction": "down"
+    }
+  ]
+}

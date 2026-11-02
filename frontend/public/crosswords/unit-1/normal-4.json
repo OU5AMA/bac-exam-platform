@@ -1,0 +1,116 @@
+{
+  "id": "unit-1_normal_4",
+  "title": "Unit 1 · Gifts of Youth · Normal 4",
+  "difficulty": "normal",
+  "grid": {
+    "rows": 13,
+    "cols": 13
+  },
+  "words": [
+    {
+      "answer": "OPTIMISM",
+      "clue": "The habit of expecting a favorable outcome.",
+      "row": 6,
+      "col": 2,
+      "direction": "across"
+    },
+    {
+      "answer": "FULFIL",
+      "clue": "To complete or achieve something desired.",
+      "row": 2,
+      "col": 7,
+      "direction": "down"
+    },
+    {
+      "answer": "AUDACITY",
+      "clue": "Boldness in taking risks or facing difficulty.",
+      "row": 1,
+      "col": 5,
+      "direction": "down"
+    },
+    {
+      "answer": "SOCIABLE",
+      "clue": "Enjoying the company of other people.",
+      "row": 4,
+      "col": 1,
+      "direction": "across"
+    },
+    {
+      "answer": "AUTONOMY",
+      "clue": "The freedom to make decisions for oneself.",
+      "row": 1,
+      "col": 2,
+      "direction": "down"
+    },
+    {
+      "answer": "AUDACIOUS",
+      "clue": "Willing to take bold risks when facing a challenge.",
+      "row": 1,
+      "col": 2,
+      "direction": "across"
+    },
+    {
+      "answer": "AUTONOMOUS",
+      "clue": "Able to make decisions without outside control.",
+      "row": 0,
+      "col": 9,
+      "direction": "down"
+    },
+    {
+      "answer": "SOCIABILITY",
+      "clue": "The quality of enjoying other people’s company.",
+      "row": 1,
+      "col": 10,
+      "direction": "down"
+    },
+    {
+      "answer": "PASSION",
+      "clue": "A powerful interest in a person or activity.",
+      "row": 9,
+      "col": 6,
+      "direction": "across"
+    },
+    {
+      "answer": "INDEPENDENT",
+      "clue": "Able to act or think without relying on others.",
+      "row": 10,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "PERSEVERANCE",
+      "clue": "Continuing to try despite obstacles.",
+      "row": 1,
+      "col": 1,
+      "direction": "down"
+    },
+    {
+      "answer": "IMAGINATIVE",
+      "clue": "Good at forming new ideas or mental pictures.",
+      "row": 2,
+      "col": 0,
+      "direction": "down"
+    },
+    {
+      "answer": "VIGOROUS",
+      "clue": "Using a lot of energy and strength.",
+      "row": 4,
+      "col": 11,
+      "direction": "down"
+    },
+    {
+      "answer": "PUNCTUAL",
+      "clue": "Arriving or acting at the expected time.",
+      "row": 0,
+      "col": 3,
+      "direction": "across"
+    },
+    {
+      "answer": "COMPETENCE",
+      "clue": "The ability to do something successfully.",
+      "row": 2,
+      "col": 12,
+      "direction": "down"
+    }
+  ]
+}

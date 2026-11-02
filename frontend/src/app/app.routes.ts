@@ -31,6 +31,27 @@ export const routes: Routes = [
     title: 'Expressing Opinion · Unit 1 · 9issemi',
   },
   {
+    path: '2-bac/unit/1/reading',
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 1 · 9issemi',
+  },
+  {
+    path: '2-bac/reading',
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading Practice · 2 Bac · 9issemi',
+  },
+  {
+    path: '2-bac/reading/:slug',
+    loadComponent: () => import('./reading/reading-exam.component').then((m) => m.ReadingExamComponent),
+    title: 'Reading Exam · 2 Bac · 9issemi',
+  },
+  {
+    path: '2-bac/unit/1/exam',
+    data: { title: 'Exam Simulator', description: 'The Unit 1 exam simulator will be available here soon.' },
+    loadComponent: () => import('./pages/2bac/unit-placeholder.component').then((m) => m.UnitPlaceholderComponent),
+    title: 'Exam Simulator · Unit 1 · 9issemi',
+  },
+  {
     path: '2-bac/unit/:unitId',
     loadComponent: () => import('./pages/2bac/unit-hub.component').then((m) => m.UnitHubComponent),
     title: 'Unit · 2 Bac · 9issemi',
@@ -42,13 +63,13 @@ export const routes: Routes = [
   },
   {
     path: '2-bac/exercices/unit-1/vocabulary/crosswords',
-    loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
-    title: 'Crossword · Unit 1 · 9issemi',
+    loadComponent: () => import('./exercises/crossword/crossword-list.component').then((m) => m.CrosswordListComponent),
+    title: 'Crosswords · Unit 1 · 9issemi',
   },
   {
     path: '2-bac/exercices/unit-1/vocabulary/crossword',
-    redirectTo: '2-bac/exercices/unit-1/vocabulary/crosswords',
-    pathMatch: 'full',
+    loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
+    title: 'Crossword · Unit 1 · 9issemi',
   },
   {
     path: '',

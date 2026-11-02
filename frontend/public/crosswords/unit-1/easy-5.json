@@ -1,0 +1,81 @@
+{
+  "id": "unit-1_easy_5",
+  "title": "Unit 1 · Gifts of Youth · Easy 5",
+  "difficulty": "easy",
+  "grid": {
+    "rows": 10,
+    "cols": 10
+  },
+  "words": [
+    {
+      "answer": "COMPETENT",
+      "clue": "Having the skills needed to do something well.",
+      "row": 4,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "ACHIEVE",
+      "clue": "To succeed in reaching a goal.",
+      "row": 3,
+      "col": 0,
+      "direction": "down"
+    },
+    {
+      "answer": "YOUTH",
+      "clue": "The period of being young.",
+      "row": 3,
+      "col": 1,
+      "direction": "down"
+    },
+    {
+      "answer": "EMPOWER",
+      "clue": "To give someone the confidence or ability to act.",
+      "row": 3,
+      "col": 2,
+      "direction": "down"
+    },
+    {
+      "answer": "INSPIRE",
+      "clue": "To encourage someone to act or create.",
+      "row": 1,
+      "col": 3,
+      "direction": "down"
+    },
+    {
+      "answer": "ENERGY",
+      "clue": "The strength needed for physical or mental activity.",
+      "row": 4,
+      "col": 4,
+      "direction": "down"
+    },
+    {
+      "answer": "VITAL",
+      "clue": "Necessary for life or success.",
+      "row": 2,
+      "col": 5,
+      "direction": "down"
+    },
+    {
+      "answer": "HONEST",
+      "clue": "Truthful and fair in what one says and does.",
+      "row": 1,
+      "col": 6,
+      "direction": "down"
+    },
+    {
+      "answer": "STRONG",
+      "clue": "Having great physical or mental power.",
+      "row": 0,
+      "col": 7,
+      "direction": "down"
+    },
+    {
+      "answer": "TALENT",
+      "clue": "A natural ability that helps someone do something well.",
+      "row": 4,
+      "col": 8,
+      "direction": "down"
+    }
+  ]
+}
