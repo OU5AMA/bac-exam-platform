@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 interface OpinionFeedback {
+  annotatedText: string;
   positives: string[];
   negatives: string[];
   score: number;
@@ -64,6 +65,15 @@ interface OpinionFeedback {
         @if (feedback(); as result) {
           <section aria-labelledby="feedback-heading" aria-live="polite" class="mt-8">
             <div class="flex flex-wrap items-end justify-between gap-4"><div><p class="text-xs font-bold uppercase tracking-[0.18em] text-[#0A6B6B]">Your feedback</p><h2 id="feedback-heading" class="font-display mt-2 text-2xl font-extrabold text-[#0B3B3B]">A strong next step</h2></div><p class="rounded-2xl bg-[#0B3B3B] px-5 py-3 text-2xl font-extrabold text-white" aria-label="Score {{ result.score }} out of 10">{{ result.score }}<span class="text-base font-semibold text-white/80"> / 10</span></p></div>
+            <article aria-labelledby="annotated-text-heading" class="mt-5 rounded-2xl border border-[#DDE6E1] bg-white p-6 shadow-sm sm:p-8">
+              <h3 id="annotated-text-heading" class="font-display text-xl font-bold text-[#0B3B3B]">Your text with feedback</h3>
+              <div class="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm" aria-label="Feedback highlight key">
+                <span><span class="hl-green">Good</span> Effective phrase</span>
+                <span><span class="hl-orange">Improve</span> Could be stronger</span>
+                <span><span class="hl-red">Change</span> Grammar or spelling</span>
+              </div>
+              <p class="mt-5 whitespace-pre-wrap text-base leading-8 text-[#263A38]" [innerHTML]="result.annotatedText"></p>
+            </article>
             <div class="mt-5 grid gap-4 sm:grid-cols-2 sm:gap-6">
               <article class="rounded-2xl border border-[#A7D5B1] bg-[#EFF9F0] p-6"><h3 class="text-lg font-bold text-[#185C2C]">What you did well</h3><ul class="mt-3 list-disc space-y-2 pl-5 leading-6 text-[#234D2D]">@for (item of result.positives; track $index) { <li>{{ item }}</li> }</ul></article>
               <article class="rounded-2xl border border-[#E9C596] bg-[#FFF5E8] p-6"><h3 class="text-lg font-bold text-[#78420E]">How to improve</h3><ul class="mt-3 list-disc space-y-2 pl-5 leading-6 text-[#5C3D20]">@for (item of result.negatives; track $index) { <li>{{ item }}</li> }</ul></article>
@@ -92,7 +102,7 @@ export class FunctionLessonComponent {
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
         next: (response) => {
-          if (!Array.isArray(response.positives) || !Array.isArray(response.negatives) || !Number.isFinite(response.score)) {
+          if (typeof response.annotatedText !== 'string' || !Array.isArray(response.positives) || !Array.isArray(response.negatives) || !Number.isFinite(response.score)) {
             this.error.set('We received feedback in an unexpected format. Please try again.');
             return;
           }

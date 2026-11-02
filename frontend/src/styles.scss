@@ -38,6 +38,31 @@ body {
   color: #B42318;
 }
 
+.hl-green {
+  background-color: #DCF2E8;
+  color: #075E42;
+  font-weight: 600;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+.hl-orange {
+  background-color: #FEF3DC;
+  color: #92400E;
+  font-weight: 600;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+.hl-red {
+  background-color: #FDECEA;
+  color: #B42318;
+  font-weight: 600;
+  padding: 0 2px;
+  border-radius: 3px;
+  text-decoration: line-through;
+}
+
 .auth-input {
   display: block;
   width: 100%;
