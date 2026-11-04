@@ -5,6 +5,8 @@ spring:
     model: meta-llama/llama-3.1-8b-instuct:free
   security:
     oauth2:
+
+      
       client:
         registration:
           google:
@@ -33,6 +35,10 @@ spring:
   h2:
     console:
       enabled: false
+
+openrouter:
+  api-key: ${OPENROUTER_API_KEY:}
+  model: ${OPENROUTER_MODEL:meta-llama/llama-3.1-8b-instruct}
 
 logging:
   level:

@@ -31,6 +31,22 @@ export const routes: Routes = [
     title: 'Grammar · Unit 1 · 9issemi',
   },
   {
+    path: '2-bac/unit/1/function',
+    loadComponent: () => import('./pages/2bac/function-lesson.component').then((m) => m.FunctionLessonComponent),
+    title: 'Expressing Opinion · Unit 1 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/1/reading',
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 1 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/1/exam',
+    data: { title: 'Exam Simulator', description: 'The Unit 1 exam simulator will be available here soon.' },
+    loadComponent: () => import('./pages/2bac/unit-placeholder.component').then((m) => m.UnitPlaceholderComponent),
+    title: 'Exam Simulator · Unit 1 · 9issemi',
+  },
+  {
     path: '2-bac/unit/:unitId',
     loadComponent: () => import('./pages/2bac/unit-hub.component').then((m) => m.UnitHubComponent),
     title: 'Unit · 2 Bac · 9issemi',
