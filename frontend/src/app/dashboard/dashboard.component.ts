@@ -1,7 +1,27 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
 import Chart from 'chart.js/auto';
 
 import { AuthService } from '../auth/auth.service';
+
+type TimeRange = 'week' | 'month' | 'all';
+type MasterySkill = 'Vocabulary' | 'Grammar' | 'Reading' | 'Function' | 'Writing';
+type TimelineDataset = { label: string; data: number[]; color: string };
+type TimelineRangeData = { labels: string[]; datasets: TimelineDataset[] };
+
+const TIMELINE_SERIES = [
+  { label: 'Reading Comprehension', color: '#16A34A' },
+  { label: 'Vocabulary', color: '#7C3AED' },
+  { label: 'Grammar', color: '#F97316' },
+  { label: 'Function', color: '#2563EB' },
+  { label: 'Writing', color: '#DC2626' },
+];
+
+function createTimelineData(labels: string[], values: number[][]): TimelineRangeData {
+  return {
+    labels,
+    datasets: TIMELINE_SERIES.map((series, index) => ({ ...series, data: values[index] })),
+  };
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -45,7 +65,7 @@ import { AuthService } from '../auth/auth.service';
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 class="font-display text-lg font-extrabold tracking-[-0.025em] text-[#0B3B3B]">Your progress</h2>
-                <p class="mt-1 text-sm text-[#4B5B5B]">{{ currentChart() === 'timeline' ? 'Mock scores by exam section over six weeks.' : 'Mock mastery percentages based on exercise scores.' }}</p>
+                <p class="mt-1 text-sm text-[#4B5B5B]">{{ currentChart() === 'timeline' ? 'Mock scores by exam section over time.' : 'Mock mastery percentages based on exercise scores.' }}</p>
               </div>
               <span class="rounded-full bg-[#E8F2F0] px-3 py-1.5 text-xs font-bold text-[#075B5B]">{{ currentChart() === 'timeline' ? 'Scores out of 100' : 'Mastery percentage' }}</span>
             </div>
@@ -53,24 +73,39 @@ import { AuthService } from '../auth/auth.service';
               <button type="button" (click)="selectChart('timeline')" [attr.aria-pressed]="currentChart() === 'timeline'" [class.bg-white]="currentChart() === 'timeline'" [class.text-[#075B5B]]="currentChart() === 'timeline'" [class.shadow-sm]="currentChart() === 'timeline'" class="min-h-11 flex-1 rounded-lg px-3 py-2 text-sm font-bold text-[#536361] transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Score Over Time</button>
               <button type="button" (click)="selectChart('mastery')" [attr.aria-pressed]="currentChart() === 'mastery'" [class.bg-white]="currentChart() === 'mastery'" [class.text-[#075B5B]]="currentChart() === 'mastery'" [class.shadow-sm]="currentChart() === 'mastery'" class="min-h-11 flex-1 rounded-lg px-3 py-2 text-sm font-bold text-[#536361] transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Skill Mastery</button>
             </div>
+            @if (currentChart() === 'timeline') {
+              <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                <label for="progress-time-range" class="text-sm font-semibold text-[#173E3D]">Time Range:</label>
+                <select id="progress-time-range" [value]="selectedTimeRange()" (change)="selectTimeRange($any($event.target).value)" class="min-h-11 w-full max-w-xs rounded-lg border border-[#C9D1CF] bg-white px-3 text-sm font-semibold text-[#173E3D] focus:border-[#0A6B6B] focus:outline-none focus:ring-4 focus:ring-[#0A6B6B]/15">
+                  @for (range of timeRangeOptions; track range.value) { <option [value]="range.value" [selected]="selectedTimeRange() === range.value">{{ range.label }}</option> }
+                </select>
+              </div>
+            } @else {
+              <div class="mt-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                <label for="mastery-unit" class="text-sm font-semibold text-[#173E3D]">View:</label>
+                <select id="mastery-unit" [value]="selectedUnit()" (change)="selectUnit($any($event.target).value)" class="min-h-11 w-full max-w-xs rounded-lg border border-[#C9D1CF] bg-white px-3 text-sm font-semibold text-[#173E3D] focus:border-[#0A6B6B] focus:outline-none focus:ring-4 focus:ring-[#0A6B6B]/15">
+                  @for (unit of unitOptions; track unit.value) { <option [value]="unit.value" [selected]="selectedUnit() === unit.value">{{ unit.label }}</option> }
+                </select>
+              </div>
+            }
             <div class="relative mt-5 h-80 w-full sm:h-96">
-              <canvas #progressChart role="img" [attr.aria-label]="currentChart() === 'timeline' ? 'Line chart titled Exam Progress, showing Reading Comprehension, Vocabulary, Grammar, Function, and Writing scores across six weeks.' : 'Radar chart titled Skill Mastery, showing Reading, Writing, Grammar, and Function mastery percentages.'" aria-describedby="progress-chart-description"></canvas>
+              <canvas #progressChart role="img" [attr.aria-label]="currentChart() === 'timeline' ? 'Line chart titled Exam Progress, showing Reading Comprehension, Vocabulary, Grammar, Function, and Writing scores for ' + selectedTimeRangeLabel() + '.' : 'Radar chart titled Skill Mastery, showing Vocabulary, Grammar, Reading, Function, and Writing mastery percentages for ' + selectedUnitLabel() + '.'" aria-describedby="progress-chart-description"></canvas>
             </div>
-            <p id="progress-chart-description" class="sr-only">{{ currentChart() === 'timeline' ? 'Use View chart data to read exact scores for each section and week.' : 'Use View chart data to read the exact mastery percentage for each skill.' }}</p>
+            <p id="progress-chart-description" class="sr-only">{{ currentChart() === 'timeline' ? 'Use View chart data to read exact scores for each section and time period.' : 'Use View chart data to read the exact mastery percentage for each skill.' }}</p>
             <details class="mt-4 rounded-xl border border-[#E5E7E5]">
               <summary class="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">View chart data</summary>
               <div class="overflow-x-auto px-4 pb-4">
                 @if (currentChart() === 'timeline') {
-                  <table id="progress-chart-data" class="min-w-[42rem] w-full border-collapse text-left text-sm">
-                    <caption class="sr-only">Exam Progress scores by section and week</caption>
-                    <thead><tr class="border-b border-[#DDE5E1] text-[#173E3D]"><th scope="col" class="px-2 py-2 font-bold">Week</th>@for (dataset of progressDatasets; track dataset.label) { <th scope="col" class="px-2 py-2 font-bold">{{ dataset.label }}</th> }</tr></thead>
-                    <tbody>@for (week of weeks; track $index) { <tr class="border-b border-[#EDF0EE] last:border-0"><th scope="row" class="px-2 py-2 font-semibold text-[#173E3D]">{{ week }}</th>@for (dataset of progressDatasets; track dataset.label) { <td class="px-2 py-2 text-[#4B5B5B]">{{ dataset.data[$index] }}</td> }</tr> }</tbody>
+                  <table id="progress-chart-data" [attr.aria-label]="'Exam Progress scores for ' + selectedTimeRangeLabel()" class="min-w-[42rem] w-full border-collapse text-left text-sm">
+                    <caption class="sr-only">Exam Progress scores for {{ selectedTimeRangeLabel() }}</caption>
+                    <thead><tr class="border-b border-[#DDE5E1] text-[#173E3D]"><th scope="col" class="px-2 py-2 font-bold">{{ selectedTimeRangeLabel() === 'Last Week' ? 'Day' : 'Period' }}</th>@for (dataset of activeTimeline().datasets; track dataset.label) { <th scope="col" class="px-2 py-2 font-bold">{{ dataset.label }}</th> }</tr></thead>
+                    <tbody>@for (period of activeTimeline().labels; track $index; let periodIndex = $index) { <tr class="border-b border-[#EDF0EE] last:border-0"><th scope="row" class="px-2 py-2 font-semibold text-[#173E3D]">{{ period }}</th>@for (dataset of activeTimeline().datasets; track dataset.label) { <td class="px-2 py-2 text-[#4B5B5B]">{{ dataset.data[periodIndex] }}</td> }</tr> }</tbody>
                   </table>
                 } @else {
-                  <table id="progress-chart-data" class="min-w-72 w-full border-collapse text-left text-sm">
-                    <caption class="sr-only">Skill Mastery percentages by section</caption>
+                  <table id="progress-chart-data" [attr.aria-label]="'Skill Mastery percentages for ' + selectedUnitLabel()" class="min-w-72 w-full border-collapse text-left text-sm">
+                    <caption class="sr-only">Skill Mastery percentages for {{ selectedUnitLabel() }}</caption>
                     <thead><tr class="border-b border-[#DDE5E1] text-[#173E3D]"><th scope="col" class="px-2 py-2 font-bold">Skill</th><th scope="col" class="px-2 py-2 font-bold">Mastery</th></tr></thead>
-                    <tbody>@for (skill of masterySkills; track skill.label) { <tr class="border-b border-[#EDF0EE] last:border-0"><th scope="row" class="px-2 py-2 font-semibold text-[#173E3D]">{{ skill.label }}</th><td class="px-2 py-2 text-[#4B5B5B]">{{ skill.value }}%</td></tr> }</tbody>
+                    <tbody>@for (skill of masterySkills(); track skill.label) { <tr class="border-b border-[#EDF0EE] last:border-0"><th scope="row" class="px-2 py-2 font-semibold text-[#173E3D]">{{ skill.label }}</th><td class="px-2 py-2 text-[#4B5B5B]">{{ skill.value }}%</td></tr> }</tbody>
                   </table>
                 }
               </div>
@@ -85,27 +120,64 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   protected readonly auth = inject(AuthService);
   @ViewChild('progressChart') private readonly progressCanvas?: ElementRef<HTMLCanvasElement>;
   protected readonly currentChart = signal<'timeline' | 'mastery'>('timeline');
+  protected readonly selectedTimeRange = signal<TimeRange>('all');
+  protected readonly selectedUnit = signal('all');
 
-  protected readonly weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'];
-  protected readonly progressDatasets = [
-    { label: 'Reading Comprehension', data: [60, 65, 70, 75, 80, 85], color: '#16A34A' },
-    { label: 'Vocabulary', data: [50, 60, 65, 70, 75, 80], color: '#7C3AED' },
-    { label: 'Grammar', data: [40, 50, 55, 65, 70, 75], color: '#F97316' },
-    { label: 'Function', data: [70, 75, 80, 85, 90, 95], color: '#2563EB' },
-    { label: 'Writing', data: [30, 40, 45, 55, 60, 70], color: '#DC2626' },
+  protected readonly timeRangeOptions: { value: TimeRange; label: string }[] = [
+    { value: 'week', label: 'Last Week' },
+    { value: 'month', label: 'Last Month' },
+    { value: 'all', label: 'All Time' },
+  ];
+  protected readonly unitOptions = [
+    { value: 'all', label: 'All Units' },
+    ...Array.from({ length: 10 }, (_, index) => ({ value: String(index + 1), label: `Unit ${index + 1}` })),
   ];
 
-  // Temporary exercise history until dashboard progress is available from the API.
-  private readonly mockExerciseHistory: Record<string, number[]> = {
-    Reading: [85],
-    Writing: [60],
-    Grammar: [75],
-    Function: [90],
+  private readonly timelineRanges: Record<TimeRange, TimelineRangeData> = {
+    week: createTimelineData(
+      ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      [
+        [70, 72, 75, 74, 78, 82, 85],
+        [60, 63, 65, 68, 70, 72, 75],
+        [55, 58, 60, 62, 65, 68, 70],
+        [80, 82, 84, 85, 88, 90, 92],
+        [45, 48, 50, 54, 58, 62, 65],
+      ],
+    ),
+    month: createTimelineData(
+      ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      [
+        [62, 67, 73, 80],
+        [52, 59, 66, 73],
+        [43, 51, 60, 68],
+        [71, 76, 82, 89],
+        [32, 41, 51, 62],
+      ],
+    ),
+    all: createTimelineData(
+      ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+      [
+        [60, 65, 70, 75, 80, 85],
+        [50, 60, 65, 70, 75, 80],
+        [40, 50, 55, 65, 70, 75],
+        [70, 75, 80, 85, 90, 95],
+        [30, 40, 45, 55, 60, 70],
+      ],
+    ),
   };
-  protected readonly masterySkills = ['Reading', 'Writing', 'Grammar', 'Function'].map((label) => ({
+  protected readonly activeTimeline = computed(() => this.timelineRanges[this.selectedTimeRange()]);
+
+  // Temporary exercise history until dashboard progress is available from the API.
+  private readonly mockExerciseHistory: Record<string, Partial<Record<MasterySkill, number[]>>> = {
+    '1': { Vocabulary: [80], Grammar: [70], Reading: [85], Function: [90], Writing: [60] },
+    '2': { Vocabulary: [76, 84], Grammar: [68, 72], Reading: [78], Function: [84, 88], Writing: [55, 65] },
+    '3': { Vocabulary: [90], Grammar: [80], Reading: [82], Function: [92], Writing: [70] },
+  };
+
+  protected readonly masterySkills = computed(() => (['Vocabulary', 'Grammar', 'Reading', 'Function', 'Writing'] as MasterySkill[]).map((label) => ({
     label,
-    value: this.averageScore(this.mockExerciseHistory[label] ?? []),
-  }));
+    value: this.calculateSkillMastery(label, this.selectedUnit()),
+  })));
 
   private chart?: Chart;
 
@@ -119,6 +191,34 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     this.renderChart();
   }
 
+  protected selectTimeRange(value: string): void {
+    if (!this.timeRangeOptions.some((option) => option.value === value)) return;
+    this.selectedTimeRange.set(value as TimeRange);
+    this.renderChart();
+  }
+
+  protected selectUnit(value: string): void {
+    if (!this.unitOptions.some((option) => option.value === value)) return;
+    this.selectedUnit.set(value);
+    this.renderChart();
+  }
+
+  protected selectedTimeRangeLabel(): string {
+    return this.timeRangeOptions.find((option) => option.value === this.selectedTimeRange())?.label ?? 'All Time';
+  }
+
+  protected selectedUnitLabel(): string {
+    return this.unitOptions.find((option) => option.value === this.selectedUnit())?.label ?? 'All Units';
+  }
+
+  private calculateSkillMastery(skill: MasterySkill, unit: string): number {
+    const unitHistory = unit === 'all'
+      ? Object.values(this.mockExerciseHistory)
+      : [this.mockExerciseHistory[unit] ?? {}];
+    const scores = unitHistory.flatMap((history) => history[skill] ?? []);
+    return this.averageScore(scores);
+  }
+
   private averageScore(scores: number[]): number {
     return scores.length ? Math.round(scores.reduce((total, score) => total + score, 0) / scores.length) : 0;
   }
@@ -129,11 +229,12 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
     this.chart?.destroy();
     if (this.currentChart() === 'timeline') {
+      const timeline = this.activeTimeline();
       this.chart = new Chart(canvas, {
       type: 'line',
       data: {
-        labels: this.weeks,
-        datasets: this.progressDatasets.map(({ label, data, color }) => ({
+        labels: timeline.labels,
+        datasets: timeline.datasets.map(({ label, data, color }) => ({
           label,
           data,
           borderColor: color,
@@ -187,13 +288,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
+    const masterySkills = this.masterySkills();
     this.chart = new Chart(canvas, {
       type: 'radar',
       data: {
-        labels: this.masterySkills.map((skill) => skill.label),
+        labels: masterySkills.map((skill) => skill.label),
         datasets: [{
           label: 'Mastery',
-          data: this.masterySkills.map((skill) => skill.value),
+          data: masterySkills.map((skill) => skill.value),
           borderColor: '#0A6B6B',
           backgroundColor: 'rgba(10, 107, 107, 0.3)',
           borderWidth: 3,
