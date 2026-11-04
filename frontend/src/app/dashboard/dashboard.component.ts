@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
 import Chart from 'chart.js/auto';
+import { finalize } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
 
@@ -8,6 +9,9 @@ type MasterySkill = 'Vocabulary' | 'Grammar' | 'Reading' | 'Function' | 'Writing
 type TimelineDataset = { label: string; data: number[]; color: string };
 type TimelineRangeData = { labels: string[]; datasets: TimelineDataset[] };
 type BadgeDisplay = { code: string; title: string; description: string; icon: string; background: string; foreground: string };
+
+const MAX_SOURCE_IMAGE_BYTES = 10 * 1024 * 1024;
+const MAX_AVATAR_DIMENSION = 300;
 
 const TIMELINE_SERIES = [
   { label: 'Reading Comprehension', color: '#16A34A' },
@@ -41,7 +45,36 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
         <div class="mb-8">
           <p class="text-sm font-semibold text-[#0A6B6B]">Your learning space</p>
           <h1 id="dashboard-title" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">Welcome back</h1>
-          <p class="mt-2 text-base text-[#4B5B5B]">{{ user.displayName || user.username || user.email }}</p>
+          <div class="mt-4 flex items-center gap-4">
+            <input #profilePictureInput id="profile-picture-file" type="file" accept="image/*" [disabled]="pictureUploading()" (change)="handleProfilePictureChange($event)" class="sr-only" />
+            <button
+              type="button"
+              [attr.aria-label]="pictureUploading() ? 'Preparing profile picture' : 'Change profile picture'"
+              [disabled]="pictureUploading()"
+              (click)="profilePictureInput.click()"
+              class="group relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#E5E7E5] bg-[#0A6B6B] text-white shadow-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B] disabled:cursor-wait sm:h-20 sm:w-20"
+            >
+              @if (user.profilePictureUrl) {
+                <img [src]="user.profilePictureUrl" alt="" class="h-full w-full object-cover" />
+              } @else {
+                <span aria-hidden="true" class="flex h-full w-full items-center justify-center text-2xl font-bold">{{ user.username.charAt(0).toUpperCase() }}</span>
+              }
+              <span class="absolute inset-0 flex items-center justify-center bg-[#0B3B3B]/65 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                @if (pictureUploading()) {
+                  <span class="text-xs font-bold">Saving…</span>
+                } @else {
+                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8.5h3l1.5-2h7l1.5 2h3A1.5 1.5 0 0 1 21.5 10v8A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5Z"/><circle cx="12" cy="13.5" r="3.25"/></svg>
+                }
+              </span>
+            </button>
+            <div class="min-w-0">
+              <p class="truncate text-lg font-bold text-[#12302F]">{{ user.displayName || 'Add a display name' }}</p>
+              <p class="mt-1 truncate text-sm text-[#4B5B5B]">@{{ user.username }}</p>
+              <p class="mt-1 truncate text-sm text-[#4B5B5B]">{{ user.email }}</p>
+              @if (profilePictureMessage()) { <p role="status" class="mt-1 text-sm font-semibold text-[#0E7A55]">{{ profilePictureMessage() }}</p> }
+              @if (profilePictureError()) { <p role="alert" class="mt-1 text-sm font-semibold text-[#A61B1B]">{{ profilePictureError() }}</p> }
+            </div>
+          </div>
         </div>
 
         @if (user.accountStatus === 'PENDING_APPROVAL') {
@@ -55,25 +88,35 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
           </div>
         }
 
-        <div class="grid gap-4 md:grid-cols-2 md:gap-5">
-          <article class="rounded-2xl border border-[#E5E7E5] bg-white p-6 sm:p-7">
-            <div class="flex items-start justify-between gap-3">
-              <h2 class="font-display text-lg font-extrabold tracking-[-0.025em] text-[#0B3B3B]">Your exams</h2>
-              <span class="rounded-full bg-[#F7F5F0] px-2.5 py-1 text-[11px] font-semibold text-[#4B5B5B]">Coming soon</span>
-            </div>
-            <p class="mt-4 text-sm leading-6 text-[#4B5B5B]">Exams assigned to you will appear here.</p>
-          </article>
-          <article class="rounded-2xl border border-[#E5E7E5] bg-white p-6 sm:p-7">
-            <div class="flex items-start justify-between gap-3">
-              <h2 class="font-display text-lg font-extrabold tracking-[-0.025em] text-[#0B3B3B]">Your class</h2>
-              <span class="rounded-full bg-[#F7F5F0] px-2.5 py-1 text-[11px] font-semibold text-[#4B5B5B]">Coming soon</span>
-            </div>
-            <p class="mt-4 text-sm leading-6 text-[#4B5B5B]">See who else is learning with you.</p>
-          </article>
-          <article class="rounded-2xl border border-[#E5E7E5] bg-white p-5 shadow-sm md:col-span-2 sm:p-7">
+        <section aria-labelledby="achievements-heading" class="mt-8">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#0A6B6B]">Keep building your skills</p>
+            <h2 id="achievements-heading" class="font-display mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[#0B3B3B]">Your Achievements</h2>
+          </div>
+          @if (earnedBadges().length > 0) {
+            <ul class="mt-5 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+              @for (badge of earnedBadges(); track badge.code) {
+                <li>
+                  <article class="flex h-full items-start gap-4 rounded-2xl border border-[#E1E7E3] bg-white p-5 shadow-sm">
+                    <span aria-hidden="true" [style.background-color]="badge.background" [style.color]="badge.foreground" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-xl font-extrabold">{{ badge.icon }}</span>
+                    <div>
+                      <h3 class="font-display text-base font-bold text-[#0B3B3B]">{{ badge.title }}</h3>
+                      <p class="mt-1 text-sm leading-6 text-[#4B5B5B]">{{ badge.description }}</p>
+                    </div>
+                  </article>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="mt-4 rounded-xl border border-dashed border-[#C9D8D1] bg-white/70 p-5 text-sm leading-6 text-[#4B5B5B]" role="status">Complete exercises to earn badges!</p>
+          }
+        </section>
+
+        <section aria-labelledby="progress-heading" class="mt-8">
+          <article class="rounded-2xl border border-[#E5E7E5] bg-white p-5 shadow-sm sm:p-7">
             <div class="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 class="font-display text-lg font-extrabold tracking-[-0.025em] text-[#0B3B3B]">Your progress</h2>
+                <h2 id="progress-heading" class="font-display text-lg font-extrabold tracking-[-0.025em] text-[#0B3B3B]">Your progress</h2>
                 <p class="mt-1 text-sm text-[#4B5B5B]">{{ currentChart() === 'timeline' ? 'Mock scores by exam section over time.' : 'Mock mastery percentages based on exercise scores.' }}</p>
               </div>
               <span class="rounded-full bg-[#E8F2F0] px-3 py-1.5 text-xs font-bold text-[#075B5B]">{{ currentChart() === 'timeline' ? 'Scores out of 100' : 'Mastery percentage' }}</span>
@@ -120,30 +163,6 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
               </div>
             </details>
           </article>
-        </div>
-
-        <section aria-labelledby="achievements-heading" class="mt-8">
-          <div>
-            <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#0A6B6B]">Keep building your skills</p>
-            <h2 id="achievements-heading" class="font-display mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[#0B3B3B]">Your Achievements</h2>
-          </div>
-          @if (earnedBadges().length > 0) {
-            <ul class="mt-5 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
-              @for (badge of earnedBadges(); track badge.code) {
-                <li>
-                  <article class="flex h-full items-start gap-4 rounded-2xl border border-[#E1E7E3] bg-white p-5 shadow-sm">
-                    <span aria-hidden="true" [style.background-color]="badge.background" [style.color]="badge.foreground" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-xl font-extrabold">{{ badge.icon }}</span>
-                    <div>
-                      <h3 class="font-display text-base font-bold text-[#0B3B3B]">{{ badge.title }}</h3>
-                      <p class="mt-1 text-sm leading-6 text-[#4B5B5B]">{{ badge.description }}</p>
-                    </div>
-                  </article>
-                </li>
-              }
-            </ul>
-          } @else {
-            <p class="mt-4 rounded-xl border border-dashed border-[#C9D8D1] bg-white/70 p-5 text-sm leading-6 text-[#4B5B5B]" role="status">Complete exercises to earn badges!</p>
-          }
         </section>
       }
     </section>
@@ -151,6 +170,9 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
 })
 export class DashboardComponent implements AfterViewInit, OnDestroy {
   protected readonly auth = inject(AuthService);
+  protected readonly pictureUploading = signal(false);
+  protected readonly profilePictureMessage = signal('');
+  protected readonly profilePictureError = signal('');
   protected readonly earnedBadges = computed(() => {
     const earned = new Set((this.auth.currentUser()?.badges ?? '').split(',').map((badge) => badge.trim()).filter(Boolean));
     return Object.values(BADGE_CATALOG).filter((badge) => earned.has(badge.code));
@@ -217,6 +239,84 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   })));
 
   private chart?: Chart;
+
+  protected handleProfilePictureChange(event: Event): void {
+    const input = event.currentTarget as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    this.profilePictureMessage.set('');
+    this.profilePictureError.set('');
+    if (!file) return;
+
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) {
+      this.profilePictureError.set('Choose a PNG, JPEG, or GIF image.');
+      return;
+    }
+    if (file.size === 0 || file.size > MAX_SOURCE_IMAGE_BYTES) {
+      this.profilePictureError.set('Choose an image under 10 MB. It will be resized before upload.');
+      return;
+    }
+
+    this.pictureUploading.set(true);
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      this.pictureUploading.set(false);
+      this.profilePictureError.set('The image could not be opened. Please try another file.');
+    };
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const sourceWidth = image.naturalWidth;
+      const sourceHeight = image.naturalHeight;
+      if (!sourceWidth || !sourceHeight) {
+        this.pictureUploading.set(false);
+        this.profilePictureError.set('The image could not be opened. Please try another file.');
+        return;
+      }
+
+      const scale = Math.min(1, MAX_AVATAR_DIMENSION / Math.max(sourceWidth, sourceHeight));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+      canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+      const context = canvas.getContext('2d');
+      if (!context) {
+        this.pictureUploading.set(false);
+        this.profilePictureError.set('The image could not be prepared. Please try another file.');
+        return;
+      }
+
+      // JPEG has no transparency; use a white background for transparent PNG/GIF files.
+      context.fillStyle = '#FFFFFF';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      let resizedImage: string;
+      try {
+        resizedImage = canvas.toDataURL('image/jpeg', 0.8);
+      } catch {
+        this.pictureUploading.set(false);
+        this.profilePictureError.set('The image could not be compressed. Please try another file.');
+        return;
+      }
+
+      console.info('Profile picture compressed before upload', {
+        originalBytes: file.size,
+        compressedBase64Characters: resizedImage.length,
+        width: canvas.width,
+        height: canvas.height,
+      });
+
+      this.auth.updateProfilePicture(resizedImage)
+        .pipe(finalize(() => this.pictureUploading.set(false)))
+        .subscribe({
+          next: () => this.profilePictureMessage.set('Profile picture updated.'),
+          error: () => this.profilePictureError.set('Upload failed. Please try again.'),
+        });
+    };
+    image.src = objectUrl;
+  }
 
   ngAfterViewInit(): void {
     this.renderChart();

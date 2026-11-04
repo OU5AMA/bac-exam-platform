@@ -30,6 +30,9 @@ public class User {
     @Column(name = "badges", nullable = false, length = 255)
     private String badges = "";
 
+    @Column(name = "profile_picture_url", columnDefinition = "TEXT")
+    private String profilePictureUrl;
+
     @Column(name = "password_hash")
     private String passwordHash;
 

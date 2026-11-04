@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 2MB
   ai:
     api-key: ${OPENROUTER_API_KEY}
     url: https://openrouter.ai/api/v1/chat/completions
@@ -50,3 +54,7 @@ management:
       show-details: always
 app:
   frontend-url: http://localhost:4200
+
+server:
+  tomcat:
+    max-http-form-post-size: 2MB

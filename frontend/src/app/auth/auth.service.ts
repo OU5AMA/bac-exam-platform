@@ -13,6 +13,7 @@ export interface AuthUser {
   email: string;
   roles: string[];
   badges: string;
+  profilePictureUrl?: string | null;
   accountStatus: AccountStatus;
 }
 
@@ -36,6 +37,7 @@ export class AuthService {
   // Relative URL on purpose: Angular only attaches the X-XSRF-TOKEN header to
   // same-origin (relative) requests. In dev this works via proxy.conf.json.
   private readonly base = '/api/auth';
+  private readonly usersBase = '/api/users';
 
   readonly currentUser = signal<AuthUser | null>(null);
 
@@ -63,6 +65,13 @@ export class AuthService {
     return this.http
       .get<AuthUser>(`${this.base}/me`)
       .pipe(tap((user) => this.currentUser.set(user)));
+  }
+
+  updateProfilePicture(imageBase64: string): Observable<AuthUser> {
+    return this.ensureCsrfCookie().pipe(
+      switchMap(() => this.http.put<AuthUser>(`${this.usersBase}/profile-picture`, { imageBase64 })),
+      tap((user) => this.currentUser.set(user)),
+    );
   }
 
   /**

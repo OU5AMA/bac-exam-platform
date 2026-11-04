@@ -9,6 +9,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.Base64;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -81,6 +86,26 @@ class AuthFlowIntegrationTest {
                 .andExpect(jsonPath("$.email").value(email))
                 .andExpect(jsonPath("$.username").value("student1"));
 
+        String profilePicture = createPngDataUri();
+        mockMvc.perform(put("/api/users/profile-picture")
+                        .with(csrf())
+                        .cookie(accessCookie)
+                        .contentType("application/json")
+                        .content("{\"imageBase64\":\"%s\"}".formatted(profilePicture)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.profilePictureUrl").value(profilePicture));
+
+        mockMvc.perform(get("/api/auth/me").cookie(accessCookie))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.profilePictureUrl").value(profilePicture));
+
+        mockMvc.perform(put("/api/users/profile-picture")
+                        .with(csrf())
+                        .cookie(accessCookie)
+                        .contentType("application/json")
+                        .content("{\"imageBase64\":\"data:image/png;base64,not-an-image\"}"))
+                .andExpect(status().isBadRequest());
+
         MvcResult refreshResult = mockMvc.perform(post("/api/auth/refresh")
                         .with(csrf())
                         .cookie(refreshCookie))
@@ -119,5 +144,12 @@ class AuthFlowIntegrationTest {
 
         mockMvc.perform(get("/api/admin/teachers/pending"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    private String createPngDataUri() throws Exception {
+        BufferedImage image = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", output);
+        return "data:image/png;base64," + Base64.getEncoder().encodeToString(output.toByteArray());
     }
 }
