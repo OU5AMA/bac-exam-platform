@@ -10,6 +10,7 @@ public record AuthResponse(
         String username,
         String email,
         List<String> roles,
+        String badges,
         AccountStatus accountStatus
 ) {
     public static AuthResponse from(User user) {
@@ -18,6 +19,7 @@ public record AuthResponse(
                 user.getUsername(),
                 user.getEmail(),
                 List.of(user.getRole().name()),
+                user.getBadges() == null ? "" : user.getBadges(),
                 user.getAccountStatus()
         );
     }

@@ -7,6 +7,7 @@ type TimeRange = 'week' | 'month' | 'all';
 type MasterySkill = 'Vocabulary' | 'Grammar' | 'Reading' | 'Function' | 'Writing';
 type TimelineDataset = { label: string; data: number[]; color: string };
 type TimelineRangeData = { labels: string[]; datasets: TimelineDataset[] };
+type BadgeDisplay = { code: string; title: string; description: string; icon: string; background: string; foreground: string };
 
 const TIMELINE_SERIES = [
   { label: 'Reading Comprehension', color: '#16A34A' },
@@ -22,6 +23,14 @@ function createTimelineData(labels: string[], values: number[][]): TimelineRange
     datasets: TIMELINE_SERIES.map((series, index) => ({ ...series, data: values[index] })),
   };
 }
+
+const BADGE_CATALOG: Record<string, BadgeDisplay> = {
+  GRAMMAR_GURU: { code: 'GRAMMAR_GURU', title: 'Grammar Guru', description: 'Scored 100% on a grammar exercise.', icon: '✓', background: '#E8F0FE', foreground: '#174EA6' },
+  VOCAB_MASTER: { code: 'VOCAB_MASTER', title: 'Vocab Master', description: 'Completed three vocabulary crosswords.', icon: 'Aa', background: '#E6F4F1', foreground: '#0B6255' },
+  OPINION_EXPERT: { code: 'OPINION_EXPERT', title: 'Opinion Expert', description: 'Earned a perfect score in Function practice.', icon: '✦', background: '#FFF0D5', foreground: '#8A4B08' },
+  READING_PRO: { code: 'READING_PRO', title: 'Reading Pro', description: 'Scored 100% on a reading exercise.', icon: '▤', background: '#E8F5E9', foreground: '#1B5E20' },
+  WRITING_STAR: { code: 'WRITING_STAR', title: 'Writing Star', description: 'Scored 100% on a writing task.', icon: '✍', background: '#FCE8E6', foreground: '#A50E0E' },
+};
 
 @Component({
   selector: 'app-dashboard',
@@ -112,12 +121,40 @@ function createTimelineData(labels: string[], values: number[][]): TimelineRange
             </details>
           </article>
         </div>
+
+        <section aria-labelledby="achievements-heading" class="mt-8">
+          <div>
+            <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#0A6B6B]">Keep building your skills</p>
+            <h2 id="achievements-heading" class="font-display mt-2 text-2xl font-extrabold tracking-[-0.03em] text-[#0B3B3B]">Your Achievements</h2>
+          </div>
+          @if (earnedBadges().length > 0) {
+            <ul class="mt-5 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3">
+              @for (badge of earnedBadges(); track badge.code) {
+                <li>
+                  <article class="flex h-full items-start gap-4 rounded-2xl border border-[#E1E7E3] bg-white p-5 shadow-sm">
+                    <span aria-hidden="true" [style.background-color]="badge.background" [style.color]="badge.foreground" class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-xl font-extrabold">{{ badge.icon }}</span>
+                    <div>
+                      <h3 class="font-display text-base font-bold text-[#0B3B3B]">{{ badge.title }}</h3>
+                      <p class="mt-1 text-sm leading-6 text-[#4B5B5B]">{{ badge.description }}</p>
+                    </div>
+                  </article>
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="mt-4 rounded-xl border border-dashed border-[#C9D8D1] bg-white/70 p-5 text-sm leading-6 text-[#4B5B5B]" role="status">Complete exercises to earn badges!</p>
+          }
+        </section>
       }
     </section>
   `,
 })
 export class DashboardComponent implements AfterViewInit, OnDestroy {
   protected readonly auth = inject(AuthService);
+  protected readonly earnedBadges = computed(() => {
+    const earned = new Set((this.auth.currentUser()?.badges ?? '').split(',').map((badge) => badge.trim()).filter(Boolean));
+    return Object.values(BADGE_CATALOG).filter((badge) => earned.has(badge.code));
+  });
   @ViewChild('progressChart') private readonly progressCanvas?: ElementRef<HTMLCanvasElement>;
   protected readonly currentChart = signal<'timeline' | 'mastery'>('timeline');
   protected readonly selectedTimeRange = signal<TimeRange>('all');

@@ -12,6 +12,7 @@ export interface AuthUser {
   displayName?: string;
   email: string;
   roles: string[];
+  badges: string;
   accountStatus: AccountStatus;
 }
 

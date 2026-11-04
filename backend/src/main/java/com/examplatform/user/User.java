@@ -27,6 +27,9 @@ public class User {
     @Column(name = "display_name", length = 255)
     private String displayName;
 
+    @Column(name = "badges", nullable = false, length = 255)
+    private String badges = "";
+
     @Column(name = "password_hash")
     private String passwordHash;
 
