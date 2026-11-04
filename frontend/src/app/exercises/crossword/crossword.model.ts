@@ -1,5 +1,5 @@
 export type Direction = 'across' | 'down';
-export type Difficulty = 'easy' | 'medium' | 'difficult' | 'master';
+export type Difficulty = 'easy' | 'normal' | 'hard';
 
 export interface CrosswordWord {
   answer: string;
@@ -23,4 +23,19 @@ export interface PlacedWord extends CrosswordWord {
   number: number;
   length: number;
   cells: { row: number; col: number }[];
+}
+
+
+export interface CrosswordManifestEntry {
+  id: string;
+  title: string;
+  difficulty: Difficulty;
+  file: string;
+  wordCount: number;
+}
+
+export interface CrosswordManifest {
+  unit: string;
+  unitTitle: string;
+  crosswords: CrosswordManifestEntry[];
 }

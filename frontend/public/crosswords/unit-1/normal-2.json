@@ -1,0 +1,116 @@
+{
+  "id": "unit-1_normal_2",
+  "title": "Unit 1 · Gifts of Youth · Normal 2",
+  "difficulty": "normal",
+  "grid": {
+    "rows": 13,
+    "cols": 13
+  },
+  "words": [
+    {
+      "answer": "PASSIONATE",
+      "clue": "Showing powerful interest in an activity or cause.",
+      "row": 6,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "VIGOUR",
+      "clue": "Physical or mental energy and strength.",
+      "row": 3,
+      "col": 5,
+      "direction": "down"
+    },
+    {
+      "answer": "FLEXIBLE",
+      "clue": "Able to adapt easily to changing conditions.",
+      "row": 4,
+      "col": 1,
+      "direction": "across"
+    },
+    {
+      "answer": "RELIABILITY",
+      "clue": "The quality of being dependable.",
+      "row": 2,
+      "col": 7,
+      "direction": "down"
+    },
+    {
+      "answer": "PERSUASION",
+      "clue": "The act of convincing someone to accept an idea.",
+      "row": 3,
+      "col": 3,
+      "direction": "down"
+    },
+    {
+      "answer": "MOTIVATION",
+      "clue": "A reason or desire that encourages action.",
+      "row": 10,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "TALENTED",
+      "clue": "Showing a natural ability in a particular area.",
+      "row": 1,
+      "col": 8,
+      "direction": "down"
+    },
+    {
+      "answer": "INDEPENDENCE",
+      "clue": "The state of relying on oneself.",
+      "row": 1,
+      "col": 9,
+      "direction": "down"
+    },
+    {
+      "answer": "PERSEVERANT",
+      "clue": "Continuing despite difficulty or delay.",
+      "row": 2,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "MOTIVATED",
+      "clue": "Having a strong reason to act or work.",
+      "row": 0,
+      "col": 10,
+      "direction": "down"
+    },
+    {
+      "answer": "INNOVATION",
+      "clue": "A new idea or method that improves something.",
+      "row": 1,
+      "col": 2,
+      "direction": "across"
+    },
+    {
+      "answer": "ENTHUSIASM",
+      "clue": "A feeling of lively interest and excitement.",
+      "row": 0,
+      "col": 11,
+      "direction": "down"
+    },
+    {
+      "answer": "OVERCOME",
+      "clue": "To succeed in dealing with a difficulty.",
+      "row": 0,
+      "col": 4,
+      "direction": "across"
+    },
+    {
+      "answer": "STRONG",
+      "clue": "Having great physical or mental power.",
+      "row": 11,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "VITAL",
+      "clue": "Necessary for life or success.",
+      "row": 8,
+      "col": 6,
+      "direction": "down"
+    }
+  ]
+}

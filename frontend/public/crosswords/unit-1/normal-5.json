@@ -1,0 +1,116 @@
+{
+  "id": "unit-1_normal_5",
+  "title": "Unit 1 · Gifts of Youth · Normal 5",
+  "difficulty": "normal",
+  "grid": {
+    "rows": 14,
+    "cols": 14
+  },
+  "words": [
+    {
+      "answer": "RESPONSIBILITY",
+      "clue": "A duty to take care of someone or something.",
+      "row": 0,
+      "col": 6,
+      "direction": "down"
+    },
+    {
+      "answer": "COOPERATIVE",
+      "clue": "Willing to work with others to reach a goal.",
+      "row": 0,
+      "col": 1,
+      "direction": "across"
+    },
+    {
+      "answer": "VOLUNTEERING",
+      "clue": "Offering time or help without expecting payment.",
+      "row": 1,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "CURIOSITY",
+      "clue": "A strong desire to learn or discover.",
+      "row": 2,
+      "col": 1,
+      "direction": "across"
+    },
+    {
+      "answer": "COOPERATION",
+      "clue": "Working together toward a shared goal.",
+      "row": 3,
+      "col": 3,
+      "direction": "across"
+    },
+    {
+      "answer": "AMBITION",
+      "clue": "A strong desire to achieve a goal.",
+      "row": 4,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "ADVENTURE",
+      "clue": "An exciting experience, often involving something unfamiliar.",
+      "row": 5,
+      "col": 2,
+      "direction": "across"
+    },
+    {
+      "answer": "STRENGTH",
+      "clue": "The quality of being physically or mentally strong.",
+      "row": 6,
+      "col": 6,
+      "direction": "across"
+    },
+    {
+      "answer": "ACHIEVE",
+      "clue": "To succeed in reaching a goal.",
+      "row": 7,
+      "col": 3,
+      "direction": "across"
+    },
+    {
+      "answer": "FLEXIBILITY",
+      "clue": "The ability to adapt to different situations.",
+      "row": 8,
+      "col": 1,
+      "direction": "across"
+    },
+    {
+      "answer": "DETERMINATION",
+      "clue": "Firmness in continuing toward a goal.",
+      "row": 9,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "CHALLENGE",
+      "clue": "A difficult task that tests a person’s ability.",
+      "row": 10,
+      "col": 3,
+      "direction": "across"
+    },
+    {
+      "answer": "INTELLIGENCE",
+      "clue": "The ability to learn, understand, and solve problems.",
+      "row": 11,
+      "col": 0,
+      "direction": "across"
+    },
+    {
+      "answer": "PUNCTUALITY",
+      "clue": "The habit of arriving or acting on time.",
+      "row": 12,
+      "col": 2,
+      "direction": "across"
+    },
+    {
+      "answer": "INQUIRY",
+      "clue": "A question or investigation seeking information.",
+      "row": 13,
+      "col": 0,
+      "direction": "across"
+    }
+  ]
+}

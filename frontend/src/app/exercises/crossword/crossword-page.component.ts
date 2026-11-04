@@ -1,15 +1,15 @@
-import { Component, computed, inject, input, signal, ViewChild } from '@angular/core';
+import { Component, computed, inject, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
-import { catchError, combineLatest, distinctUntilChanged, EMPTY, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, EMPTY, map, switchMap, tap } from 'rxjs';
 
 import { CrosswordGridComponent } from './crossword-grid.component';
 import { CrosswordCluesComponent } from './crossword-clues.component';
 import { CrosswordInputPanelComponent } from './crossword-input-panel.component';
 import { CrosswordService } from './crossword.service';
-import { Crossword, Difficulty, PlacedWord } from './crossword.model';
+import { Crossword, PlacedWord } from './crossword.model';
 
-const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'difficult', 'master'];
 
 @Component({
   selector: 'app-crossword-page',
@@ -88,7 +88,6 @@ const DIFFICULTIES: Difficulty[] = ['easy', 'medium', 'difficult', 'master'];
   `,
 })
 export class CrosswordPageComponent {
-  readonly level = input<Difficulty | string>('easy');
   readonly crossword = signal<Crossword | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
@@ -129,29 +128,38 @@ export class CrosswordPageComponent {
     );
   });
   private readonly retryToken = signal(0);
+  private readonly route = inject(ActivatedRoute);
   private readonly service = inject(CrosswordService);
   @ViewChild(CrosswordInputPanelComponent) private inputPanel?: CrosswordInputPanelComponent;
 
   constructor() {
-    combineLatest([toObservable(this.level), toObservable(this.retryToken)])
+    combineLatest([
+      this.route.queryParamMap.pipe(map((params) => params.get('id') || 'unit-1_normal_1')),
+      toObservable(this.retryToken),
+    ])
       .pipe(
-        distinctUntilChanged(([previousLevel, previousRetry], [level, retry]) => previousLevel === level && previousRetry === retry),
-        switchMap(([level]) => {
-          const difficulty = DIFFICULTIES.includes(level as Difficulty) ? (level as Difficulty) : 'easy';
+        map(([id]) => id),
+        switchMap((id) => {
           this.loading.set(true);
           this.error.set(null);
           this.crossword.set(null);
-          return this.service.load(difficulty).pipe(
-            tap((puzzle) => {
-              this.crossword.set(puzzle);
-              this.loading.set(false);
-            }),
-            catchError(() => {
-              this.error.set('We couldn’t load this puzzle. Please try again in a moment.');
-              this.loading.set(false);
-              return EMPTY;
-            }),
-          );
+          try {
+            return this.service.loadById(id).pipe(
+              tap((puzzle) => {
+                this.crossword.set(puzzle);
+                this.loading.set(false);
+              }),
+              catchError(() => {
+                this.error.set('We couldn’t load this puzzle. Please try again in a moment.');
+                this.loading.set(false);
+                return EMPTY;
+              }),
+            );
+          } catch {
+            this.error.set('This crossword could not be found.');
+            this.loading.set(false);
+            return EMPTY;
+          }
         }),
         takeUntilDestroyed(),
       )

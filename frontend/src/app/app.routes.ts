@@ -42,13 +42,13 @@ export const routes: Routes = [
   },
   {
     path: '2-bac/exercices/unit-1/vocabulary/crosswords',
-    loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
-    title: 'Crossword · Unit 1 · 9issemi',
+    loadComponent: () => import('./exercises/crossword/crossword-list.component').then((m) => m.CrosswordListComponent),
+    title: 'Crosswords · Unit 1 · 9issemi',
   },
   {
     path: '2-bac/exercices/unit-1/vocabulary/crossword',
-    redirectTo: '2-bac/exercices/unit-1/vocabulary/crosswords',
-    pathMatch: 'full',
+    loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
+    title: 'Crossword · Unit 1 · 9issemi',
   },
   {
     path: '',
