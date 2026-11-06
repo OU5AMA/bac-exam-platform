@@ -91,6 +91,11 @@ export const routes: Routes = [
         title: 'Profile · 9issemi',
         loadComponent: () => import('./profile/profile.component').then((m) => m.ProfileComponent),
       },
+      {
+        path: 'leaderboard',
+        title: 'Class Leaderboard · 9issemi',
+        loadComponent: () => import('./pages/leaderboard/leaderboard.component').then((m) => m.LeaderboardComponent),
+      },
       // future feature routes go here
     ],
   },
