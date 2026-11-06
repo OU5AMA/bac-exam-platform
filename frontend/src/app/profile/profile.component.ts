@@ -25,7 +25,15 @@ const MAX_AVATAR_DIMENSION = 300;
           <section aria-labelledby="personal-info-title" class="rounded-2xl border border-[#E5E7E5] bg-white p-5 shadow-sm sm:p-7">
             <h2 id="personal-info-title" class="font-display text-xl font-extrabold text-[#0B3B3B]">Personal information</h2>
             <dl class="mt-5 space-y-4">
-              <div><dt class="text-xs font-bold uppercase tracking-wide text-[#647171]">Display name</dt><dd class="mt-1 break-words text-base font-semibold text-[#12302F]">{{ user.displayName || 'Not set' }}</dd></div>
+              <div>
+                <dt class="text-xs font-bold uppercase tracking-wide text-[#647171]">Display name</dt>
+                <dd class="mt-2 flex flex-col gap-3 sm:flex-row">
+                  <input id="display-name" type="text" maxlength="80" autocomplete="name" placeholder="Add a display name" [value]="displayNameDraft()" (input)="displayNameDraft.set($any($event.target).value)" [attr.aria-describedby]="displayNameError() ? 'display-name-error' : null" [attr.aria-invalid]="displayNameError() ? 'true' : null" class="min-h-11 min-w-0 flex-1 rounded-lg border border-[#C9D1CF] bg-white px-3 text-sm text-[#173E3D] focus:border-[#0A6B6B] focus:outline-none focus:ring-4 focus:ring-[#0A6B6B]/15" />
+                  <button type="button" [disabled]="savingDisplayName() || !displayNameDraft().trim() || displayNameDraft().trim() === (user.displayName ?? '')" (click)="saveDisplayName()" class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-[#0A6B6B] px-4 text-sm font-bold text-white transition-colors hover:bg-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B] disabled:cursor-not-allowed disabled:opacity-50">{{ savingDisplayName() ? 'Saving…' : 'Save name' }}</button>
+                </dd>
+                @if (displayNameError()) { <p id="display-name-error" class="mt-2 text-sm font-semibold text-[#A61B1B]" role="alert">{{ displayNameError() }}</p> }
+                @if (displayNameMessage()) { <p class="mt-2 text-sm font-semibold text-[#0E7A55]" role="status">{{ displayNameMessage() }}</p> }
+              </div>
               <div><dt class="text-xs font-bold uppercase tracking-wide text-[#647171]">Username</dt><dd class="mt-1 break-words text-base font-semibold text-[#12302F]">@{{ user.username }}</dd></div>
               <div><dt class="text-xs font-bold uppercase tracking-wide text-[#647171]">Email</dt><dd class="mt-1 break-words text-base font-semibold text-[#12302F]">{{ user.email }}</dd></div>
             </dl>
@@ -89,8 +97,13 @@ export class ProfileComponent {
   protected readonly pictureError = signal('');
   protected readonly preferredLanguage = signal<PreferredLanguage>('en');
   protected readonly languageMessage = signal('');
+  protected readonly displayNameDraft = signal('');
+  protected readonly savingDisplayName = signal(false);
+  protected readonly displayNameMessage = signal('');
+  protected readonly displayNameError = signal('');
 
   constructor() {
+    this.displayNameDraft.set(this.auth.currentUser()?.displayName ?? '');
     const savedLanguage = localStorage.getItem('preferredLanguage');
     if (savedLanguage === 'en' || savedLanguage === 'fr' || savedLanguage === 'ar') {
       this.preferredLanguage.set(savedLanguage);
@@ -108,6 +121,31 @@ export class ProfileComponent {
     this.preferredLanguage.set(value);
     localStorage.setItem('preferredLanguage', value);
     this.languageMessage.set('Language preference saved on this device.');
+  }
+
+  protected saveDisplayName(): void {
+    const displayName = this.displayNameDraft().trim();
+    this.displayNameMessage.set('');
+    this.displayNameError.set('');
+    if (!displayName) {
+      this.displayNameError.set('Enter a display name.');
+      return;
+    }
+    if (displayName.length > 80) {
+      this.displayNameError.set('Display names must be 80 characters or fewer.');
+      return;
+    }
+
+    this.savingDisplayName.set(true);
+    this.auth.updateDisplayName(displayName)
+      .pipe(finalize(() => this.savingDisplayName.set(false)))
+      .subscribe({
+        next: () => {
+          this.displayNameDraft.set(displayName);
+          this.displayNameMessage.set('Display name updated.');
+        },
+        error: () => this.displayNameError.set('Could not update your display name. Please try again.'),
+      });
   }
 
   protected handlePictureChange(event: Event): void {

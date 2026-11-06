@@ -21,4 +21,9 @@ public class UserProfileController {
     public AuthResponse updateProfilePicture(@Valid @RequestBody ProfilePictureRequest request) {
         return AuthResponse.from(userProfileService.updateProfilePicture(request.imageBase64()));
     }
+
+    @PutMapping(value = "/display-name", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public AuthResponse updateDisplayName(@Valid @RequestBody DisplayNameRequest request) {
+        return AuthResponse.from(userProfileService.updateDisplayName(request.displayName()));
+    }
 }

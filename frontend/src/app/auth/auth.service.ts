@@ -76,6 +76,13 @@ export class AuthService {
     );
   }
 
+  updateDisplayName(displayName: string): Observable<AuthUser> {
+    return this.ensureCsrfCookie().pipe(
+      switchMap(() => this.http.put<AuthUser>(`${this.usersBase}/display-name`, { displayName })),
+      tap((user) => this.currentUser.set(user)),
+    );
+  }
+
   /**
    * The backend only issues the XSRF-TOKEN cookie once it has seen a request.
    * A visitor landing straight on /sign-in has no cookie yet, so the first

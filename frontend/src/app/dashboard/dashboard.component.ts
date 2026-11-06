@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RouterLink } from '@angular/router';
 import Chart from 'chart.js/auto';
 import { finalize } from 'rxjs';
 
@@ -41,16 +40,13 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DailyChallengeComponent, RouterLink],
+  imports: [DailyChallengeComponent],
   template: `
     <section aria-labelledby="dashboard-title">
       @if (auth.currentUser(); as user) {
-        <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p class="text-sm font-semibold text-[#0A6B6B]">Your learning space</p>
-            <h1 id="dashboard-title" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">Welcome back</h1>
-          </div>
-          <a routerLink="/profile" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#0A6B6B] bg-white px-4 text-sm font-bold text-[#075B5B] transition-colors hover:bg-[#E8F2F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Edit Profile</a>
+        <div class="mb-8">
+          <p class="text-sm font-semibold text-[#0A6B6B]">Your learning space</p>
+          <h1 id="dashboard-title" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">Welcome back</h1>
         </div>
 
         @if (user.accountStatus === 'PENDING_APPROVAL') {
