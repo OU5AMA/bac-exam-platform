@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import confetti from 'canvas-confetti';
 
 interface OpinionFeedback {
   annotatedText: string;
@@ -64,6 +65,7 @@ interface OpinionFeedback {
 
         @if (feedback(); as result) {
           <section aria-labelledby="feedback-heading" aria-live="polite" class="mt-8">
+            @if (resultMessage()) { <p class="mb-5 rounded-xl border border-[#B8D7D0] bg-[#E8F2F0] p-4 text-base font-semibold text-[#084F4F]" role="status">{{ resultMessage() }}</p> }
             <div class="flex flex-wrap items-end justify-between gap-4"><div><p class="text-xs font-bold uppercase tracking-[0.18em] text-[#0A6B6B]">Your feedback</p><h2 id="feedback-heading" class="font-display mt-2 text-2xl font-extrabold text-[#0B3B3B]">A strong next step</h2></div><p class="rounded-2xl bg-[#0B3B3B] px-5 py-3 text-2xl font-extrabold text-white" aria-label="Score {{ result.score }} out of 10">{{ result.score }}<span class="text-base font-semibold text-white/80"> / 10</span></p></div>
             <article aria-labelledby="annotated-text-heading" class="mt-5 rounded-2xl border border-[#DDE6E1] bg-white p-6 shadow-sm sm:p-8">
               <h3 id="annotated-text-heading" class="font-display text-xl font-bold text-[#0B3B3B]">Your text with feedback</h3>
@@ -90,6 +92,7 @@ export class FunctionLessonComponent {
   protected text = '';
   protected readonly loading = signal(false);
   protected readonly feedback = signal<OpinionFeedback | null>(null);
+  protected readonly resultMessage = signal('');
   protected readonly error = signal('');
 
   protected getFeedback(): void {
@@ -98,6 +101,7 @@ export class FunctionLessonComponent {
     this.loading.set(true);
     this.error.set('');
     this.feedback.set(null);
+    this.resultMessage.set('');
     this.http.post<OpinionFeedback>('/api/function/opinion/feedback', { text })
       .pipe(finalize(() => this.loading.set(false)))
       .subscribe({
@@ -106,6 +110,9 @@ export class FunctionLessonComponent {
             this.error.set('We received feedback in an unexpected format. Please try again.');
             return;
           }
+          const percentage = Math.max(0, Math.min(100, response.score * 10));
+          this.resultMessage.set(percentage === 100 ? 'Wow! You are a true champion. Perfect score! 🏆' : percentage >= 70 ? "Great job! You're getting really good at this. Keep it up! 💪" : percentage >= 40 ? "Not bad! A quick review of the lesson and you'll ace it next time. 📚" : "Don't worry, even Shakespeare made mistakes. Try again! ✍️");
+          if (percentage >= 70) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#0A6B6B', '#F5A623', '#1565C0'] });
           this.feedback.set(response);
         },
         error: () => this.error.set('We couldn’t get feedback just now. Please try again in a moment.'),
