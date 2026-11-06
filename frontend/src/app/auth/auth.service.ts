@@ -15,6 +15,8 @@ export interface AuthUser {
   badges: string;
   profilePictureUrl?: string | null;
   accountStatus: AccountStatus;
+  currentStreak: number;
+  streakFreezes: number;
 }
 
 export interface LoginPayload {

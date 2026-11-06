@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
+import { StreakService } from '../../auth/streak.service';
+
 interface OpinionFeedback {
   annotatedText: string;
   positives: string[];
@@ -86,6 +88,7 @@ interface OpinionFeedback {
 })
 export class FunctionLessonComponent {
   private readonly http = inject(HttpClient);
+  private readonly streak = inject(StreakService);
   protected readonly connectors = ['because', 'since', 'for example', 'moreover', 'therefore'];
   protected text = '';
   protected readonly loading = signal(false);
@@ -107,6 +110,7 @@ export class FunctionLessonComponent {
             return;
           }
           this.feedback.set(response);
+          this.streak.recordActivity();
         },
         error: () => this.error.set('We couldn’t get feedback just now. Please try again in a moment.'),
       });

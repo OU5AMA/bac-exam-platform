@@ -33,7 +33,12 @@ public class BadgeService {
             case "WRITING" -> score == 100 ? "WRITING_STAR" : null;
             default -> null;
         };
-        if (badge == null) return;
+        awardBadge(user, badge);
+    }
+
+    @Transactional
+    public void awardBadge(User user, String badge) {
+        if (user == null || badge == null || badge.isBlank()) return;
 
         Set<String> earned = new LinkedHashSet<>();
         if (user.getBadges() != null && !user.getBadges().isBlank()) {

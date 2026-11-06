@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { StreakService } from '../../../auth/streak.service';
 
 interface PracticeQuestion {
   id: string;
@@ -200,6 +201,7 @@ interface PracticeQuestion {
   `,
 })
 export class GrammarLessonComponent {
+  private readonly streak = inject(StreakService);
   protected readonly fullExamples = ['I want to study.', 'She decided to help.', 'They hope to win.'];
   protected readonly bareExamples = ['You must go.', 'I can help.', 'She made me cry. (No “to” after make.)', 'Let me try.'];
   protected readonly gerundExamples = [
@@ -234,7 +236,11 @@ export class GrammarLessonComponent {
   protected previousCvcExample(): void { this.cvcExampleIndex.update((index) => Math.max(index - 1, 0)); }
   protected setQuizAnswer(id: string, answer: string): void { this.quizAnswers.update((answers) => ({ ...answers, [id]: answer })); }
   protected quizComplete(): boolean { return this.quizQuestions.every((question) => Boolean(this.quizAnswers()[question.id])); }
-  protected checkQuiz(): void { if (this.quizComplete()) this.quizChecked.set(true); }
+  protected checkQuiz(): void {
+    if (!this.quizComplete() || this.quizChecked()) return;
+    this.quizChecked.set(true);
+    this.streak.recordActivity();
+  }
   protected quizScore(): number { return this.quizQuestions.filter((question) => this.quizAnswers()[question.id] === question.answer).length; }
   protected resetQuiz(): void { this.quizAnswers.set({}); this.quizChecked.set(false); }
 }

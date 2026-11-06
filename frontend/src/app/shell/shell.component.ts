@@ -40,6 +40,9 @@ import { AuthService } from '../auth/auth.service';
                 <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7E5] bg-[#0A6B6B] text-sm font-bold text-white" aria-hidden="true">{{ initial() }}</span>
               }
               <span class="hidden truncate sm:inline">{{ auth.currentUser()?.displayName || auth.currentUser()?.username }}</span>
+              @if ((auth.currentUser()?.currentStreak ?? 0) > 0) {
+                <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#FFF0D5] px-2 py-1 text-xs font-bold text-[#71420C]" [attr.aria-label]="auth.currentUser()?.currentStreak + ' day streak'">🔥 {{ auth.currentUser()?.currentStreak }}</span>
+              }
               <svg class="h-4 w-4 shrink-0 text-[#4B5B5B]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
             </button>
 

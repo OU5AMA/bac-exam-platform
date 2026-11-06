@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "users")
@@ -29,6 +30,15 @@ public class User {
 
     @Column(name = "badges", nullable = false, length = 255)
     private String badges = "";
+
+    @Column(name = "current_streak", nullable = false)
+    private int currentStreak = 0;
+
+    @Column(name = "last_activity_date")
+    private LocalDate lastActivityDate;
+
+    @Column(name = "streak_freezes", nullable = false)
+    private int streakFreezes = 0;
 
     @Column(name = "profile_picture_url", columnDefinition = "TEXT")
     private String profilePictureUrl;

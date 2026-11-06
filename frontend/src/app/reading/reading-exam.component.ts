@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReadingExam, ReadingQuestion, ReadingAnswers, ReadingSection, AssessmentResult, QuestionResult } from './reading.models';
 import { readingExamBySlug } from './reading.data';
 import { formatCountdown, secondsRemaining } from './reading-timer';
+import { StreakService } from '../auth/streak.service';
 
 interface SavedAttempt { answers: ReadingAnswers; submitted: boolean; result?: AssessmentResult | null; timerDeadline?: number | null; timerDurationMinutes?: number; }
 interface FlatQuestion { section: ReadingSection; question: ReadingQuestion; }
@@ -171,6 +172,7 @@ const YES_NO = [{ value: 'true', label: 'True' }, { value: 'false', label: 'Fals
 export class ReadingExamComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly streak = inject(StreakService);
   @ViewChild('confirmDialog') private confirmDialog?: ElementRef<HTMLDialogElement>;
   protected readonly exam: ReadingExam | undefined = readingExamBySlug(this.route.snapshot.paramMap.get('slug'));
   protected readonly answers = signal<ReadingAnswers>({});
@@ -238,6 +240,7 @@ export class ReadingExamComponent implements OnDestroy {
       const { scoreReadingExam } = await import('./reading.assessment');
       const scored = scoreReadingExam(this.exam, this.answers());
       this.result.set(scored); this.submitted.set(true); this.stopTimerInterval(); this.persist(); this.closeDialog(); this.activeIndex.set(0);
+      this.streak.recordActivity();
     } finally { this.scoring.set(false); }
   }
   protected resultFor(id: string): QuestionResult | undefined { return this.result()?.questions.find((item) => item.questionId === id); }

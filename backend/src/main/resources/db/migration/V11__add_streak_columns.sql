@@ -1,0 +1,3 @@
+ALTER TABLE users ADD COLUMN current_streak INT DEFAULT 0 NOT NULL;
+ALTER TABLE users ADD COLUMN last_activity_date DATE;
+ALTER TABLE users ADD COLUMN streak_freezes INT DEFAULT 0 NOT NULL;
