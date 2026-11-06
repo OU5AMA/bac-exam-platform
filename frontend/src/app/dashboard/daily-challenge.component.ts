@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
+import { randomLoadingMessage } from '../shared/loading-messages';
 import { DailyChallenge, DailyChallengeService } from './daily-challenge.service';
 
 @Component({
@@ -21,7 +22,7 @@ import { DailyChallenge, DailyChallengeService } from './daily-challenge.service
         </div>
 
         @if (loading() && !challenge()) {
-          <p class="mt-5 text-sm font-semibold text-[#4B5B5B]" role="status">Loading today's challenge…</p>
+          <p class="mt-5 text-sm font-semibold text-[#4B5B5B]" role="status">{{ loadingMessage() }}</p>
         } @else if (error()) {
           <div class="mt-5 flex flex-wrap items-center gap-3" role="alert">
             <p class="text-sm font-semibold text-[#7B261C]">{{ error() }}</p>
@@ -70,6 +71,7 @@ import { DailyChallenge, DailyChallengeService } from './daily-challenge.service
             </div>
           }
         }
+        @if (loading() && challenge()) { <p class="mt-3 text-sm font-semibold text-[#667575]" role="status">{{ loadingMessage() }}</p> }
       </div>
     </article>
   `,
@@ -81,6 +83,7 @@ export class DailyChallengeComponent implements OnInit, OnDestroy {
   protected readonly answers = signal<Record<string, string>>({});
   protected readonly secondsLeft = signal(300);
   protected readonly loading = signal(false);
+  protected readonly loadingMessage = signal(randomLoadingMessage());
   protected readonly error = signal('');
   protected readonly allAnswered = computed(() => {
     const daily = this.challenge();
@@ -94,6 +97,7 @@ export class DailyChallengeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void { this.stopTimer(); if (this.rolloverTimer) clearTimeout(this.rolloverTimer); }
 
   protected load(): void {
+    this.loadingMessage.set(randomLoadingMessage());
     this.loading.set(true);
     this.error.set('');
     this.challengeApi.loadToday().subscribe({
@@ -110,6 +114,7 @@ export class DailyChallengeComponent implements OnInit, OnDestroy {
 
   protected start(): void {
     if (this.loading()) return;
+    this.loadingMessage.set(randomLoadingMessage());
     this.loading.set(true);
     this.error.set('');
     this.challengeApi.start().subscribe({
@@ -133,6 +138,7 @@ export class DailyChallengeComponent implements OnInit, OnDestroy {
 
   protected submit(): void {
     if ((!this.allAnswered() && this.secondsLeft() > 0) || this.loading()) return;
+    this.loadingMessage.set(randomLoadingMessage());
     this.loading.set(true);
     this.error.set('');
     this.challengeApi.submit(this.answers()).subscribe({

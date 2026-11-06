@@ -1,8 +1,11 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import Chart from 'chart.js/auto';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
+import { AVATAR_OPTIONS, avatarName, isAvatarEmoji } from '../shared/avatar-options';
+import { randomLoadingMessage } from '../shared/loading-messages';
 import { DailyChallengeComponent } from './daily-challenge.component';
 
 type TimeRange = 'week' | 'month' | 'all';
@@ -48,7 +51,7 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
         <div class="mb-8">
           <p class="text-sm font-semibold text-[#0A6B6B]">Your learning space</p>
           <h1 id="dashboard-title" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">Welcome back</h1>
-          <div class="mt-4 flex items-center gap-4">
+          <div class="mt-4 flex flex-wrap items-center gap-4">
             <input #profilePictureInput id="profile-picture-file" type="file" accept="image/*" [disabled]="pictureUploading()" (change)="handleProfilePictureChange($event)" class="sr-only" />
             <button
               type="button"
@@ -57,7 +60,9 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
               (click)="profilePictureInput.click()"
               class="group relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#E5E7E5] bg-[#0A6B6B] text-white shadow-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B] disabled:cursor-wait sm:h-20 sm:w-20"
             >
-              @if (user.profilePictureUrl) {
+              @if (isAvatarEmoji(user.profilePictureUrl)) {
+                <span class="flex h-full w-full items-center justify-center bg-[#FFF7E5] text-4xl" role="img" [attr.aria-label]="avatarName(user.profilePictureUrl) + ' avatar'">{{ user.profilePictureUrl }}</span>
+              } @else if (user.profilePictureUrl) {
                 <img [src]="user.profilePictureUrl" alt="" class="h-full w-full object-cover" />
               } @else {
                 <span aria-hidden="true" class="flex h-full w-full items-center justify-center text-2xl font-bold">{{ user.username.charAt(0).toUpperCase() }}</span>
@@ -70,6 +75,7 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
                 }
               </span>
             </button>
+            <button type="button" (click)="avatarPickerOpen.update((open) => !open)" [attr.aria-expanded]="avatarPickerOpen()" aria-controls="avatar-picker" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#0A6B6B] bg-white px-4 text-sm font-bold text-[#075B5B] hover:bg-[#E8F2F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">{{ avatarPickerOpen() ? 'Close avatars' : 'Choose an avatar' }}</button>
             <div class="min-w-0">
               <p class="truncate text-lg font-bold text-[#12302F]">{{ user.displayName || 'Add a display name' }}</p>
               <p class="mt-1 truncate text-sm text-[#4B5B5B]">@{{ user.username }}</p>
@@ -78,6 +84,19 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
               @if (profilePictureError()) { <p role="alert" class="mt-1 text-sm font-semibold text-[#A61B1B]">{{ profilePictureError() }}</p> }
             </div>
           </div>
+          @if (avatarPickerOpen()) {
+            <section id="avatar-picker" aria-labelledby="avatar-picker-title" class="mt-4 rounded-xl border border-[#D9E8E2] bg-white p-4 sm:ml-24 sm:p-5">
+              <h2 id="avatar-picker-title" class="text-sm font-bold text-[#0B3B3B]">Choose a learning avatar</h2>
+              <div class="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6" role="group" aria-labelledby="avatar-picker-title">
+                @for (avatar of avatarOptions; track avatar.emoji) {
+                  <button type="button" (click)="selectAvatar(avatar.emoji, avatar.label)" [attr.aria-pressed]="user.profilePictureUrl === avatar.emoji" [attr.aria-label]="avatar.label + ' avatar'" class="flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border border-[#DDE6E1] bg-[#FAFCFB] text-3xl transition hover:border-[#0A6B6B] hover:bg-[#E8F2F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B] aria-pressed:border-[#0A6B6B] aria-pressed:bg-[#E8F2F0]">
+                    <span aria-hidden="true">{{ avatar.emoji }}</span><span class="text-xs font-semibold text-[#4B5B5B]">{{ avatar.label }}</span>
+                  </button>
+                }
+              </div>
+              <p class="mt-3 text-xs leading-5 text-[#667575]">Avatar choices apply for this session and won’t replace an uploaded photo on your account.</p>
+            </section>
+          }
         </div>
 
         @if (user.accountStatus === 'PENDING_APPROVAL') {
@@ -95,14 +114,15 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
           <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#F5C56D]">Keep your momentum</p>
-              <h2 id="streak-heading" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] sm:text-4xl">🔥 {{ user.currentStreak }} Day Streak!</h2>
+              <h2 id="streak-heading" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] sm:text-4xl">🔥 {{ dashboardSummary()?.currentStreak ?? user.currentStreak }} Day Streak!</h2>
               <p class="mt-3 max-w-xl text-sm leading-6 text-white/85">
-                @if (user.streakFreezes > 0) {
-                  You have {{ user.streakFreezes }} Streak Freeze{{ user.streakFreezes === 1 ? '' : 's' }}. Don't lose your chain!
+                @if ((dashboardSummary()?.streakFreezes ?? user.streakFreezes) > 0) {
+                  You have {{ dashboardSummary()?.streakFreezes ?? user.streakFreezes }} Streak Freeze{{ (dashboardSummary()?.streakFreezes ?? user.streakFreezes) === 1 ? '' : 's' }}. Don't lose your chain!
                 } @else {
                   Complete an exercise every day to keep your streak alive!
                 }
               </p>
+              @if (dashboardDataLoading()) { <p class="mt-2 text-sm font-semibold text-white/80" role="status">{{ dashboardLoadingMessage() }}</p> }
             </div>
             <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-4xl" aria-hidden="true">🔥</div>
           </div>
@@ -191,7 +211,15 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
   `,
 })
 export class DashboardComponent implements AfterViewInit, OnDestroy {
+  private readonly http = inject(HttpClient);
   protected readonly auth = inject(AuthService);
+  protected readonly avatarOptions = AVATAR_OPTIONS;
+  protected readonly isAvatarEmoji = isAvatarEmoji;
+  protected readonly avatarName = avatarName;
+  protected readonly avatarPickerOpen = signal(false);
+  protected readonly dashboardDataLoading = signal(true);
+  protected readonly dashboardLoadingMessage = signal(randomLoadingMessage());
+  protected readonly dashboardSummary = signal<{ currentStreak: number; streakFreezes: number } | null>(null);
   protected readonly pictureUploading = signal(false);
   protected readonly profilePictureMessage = signal('');
   protected readonly profilePictureError = signal('');
@@ -261,6 +289,22 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   })));
 
   private chart?: Chart;
+
+  constructor() {
+    this.http.get<{ currentStreak: number; streakFreezes: number }>('/api/progress/dashboard')
+      .pipe(finalize(() => this.dashboardDataLoading.set(false)))
+      .subscribe({
+        next: (summary) => this.dashboardSummary.set(summary),
+        error: () => this.dashboardSummary.set(null),
+      });
+  }
+
+  protected selectAvatar(emoji: string, label: string): void {
+    this.auth.currentUser.update((user) => user ? { ...user, profilePictureUrl: emoji } : null);
+    this.avatarPickerOpen.set(false);
+    this.profilePictureMessage.set(`${label} avatar selected for this session.`);
+    this.profilePictureError.set('');
+  }
 
   protected handleProfilePictureChange(event: Event): void {
     const input = event.currentTarget as HTMLInputElement;
