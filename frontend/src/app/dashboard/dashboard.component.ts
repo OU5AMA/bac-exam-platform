@@ -1,10 +1,10 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { RouterLink } from '@angular/router';
 import Chart from 'chart.js/auto';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
-import { AVATAR_OPTIONS, avatarName, isAvatarEmoji } from '../shared/avatar-options';
 import { randomLoadingMessage } from '../shared/loading-messages';
 import { DailyChallengeComponent } from './daily-challenge.component';
 
@@ -13,9 +13,6 @@ type MasterySkill = 'Vocabulary' | 'Grammar' | 'Reading' | 'Function' | 'Writing
 type TimelineDataset = { label: string; data: number[]; color: string };
 type TimelineRangeData = { labels: string[]; datasets: TimelineDataset[] };
 type BadgeDisplay = { code: string; title: string; description: string; icon: string; background: string; foreground: string };
-
-const MAX_SOURCE_IMAGE_BYTES = 10 * 1024 * 1024;
-const MAX_AVATAR_DIMENSION = 300;
 
 const TIMELINE_SERIES = [
   { label: 'Reading Comprehension', color: '#16A34A' },
@@ -44,59 +41,16 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DailyChallengeComponent],
+  imports: [DailyChallengeComponent, RouterLink],
   template: `
     <section aria-labelledby="dashboard-title">
       @if (auth.currentUser(); as user) {
-        <div class="mb-8">
-          <p class="text-sm font-semibold text-[#0A6B6B]">Your learning space</p>
-          <h1 id="dashboard-title" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">Welcome back</h1>
-          <div class="mt-4 flex flex-wrap items-center gap-4">
-            <input #profilePictureInput id="profile-picture-file" type="file" accept="image/*" [disabled]="pictureUploading()" (change)="handleProfilePictureChange($event)" class="sr-only" />
-            <button
-              type="button"
-              [attr.aria-label]="pictureUploading() ? 'Preparing profile picture' : 'Change profile picture'"
-              [disabled]="pictureUploading()"
-              (click)="profilePictureInput.click()"
-              class="group relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#E5E7E5] bg-[#0A6B6B] text-white shadow-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B] disabled:cursor-wait sm:h-20 sm:w-20"
-            >
-              @if (isAvatarEmoji(user.profilePictureUrl)) {
-                <span class="flex h-full w-full items-center justify-center bg-[#FFF7E5] text-4xl" role="img" [attr.aria-label]="avatarName(user.profilePictureUrl) + ' avatar'">{{ user.profilePictureUrl }}</span>
-              } @else if (user.profilePictureUrl) {
-                <img [src]="user.profilePictureUrl" alt="" class="h-full w-full object-cover" />
-              } @else {
-                <span aria-hidden="true" class="flex h-full w-full items-center justify-center text-2xl font-bold">{{ user.username.charAt(0).toUpperCase() }}</span>
-              }
-              <span class="absolute inset-0 flex items-center justify-center bg-[#0B3B3B]/65 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-                @if (pictureUploading()) {
-                  <span class="text-xs font-bold">Saving…</span>
-                } @else {
-                  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8.5h3l1.5-2h7l1.5 2h3A1.5 1.5 0 0 1 21.5 10v8A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18v-8A1.5 1.5 0 0 1 4 8.5Z"/><circle cx="12" cy="13.5" r="3.25"/></svg>
-                }
-              </span>
-            </button>
-            <button type="button" (click)="avatarPickerOpen.update((open) => !open)" [attr.aria-expanded]="avatarPickerOpen()" aria-controls="avatar-picker" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#0A6B6B] bg-white px-4 text-sm font-bold text-[#075B5B] hover:bg-[#E8F2F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">{{ avatarPickerOpen() ? 'Close avatars' : 'Choose an avatar' }}</button>
-            <div class="min-w-0">
-              <p class="truncate text-lg font-bold text-[#12302F]">{{ user.displayName || 'Add a display name' }}</p>
-              <p class="mt-1 truncate text-sm text-[#4B5B5B]">@{{ user.username }}</p>
-              <p class="mt-1 truncate text-sm text-[#4B5B5B]">{{ user.email }}</p>
-              @if (profilePictureMessage()) { <p role="status" class="mt-1 text-sm font-semibold text-[#0E7A55]">{{ profilePictureMessage() }}</p> }
-              @if (profilePictureError()) { <p role="alert" class="mt-1 text-sm font-semibold text-[#A61B1B]">{{ profilePictureError() }}</p> }
-            </div>
+        <div class="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p class="text-sm font-semibold text-[#0A6B6B]">Your learning space</p>
+            <h1 id="dashboard-title" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] text-[#0B3B3B] sm:text-4xl">Welcome back</h1>
           </div>
-          @if (avatarPickerOpen()) {
-            <section id="avatar-picker" aria-labelledby="avatar-picker-title" class="mt-4 rounded-xl border border-[#D9E8E2] bg-white p-4 sm:ml-24 sm:p-5">
-              <h2 id="avatar-picker-title" class="text-sm font-bold text-[#0B3B3B]">Choose a learning avatar</h2>
-              <div class="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-6" role="group" aria-labelledby="avatar-picker-title">
-                @for (avatar of avatarOptions; track avatar.emoji) {
-                  <button type="button" (click)="selectAvatar(avatar.emoji, avatar.label)" [attr.aria-pressed]="user.profilePictureUrl === avatar.emoji" [attr.aria-label]="avatar.label + ' avatar'" class="flex min-h-20 flex-col items-center justify-center gap-1 rounded-xl border border-[#DDE6E1] bg-[#FAFCFB] text-3xl transition hover:border-[#0A6B6B] hover:bg-[#E8F2F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B] aria-pressed:border-[#0A6B6B] aria-pressed:bg-[#E8F2F0]">
-                    <span aria-hidden="true">{{ avatar.emoji }}</span><span class="text-xs font-semibold text-[#4B5B5B]">{{ avatar.label }}</span>
-                  </button>
-                }
-              </div>
-              <p class="mt-3 text-xs leading-5 text-[#667575]">Avatar choices apply for this session and won’t replace an uploaded photo on your account.</p>
-            </section>
-          }
+          <a routerLink="/profile" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#0A6B6B] bg-white px-4 text-sm font-bold text-[#075B5B] transition-colors hover:bg-[#E8F2F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Edit Profile</a>
         </div>
 
         @if (user.accountStatus === 'PENDING_APPROVAL') {
@@ -213,16 +167,9 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
 export class DashboardComponent implements AfterViewInit, OnDestroy {
   private readonly http = inject(HttpClient);
   protected readonly auth = inject(AuthService);
-  protected readonly avatarOptions = AVATAR_OPTIONS;
-  protected readonly isAvatarEmoji = isAvatarEmoji;
-  protected readonly avatarName = avatarName;
-  protected readonly avatarPickerOpen = signal(false);
   protected readonly dashboardDataLoading = signal(true);
   protected readonly dashboardLoadingMessage = signal(randomLoadingMessage());
   protected readonly dashboardSummary = signal<{ currentStreak: number; streakFreezes: number } | null>(null);
-  protected readonly pictureUploading = signal(false);
-  protected readonly profilePictureMessage = signal('');
-  protected readonly profilePictureError = signal('');
   protected readonly earnedBadges = computed(() => {
     const earned = new Set((this.auth.currentUser()?.badges ?? '').split(',').map((badge) => badge.trim()).filter(Boolean));
     return Object.values(BADGE_CATALOG).filter((badge) => earned.has(badge.code));
@@ -297,91 +244,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         next: (summary) => this.dashboardSummary.set(summary),
         error: () => this.dashboardSummary.set(null),
       });
-  }
-
-  protected selectAvatar(emoji: string, label: string): void {
-    this.auth.currentUser.update((user) => user ? { ...user, profilePictureUrl: emoji } : null);
-    this.avatarPickerOpen.set(false);
-    this.profilePictureMessage.set(`${label} avatar selected for this session.`);
-    this.profilePictureError.set('');
-  }
-
-  protected handleProfilePictureChange(event: Event): void {
-    const input = event.currentTarget as HTMLInputElement;
-    const file = input.files?.[0];
-    input.value = '';
-    this.profilePictureMessage.set('');
-    this.profilePictureError.set('');
-    if (!file) return;
-
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      this.profilePictureError.set('Choose a PNG, JPEG, or GIF image.');
-      return;
-    }
-    if (file.size === 0 || file.size > MAX_SOURCE_IMAGE_BYTES) {
-      this.profilePictureError.set('Choose an image under 10 MB. It will be resized before upload.');
-      return;
-    }
-
-    this.pictureUploading.set(true);
-    const image = new Image();
-    const objectUrl = URL.createObjectURL(file);
-    image.onerror = () => {
-      URL.revokeObjectURL(objectUrl);
-      this.pictureUploading.set(false);
-      this.profilePictureError.set('The image could not be opened. Please try another file.');
-    };
-    image.onload = () => {
-      URL.revokeObjectURL(objectUrl);
-      const sourceWidth = image.naturalWidth;
-      const sourceHeight = image.naturalHeight;
-      if (!sourceWidth || !sourceHeight) {
-        this.pictureUploading.set(false);
-        this.profilePictureError.set('The image could not be opened. Please try another file.');
-        return;
-      }
-
-      const scale = Math.min(1, MAX_AVATAR_DIMENSION / Math.max(sourceWidth, sourceHeight));
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.max(1, Math.round(sourceWidth * scale));
-      canvas.height = Math.max(1, Math.round(sourceHeight * scale));
-      const context = canvas.getContext('2d');
-      if (!context) {
-        this.pictureUploading.set(false);
-        this.profilePictureError.set('The image could not be prepared. Please try another file.');
-        return;
-      }
-
-      // JPEG has no transparency; use a white background for transparent PNG/GIF files.
-      context.fillStyle = '#FFFFFF';
-      context.fillRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-      let resizedImage: string;
-      try {
-        resizedImage = canvas.toDataURL('image/jpeg', 0.8);
-      } catch {
-        this.pictureUploading.set(false);
-        this.profilePictureError.set('The image could not be compressed. Please try another file.');
-        return;
-      }
-
-      console.info('Profile picture compressed before upload', {
-        originalBytes: file.size,
-        compressedBase64Characters: resizedImage.length,
-        width: canvas.width,
-        height: canvas.height,
-      });
-
-      this.auth.updateProfilePicture(resizedImage)
-        .pipe(finalize(() => this.pictureUploading.set(false)))
-        .subscribe({
-          next: () => this.profilePictureMessage.set('Profile picture updated.'),
-          error: () => this.profilePictureError.set('Upload failed. Please try again.'),
-        });
-    };
-    image.src = objectUrl;
   }
 
   ngAfterViewInit(): void {

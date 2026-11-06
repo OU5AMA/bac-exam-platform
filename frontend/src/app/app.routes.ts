@@ -86,6 +86,11 @@ export const routes: Routes = [
         title: 'Dashboard · 9issemi',
         loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
+      {
+        path: 'profile',
+        title: 'Profile · 9issemi',
+        loadComponent: () => import('./profile/profile.component').then((m) => m.ProfileComponent),
+      },
       // future feature routes go here
     ],
   },

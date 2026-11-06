@@ -55,7 +55,7 @@ import { avatarName, isAvatarEmoji } from '../shared/avatar-options';
             @if (menuOpen()) {
               <div id="user-menu" role="menu" aria-label="User account" class="absolute right-0 top-full z-40 mt-2 w-64 overflow-hidden rounded-xl border border-[#E5E7E5] bg-white shadow-lg shadow-[#0B3B3B]/10">
                 <div class="border-b border-[#E5E7E5] px-4 py-3">
-                  <p class="truncate text-sm font-semibold text-[#12302F]">{{ auth.currentUser()?.displayName || auth.currentUser()?.username }}</p>
+                  <a routerLink="/profile" role="menuitem" (click)="menuOpen.set(false)" class="block truncate rounded-sm text-sm font-semibold text-[#12302F] hover:text-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">{{ auth.currentUser()?.displayName || auth.currentUser()?.username }}</a>
                   <p class="mt-1 text-xs font-medium text-[#4B5B5B]">{{ auth.currentUser()?.roles?.[0] ?? 'Member' }}</p>
                 </div>
                 <div class="p-2">
