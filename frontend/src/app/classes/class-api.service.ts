@@ -10,6 +10,7 @@ export interface ClassSummary {
   memberCount: number;
   maxMembers: number;
   totalPoints: number;
+  averagePoints: number;
   rank: number;
 }
 
@@ -18,6 +19,7 @@ export interface ClassLeaderboardEntry {
   name: string;
   memberCount: number;
   totalPoints: number;
+  averagePoints: number;
   rank: number;
   currentClass: boolean;
 }

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, computed, inject, signal, ViewChild } from '@angular/core';
+import { Component, computed, inject, input, signal, ViewChild } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
@@ -10,6 +10,7 @@ import { CrosswordCluesComponent } from './crossword-clues.component';
 import { CrosswordInputPanelComponent } from './crossword-input-panel.component';
 import { CrosswordService } from './crossword.service';
 import { Crossword, PlacedWord } from './crossword.model';
+import { exercisePath } from '../../pages/2bac/unit-skill-routes';
 
 
 @Component({
@@ -19,8 +20,8 @@ import { Crossword, PlacedWord } from './crossword.model';
   template: `
     <main class="min-h-screen bg-[#F7F5F0] px-4 py-8 text-[#4B5B5B] sm:px-8 sm:py-12">
       <div class="mx-auto max-w-5xl">
-        <a routerLink="/" class="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-[#0A6B6B] hover:text-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
-          <span aria-hidden="true" class="mr-2 text-lg">←</span> Back to home
+        <a [routerLink]="exercisePath(unitId(), 'vocabulary', 'crosswords')" class="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-[#0A6B6B] hover:text-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
+          <span aria-hidden="true" class="mr-2 text-lg">←</span> Back to crosswords
         </a>
 
         @if (crossword(); as puzzle) {
@@ -153,6 +154,8 @@ import { Crossword, PlacedWord } from './crossword.model';
   `,
 })
 export class CrosswordPageComponent {
+  readonly unitId = input.required<string>();
+  protected readonly exercisePath = exercisePath;
   readonly crossword = signal<Crossword | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
@@ -206,7 +209,10 @@ export class CrosswordPageComponent {
 
   constructor() {
     combineLatest([
-      this.route.queryParamMap.pipe(map((params) => params.get('id') || 'unit-1_normal_1')),
+      combineLatest([
+        toObservable(this.unitId),
+        this.route.queryParamMap.pipe(map((params) => params.get('id'))),
+      ]).pipe(map(([unitId, id]) => id || `unit-${unitId}_normal_1`)),
       toObservable(this.retryToken),
     ])
       .pipe(

@@ -6,6 +6,7 @@ public record ClassSummaryResponse(
         String joinCode,
         int memberCount,
         int maxMembers,
-        long totalPoints,
+        double totalPoints,
+        double averagePoints,
         int rank
 ) {}

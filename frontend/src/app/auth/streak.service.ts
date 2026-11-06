@@ -23,4 +23,15 @@ export class StreakService {
       error: () => undefined,
     });
   }
+
+  recordProgress(unitNumber: number, skill: string, score: number, maxScore: number): void {
+    const csrfReady = /(^|;\s*)XSRF-TOKEN=/.test(this.document.cookie)
+      ? of(null)
+      : this.http.get('/api/auth/me').pipe(catchError(() => of(null)));
+
+    csrfReady.pipe(
+      switchMap(() => this.http.post('/api/progress/save', { unitNumber, skill, score, maxScore })),
+      switchMap(() => this.auth.me()),
+    ).subscribe({ error: () => undefined });
+  }
 }

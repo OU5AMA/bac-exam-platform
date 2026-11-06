@@ -4,7 +4,8 @@ public record ClassLeaderboardEntry(
         Long id,
         String name,
         int memberCount,
-        long totalPoints,
+        double totalPoints,
+        double averagePoints,
         int rank,
         boolean currentClass
 ) {}

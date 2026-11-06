@@ -240,7 +240,7 @@ export class ReadingExamComponent implements OnDestroy {
       const { scoreReadingExam } = await import('./reading.assessment');
       const scored = scoreReadingExam(this.exam, this.answers());
       this.result.set(scored); this.submitted.set(true); this.stopTimerInterval(); this.persist(); this.closeDialog(); this.activeIndex.set(0);
-      this.streak.recordActivity();
+      if (scored.total > 0) this.streak.recordProgress(1, 'READING', scored.score, scored.total);
     } finally { this.scoring.set(false); }
   }
   protected resultFor(id: string): QuestionResult | undefined { return this.result()?.questions.find((item) => item.questionId === id); }

@@ -22,12 +22,14 @@ public class ClassService {
     private static final String LEADERBOARD_SQL = """
             SELECT c.id, c.name, c.join_code,
                    COUNT(DISTINCT cm.user_id) AS member_count,
-                   COALESCE(SUM(up.score), 0) AS total_points
+                   COALESCE(SUM(CAST(up.score AS DECIMAL(12, 4)) * 100 / NULLIF(up.max_score, 0)), 0) AS total_points,
+                   COALESCE(SUM(CAST(up.score AS DECIMAL(12, 4)) * 100 / NULLIF(up.max_score, 0))
+                       / NULLIF(COUNT(DISTINCT cm.user_id), 0), 0) AS average_points
             FROM classes c
             LEFT JOIN class_members cm ON cm.class_id = c.id
             LEFT JOIN user_progress up ON up.user_id = cm.user_id
             GROUP BY c.id, c.name, c.join_code, c.created_at
-            ORDER BY total_points DESC, c.created_at ASC, c.id ASC
+            ORDER BY average_points DESC, total_points DESC, c.created_at ASC, c.id ASC
             """;
 
     private final SchoolClassRepository schoolClassRepository;
@@ -128,7 +130,7 @@ public class ClassService {
     }
 
     private ClassSummaryResponse toSummary(Standing standing, int rank) {
-        return new ClassSummaryResponse(standing.id(), standing.name(), standing.joinCode(), standing.memberCount(), MAX_MEMBERS, standing.totalPoints(), rank);
+        return new ClassSummaryResponse(standing.id(), standing.name(), standing.joinCode(), standing.memberCount(), MAX_MEMBERS, standing.totalPoints(), standing.averagePoints(), rank);
     }
 
     private List<Standing> allStandings() {
@@ -137,8 +139,13 @@ public class ClassService {
                 result.getString("name"),
                 result.getString("join_code"),
                 result.getInt("member_count"),
-                result.getLong("total_points")
+                roundPoints(result.getDouble("total_points")),
+                roundPoints(result.getDouble("average_points"))
         ));
+    }
+
+    private double roundPoints(double points) {
+        return Math.round(points * 100.0) / 100.0;
     }
 
     private String generateJoinCode() {
@@ -159,9 +166,9 @@ public class ClassService {
         return raw.substring(0, 3) + "-" + raw.substring(3);
     }
 
-    private record Standing(Long id, String name, String joinCode, int memberCount, long totalPoints) {
+    private record Standing(Long id, String name, String joinCode, int memberCount, double totalPoints, double averagePoints) {
         ClassLeaderboardEntry toEntry(int rank, boolean currentClass) {
-            return new ClassLeaderboardEntry(id, name, memberCount, totalPoints, rank, currentClass);
+            return new ClassLeaderboardEntry(id, name, memberCount, totalPoints, averagePoints, rank, currentClass);
         }
     }
 }

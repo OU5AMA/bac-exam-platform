@@ -50,9 +50,10 @@ class ClassSystemIntegrationTest {
 
         mockMvc.perform(get("/api/classes/leaderboard").cookie(owner))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.topClasses[0].name").value("2Bac SM-A"))
-                .andExpect(jsonPath("$.topClasses[0].memberCount").value(2))
-                .andExpect(jsonPath("$.topClasses[0].totalPoints").value(8))
+                .andExpect(jsonPath("$.myClass.name").value("2Bac SM-A"))
+                .andExpect(jsonPath("$.myClass.memberCount").value(2))
+                .andExpect(jsonPath("$.myClass.totalPoints").value(80))
+                .andExpect(jsonPath("$.myClass.averagePoints").value(40))
                 .andExpect(jsonPath("$.myClass.currentClass").value(true));
 
         mockMvc.perform(get("/api/classes/my-class").cookie(member))

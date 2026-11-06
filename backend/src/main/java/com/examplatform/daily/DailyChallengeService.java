@@ -1,6 +1,7 @@
 package com.examplatform.daily;
 
-import com.examplatform.progress.StreakService;
+import com.examplatform.progress.ProgressSaveRequest;
+import com.examplatform.progress.ProgressService;
 import com.examplatform.user.BadgeService;
 import com.examplatform.user.User;
 import org.springframework.stereotype.Service;
@@ -31,14 +32,14 @@ public class DailyChallengeService {
 
     private final DailyChallengeAttemptRepository attemptRepository;
     private final BadgeService badgeService;
-    private final StreakService streakService;
+    private final ProgressService progressService;
 
     public DailyChallengeService(DailyChallengeAttemptRepository attemptRepository,
                                  BadgeService badgeService,
-                                 StreakService streakService) {
+                                 ProgressService progressService) {
         this.attemptRepository = attemptRepository;
         this.badgeService = badgeService;
-        this.streakService = streakService;
+        this.progressService = progressService;
     }
 
     @Transactional(readOnly = true)
@@ -82,7 +83,8 @@ public class DailyChallengeService {
         attempt.setCompletedAt(now);
         attempt.setBadgeAwarded(earnedBadge);
         attemptRepository.save(attempt);
-        streakService.recordActivity(user);
+        int challengePoints = 20 + Math.round((float) score / questions.size() * 80);
+        progressService.saveProgress(user, new ProgressSaveRequest(1, "DAILY_CHALLENGE", challengePoints, 100));
         if (earnedBadge) badgeService.awardBadge(user, BADGE_CODE);
 
         return response(today, attempt);

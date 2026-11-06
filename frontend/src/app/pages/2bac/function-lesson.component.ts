@@ -113,7 +113,7 @@ export class FunctionLessonComponent {
             return;
           }
           this.feedback.set(response);
-          this.streak.recordActivity();
+          this.streak.recordProgress(1, 'FUNCTION', response.score, 10);
         },
         error: () => this.error.set('We couldn’t get feedback just now. Please try again in a moment.'),
       });

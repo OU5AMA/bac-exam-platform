@@ -27,7 +27,8 @@ import { ClassApiService, ClassSummary } from './class-api.service';
             <div class="min-w-0">
               <h3 class="font-display text-xl font-extrabold text-[#0B3B3B]">{{ info.name }}</h3>
               <p class="mt-2 text-sm text-[#4B5B5B]">{{ info.memberCount }}/{{ info.maxMembers }} students · Rank #{{ info.rank }}</p>
-              <p class="mt-1 text-sm font-semibold text-[#0A6B6B]">{{ info.totalPoints }} class points</p>
+              <p class="mt-1 text-sm font-semibold text-[#0A6B6B]">Avg. {{ info.averagePoints }} pts/student</p>
+              <p class="mt-1 text-xs text-[#667575]">{{ info.totalPoints }} total class points</p>
               <p class="mt-3 text-xs font-semibold uppercase tracking-wide text-[#667575]">Class code: <span class="select-all rounded bg-[#F1F6F3] px-2 py-1 font-mono text-sm text-[#12302F]">{{ info.joinCode }}</span></p>
             </div>
             <a routerLink="/leaderboard" class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-[#0A6B6B] px-5 text-sm font-bold text-white transition hover:bg-[#075B5B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">View class leaderboard</a>

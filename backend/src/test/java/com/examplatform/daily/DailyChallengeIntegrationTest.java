@@ -8,6 +8,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -21,6 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class DailyChallengeIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Test
     void authenticatedStudentCanStartAndSubmitTodaysChallengeOnce() throws Exception {
@@ -69,5 +73,13 @@ class DailyChallengeIntegrationTest {
         mockMvc.perform(get("/api/challenges/daily").cookie(accessCookie))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.completedAt").isNotEmpty());
+
+        Integer progressRows = jdbcTemplate.queryForObject("""
+                SELECT COUNT(*) FROM user_progress up
+                JOIN users u ON u.id = up.user_id
+                WHERE u.email = 'challenge@example.com' AND up.skill = 'DAILY_CHALLENGE'
+                  AND up.score = 20 AND up.max_score = 100
+                """, Integer.class);
+        org.junit.jupiter.api.Assertions.assertEquals(1, progressRows);
     }
 }

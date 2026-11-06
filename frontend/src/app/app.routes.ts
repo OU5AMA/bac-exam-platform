@@ -1,7 +1,19 @@
-import { Routes } from '@angular/router';
+import { Routes, UrlMatcher, UrlSegment } from '@angular/router';
 
 import { authGuard } from './auth/auth.guard';
 import { ShellComponent } from './shell/shell.component';
+
+const legacyCrosswordMatcher = (segments: UrlSegment[], page: 'crosswords' | 'crossword') => {
+  const unitId = segments[2]?.path.match(/^unit-(\d+)$/)?.[1];
+  if (
+    segments.length !== 5 || segments[0].path !== '2-bac' || segments[1].path !== 'exercices' ||
+    !unitId || segments[3].path !== 'vocabulary' || segments[4].path !== page
+  ) return null;
+  return { consumed: segments, posParams: { unitId: new UrlSegment(unitId, {}) } };
+};
+
+const legacyCrosswordListMatcher: UrlMatcher = (segments) => legacyCrosswordMatcher(segments, 'crosswords');
+const legacyCrosswordPuzzleMatcher: UrlMatcher = (segments) => legacyCrosswordMatcher(segments, 'crossword');
 
 export const routes: Routes = [
   {
@@ -52,6 +64,31 @@ export const routes: Routes = [
     title: 'Unit · 2 Bac · 9issemi',
   },
   {
+    path: '2-bac/unit/:unitId/:skill/lesson',
+    loadComponent: () => import('./pages/2bac/skill-lesson.component').then((m) => m.SkillLessonComponent),
+    title: 'Skill Lesson · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/:skill/exercises',
+    loadComponent: () => import('./pages/2bac/exercise-type-chooser.component').then((m) => m.ExerciseTypeChooserComponent),
+    title: 'Choose an Exercise · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/vocabulary/exercises/crosswords/puzzle',
+    loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
+    title: 'Crossword · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/vocabulary/exercises/crosswords',
+    loadComponent: () => import('./exercises/crossword/crossword-list.component').then((m) => m.CrosswordListComponent),
+    title: 'Crosswords · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/:skill/exercises/:type',
+    loadComponent: () => import('./pages/2bac/exercise-type-page.component').then((m) => m.ExerciseTypePageComponent),
+    title: 'Exercise · 9issemi',
+  },
+  {
     path: '2-bac/national-exam',
     loadComponent: () => import('./pages/2bac/national-exam.component').then((m) => m.NationalExamComponent),
     title: 'National Exam Prep · 9issemi',
@@ -66,16 +103,8 @@ export const routes: Routes = [
     loadComponent: () => import('./reading/reading-exam.component').then((m) => m.ReadingExamComponent),
     title: 'Reading Exam · 2 Bac · 9issemi',
   },
-  {
-    path: '2-bac/exercices/unit-1/vocabulary/crosswords',
-    loadComponent: () => import('./exercises/crossword/crossword-list.component').then((m) => m.CrosswordListComponent),
-    title: 'Crosswords · Unit 1 · 9issemi',
-  },
-  {
-    path: '2-bac/exercices/unit-1/vocabulary/crossword',
-    loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
-    title: 'Crossword · Unit 1 · 9issemi',
-  },
+  { matcher: legacyCrosswordListMatcher, redirectTo: '/2-bac/unit/:unitId/vocabulary/exercises/crosswords' },
+  { matcher: legacyCrosswordPuzzleMatcher, redirectTo: '/2-bac/unit/:unitId/vocabulary/exercises/crosswords/puzzle' },
   {
     path: '',
     component: ShellComponent,

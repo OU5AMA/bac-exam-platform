@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
@@ -7,7 +8,7 @@ import { ClassApiService, ClassLeaderboardEntry } from '../../classes/class-api.
 @Component({
   selector: 'app-leaderboard',
   standalone: true,
-  imports: [RouterLink],
+  imports: [DecimalPipe, RouterLink],
   template: `
     <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
       <a routerLink="/dashboard" class="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-[#0A6B6B] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">← Back to dashboard</a>
@@ -41,8 +42,9 @@ import { ClassApiService, ClassLeaderboardEntry } from '../../classes/class-api.
                 <p class="mt-2 text-xs font-extrabold uppercase tracking-[0.16em]">Rank {{ entry.rank }}</p>
                 @if (entry.currentClass) { <span class="mt-2 rounded-full bg-white/80 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-[#075B5B]">Your class</span> }
                 <h2 class="mt-2 break-words text-lg font-extrabold leading-tight">{{ entry.name }}</h2>
-                <p class="mt-3 text-2xl font-extrabold tabular-nums">{{ entry.totalPoints }}</p>
-                <p class="text-xs font-semibold opacity-80">points · {{ entry.memberCount }} students</p>
+                <p class="mt-3 text-2xl font-extrabold tabular-nums">{{ entry.averagePoints | number:'1.0-2' }}</p>
+                <p class="text-xs font-semibold opacity-80">avg pts/student · {{ entry.totalPoints | number:'1.0-2' }} total</p>
+                <p class="text-xs font-semibold opacity-80">{{ entry.memberCount }} students</p>
               </article>
             }
           </section>
@@ -60,9 +62,9 @@ import { ClassApiService, ClassLeaderboardEntry } from '../../classes/class-api.
                   <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F1F6F3] text-sm font-extrabold text-[#365553]">{{ entry.rank }}</span>
                   <div class="min-w-0 flex-1">
                     <p class="truncate font-bold text-[#12302F]">{{ entry.name }} @if (entry.currentClass) { <span class="ml-1 rounded-full bg-[#E0F2E9] px-2 py-1 text-[10px] font-extrabold uppercase tracking-wide text-[#17633D]">Your class</span> }</p>
-                    <p class="mt-1 text-xs text-[#667575]">{{ entry.memberCount }} students</p>
+                    <p class="mt-1 text-xs text-[#667575]">Avg. {{ entry.averagePoints | number:'1.0-2' }} pts/student · {{ entry.memberCount }} students</p>
                   </div>
-                  <p class="shrink-0 text-right font-extrabold tabular-nums text-[#0B3B3B]">{{ entry.totalPoints }} <span class="block text-[10px] font-semibold uppercase tracking-wide text-[#667575]">points</span></p>
+                  <p class="shrink-0 text-right text-xs font-semibold tabular-nums text-[#667575]">{{ entry.totalPoints | number:'1.0-2' }}<span class="block text-[10px] uppercase tracking-wide">total pts</span></p>
                 </li>
               }
             }
@@ -75,7 +77,7 @@ import { ClassApiService, ClassLeaderboardEntry } from '../../classes/class-api.
             <div class="mt-3 flex items-center gap-4">
               <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white font-extrabold text-[#0A6B6B]">{{ myClassOutsideTop()?.rank }}</span>
               <div class="min-w-0 flex-1"><h2 id="your-class-heading" class="truncate font-bold text-[#12302F]">{{ myClassOutsideTop()?.name }}</h2><p class="mt-1 text-xs text-[#667575]">{{ myClassOutsideTop()?.memberCount }} students</p></div>
-              <p class="text-right font-extrabold tabular-nums text-[#0B3B3B]">{{ myClassOutsideTop()?.totalPoints }}<span class="block text-[10px] font-semibold uppercase tracking-wide text-[#667575]">points</span></p>
+              <p class="text-right font-extrabold tabular-nums text-[#0B3B3B]">{{ myClassOutsideTop()?.averagePoints | number:'1.0-2' }}<span class="block text-[10px] font-semibold uppercase tracking-wide text-[#667575]">avg pts/student</span></p>
             </div>
           </section>
         }
