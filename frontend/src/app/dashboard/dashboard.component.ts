@@ -135,6 +135,16 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
             <div class="relative mt-5 h-80 w-full sm:h-96">
               <canvas #progressChart role="img" [attr.aria-label]="currentChart() === 'timeline' ? 'Line chart titled Exam Progress, showing Reading Comprehension, Vocabulary, Grammar, Function, and Writing scores for ' + selectedTimeRangeLabel() + '.' : 'Radar chart titled Skill Mastery, showing Vocabulary, Grammar, Reading, Function, and Writing mastery percentages for ' + selectedUnitLabel() + '.'" aria-describedby="progress-chart-description"></canvas>
             </div>
+            @if (currentChart() === 'mastery' && selectedUnit() === 'all') {
+              <p class="mt-3 rounded-lg bg-[#F7F5F0] px-4 py-3 text-sm leading-6 text-[#4B5B5B]" aria-live="polite">
+                @if (trackedUnits().length) {
+                  <span class="font-semibold text-[#173E3D]">Currently tracking: </span>
+                  @for (unit of trackedUnits(); track unit; let last = $last) { Unit {{ unit }}@if (!last) {, } }
+                } @else {
+                  No progress tracked yet. Complete an exercise to start!
+                }
+              </p>
+            }
             <p id="progress-chart-description" class="sr-only">{{ currentChart() === 'timeline' ? 'Use View chart data to read exact scores for each section and time period.' : 'Use View chart data to read the exact mastery percentage for each skill.' }}</p>
             <details class="mt-4 rounded-xl border border-[#E5E7E5]">
               <summary class="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">View chart data</summary>
@@ -171,7 +181,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     return Object.values(BADGE_CATALOG).filter((badge) => earned.has(badge.code));
   });
   @ViewChild('progressChart') private readonly progressCanvas?: ElementRef<HTMLCanvasElement>;
-  protected readonly currentChart = signal<'timeline' | 'mastery'>('timeline');
+  protected readonly currentChart = signal<'timeline' | 'mastery'>('mastery');
   protected readonly selectedTimeRange = signal<TimeRange>('all');
   protected readonly selectedUnit = signal('all');
 
@@ -225,6 +235,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     '2': { Vocabulary: [76, 84], Grammar: [68, 72], Reading: [78], Function: [84, 88], Writing: [55, 65] },
     '3': { Vocabulary: [90], Grammar: [80], Reading: [82], Function: [92], Writing: [70] },
   };
+
+  protected readonly trackedUnits = computed(() => Object.entries(this.mockExerciseHistory)
+    .filter(([, unitHistory]) => Object.values(unitHistory).some((scores) => (scores?.length ?? 0) > 0))
+    .map(([unitId]) => Number(unitId))
+    .sort((first, second) => first - second));
 
   protected readonly masterySkills = computed(() => (['Vocabulary', 'Grammar', 'Reading', 'Function', 'Writing'] as MasterySkill[]).map((label) => ({
     label,
