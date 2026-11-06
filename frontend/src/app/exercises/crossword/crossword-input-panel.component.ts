@@ -73,6 +73,11 @@ export class CrosswordInputPanelComponent implements OnChanges {
     if (word) this.confirmed.emit({ word, answer: this.answer() });
   }
 
+  fillAnswer(answer: string): void {
+    this.answer.set(answer.toUpperCase());
+    this.confirm();
+  }
+
   focusInput(): void {
     this.answerInput?.nativeElement.focus();
   }

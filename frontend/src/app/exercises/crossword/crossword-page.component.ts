@@ -66,13 +66,41 @@ import { Crossword, PlacedWord } from './crossword.model';
                 }
               </app-crossword-grid>
             </div>
-            <app-crossword-clues
-              class="block min-w-0"
-              [crossword]="puzzle"
-              [placedWords]="placedWords()"
-              [selectedWord]="selectedWord()"
-              (clueSelected)="selectWord($event)"
-            />
+            <aside class="min-w-0">
+              <app-crossword-clues
+                class="block min-w-0"
+                [crossword]="puzzle"
+                [placedWords]="placedWords()"
+                [selectedWord]="selectedWord()"
+                (clueSelected)="selectWord($event)"
+              />
+              <section class="mt-6 rounded-lg border border-[#E5E7E5] bg-white p-4 sm:p-6" aria-labelledby="word-bank-title">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 id="word-bank-title" class="font-display text-xl font-bold text-[#0B3B3B]">Word Bank</h2>
+                  <span class="text-sm text-[#536363]">{{ wordBank().length }} words</span>
+                </div>
+                <p class="mt-2 text-sm leading-5 text-[#536363]" aria-live="polite">
+                  @if (selectedWord(); as word) {
+                    Choose a {{ word.length }}-letter answer for {{ word.number }} {{ word.direction }}.
+                  } @else {
+                    Select a clue or grid cell to choose an answer.
+                  }
+                </p>
+                <ul class="mt-4 flex flex-wrap gap-2" aria-label="Available crossword answers">
+                  @for (answer of wordBank(); track answer) {
+                    <li>
+                      <button
+                        type="button"
+                        class="min-h-11 rounded-full border border-[#B8D7D0] bg-[#E8F2F0] px-4 py-2 text-sm font-bold tracking-wide text-[#084F4F] transition-colors hover:bg-[#D6EAE5] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B] disabled:cursor-not-allowed disabled:opacity-50"
+                        [disabled]="!selectedWord() || selectedWord()?.length !== answer.length"
+                        [attr.aria-label]="answer + ', ' + answer.length + ' letters'"
+                        (click)="chooseBankWord(answer)"
+                      >{{ answer }}</button>
+                    </li>
+                  }
+                </ul>
+              </section>
+            </aside>
           </div>
         } @else if (loading()) {
           <p class="mt-8" role="status">Loading crossword…</p>
@@ -96,6 +124,7 @@ export class CrosswordPageComponent {
   readonly revealedCells = signal<Set<string>>(new Set());
   readonly lengthMismatch = signal<string | null>(null);
   readonly checkedCells = signal<Map<string, 'correct' | 'wrong'>>(new Map());
+  readonly wordBank = computed(() => [...new Set((this.crossword()?.words ?? []).map(({ answer }) => answer.toUpperCase()))].sort((a, b) => a.localeCompare(b)));
   readonly checkMessage = signal<string | null>(null);
   readonly answersChecked = signal(false);
   readonly placedWords = computed(() => {
@@ -190,6 +219,12 @@ export class CrosswordPageComponent {
     event.word.cells.forEach((cell, index) => letters.set(`${cell.row},${cell.col}`, answer[index]));
     this.filledLetters.set(letters);
     this.lengthMismatch.set(null);
+  }
+
+  chooseBankWord(answer: string): void {
+    const word = this.selectedWord();
+    if (!word || answer.length !== word.length) return;
+    this.inputPanel?.fillAnswer(answer);
   }
 
   requestClue(word: PlacedWord): void {
