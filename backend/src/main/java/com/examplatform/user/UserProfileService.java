@@ -41,6 +41,13 @@ public class UserProfileService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public User updateDisplayName(String displayName) {
+        User user = currentUserService.getCurrentUser();
+        user.setDisplayName(displayName.trim());
+        return userRepository.save(user);
+    }
+
     private byte[] decodeAndValidate(String imageBase64) {
         if (imageBase64 == null) {
             throw invalidImage();
