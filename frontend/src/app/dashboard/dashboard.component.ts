@@ -3,6 +3,7 @@ import Chart from 'chart.js/auto';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
+import { DailyChallengeComponent } from './daily-challenge.component';
 
 type TimeRange = 'week' | 'month' | 'all';
 type MasterySkill = 'Vocabulary' | 'Grammar' | 'Reading' | 'Function' | 'Writing';
@@ -32,6 +33,7 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
   GRAMMAR_GURU: { code: 'GRAMMAR_GURU', title: 'Grammar Guru', description: 'Scored 100% on a grammar exercise.', icon: '✓', background: '#E8F0FE', foreground: '#174EA6' },
   VOCAB_MASTER: { code: 'VOCAB_MASTER', title: 'Vocab Master', description: 'Completed three vocabulary crosswords.', icon: 'Aa', background: '#E6F4F1', foreground: '#0B6255' },
   OPINION_EXPERT: { code: 'OPINION_EXPERT', title: 'Opinion Expert', description: 'Earned a perfect score in Function practice.', icon: '✦', background: '#FFF0D5', foreground: '#8A4B08' },
+  DAILY_CHALLENGE: { code: 'DAILY_CHALLENGE', title: 'Daily Challenger', description: 'Beat the clock with a perfect score in a daily challenge.', icon: '⏱', background: '#FFF0D5', foreground: '#71420C' },
   READING_PRO: { code: 'READING_PRO', title: 'Reading Pro', description: 'Scored 100% on a reading exercise.', icon: '▤', background: '#E8F5E9', foreground: '#1B5E20' },
   WRITING_STAR: { code: 'WRITING_STAR', title: 'Writing Star', description: 'Scored 100% on a writing task.', icon: '✍', background: '#FCE8E6', foreground: '#A50E0E' },
 };
@@ -39,6 +41,7 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+  imports: [DailyChallengeComponent],
   template: `
     <section aria-labelledby="dashboard-title">
       @if (auth.currentUser(); as user) {
@@ -104,6 +107,8 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
             <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-4xl" aria-hidden="true">🔥</div>
           </div>
         </article>
+
+        <app-daily-challenge />
 
         <section aria-labelledby="achievements-heading" class="mt-8">
           <div>
