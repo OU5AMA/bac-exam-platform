@@ -12,6 +12,7 @@ type MasterySkill = 'Vocabulary' | 'Grammar' | 'Reading' | 'Function' | 'Writing
 type TimelineDataset = { label: string; data: number[]; color: string };
 type TimelineRangeData = { labels: string[]; datasets: TimelineDataset[] };
 type BadgeDisplay = { code: string; title: string; description: string; icon: string; background: string; foreground: string };
+type PointsSummary = { individualPoints: number; className: string | null; classPoints: number | null };
 
 const TIMELINE_SERIES = [
   { label: 'Reading Comprehension', color: '#16A34A' },
@@ -60,7 +61,8 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
           </div>
         }
 
-        <article aria-labelledby="streak-heading" class="mb-8 overflow-hidden rounded-2xl bg-[#0B3B3B] p-6 text-white shadow-sm sm:p-8">
+        <div class="mb-8 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(16rem,1fr)]">
+        <article aria-labelledby="streak-heading" class="overflow-hidden rounded-2xl bg-[#0B3B3B] p-6 text-white shadow-sm sm:p-8">
           <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#F5C56D]">Keep your momentum</p>
@@ -77,6 +79,24 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
             <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-4xl" aria-hidden="true">🔥</div>
           </div>
         </article>
+        <article aria-labelledby="points-heading" class="relative flex min-h-48 flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-[#F5A623] to-[#D97706] p-6 text-[#2E2718] shadow-sm sm:p-8">
+          <div class="relative z-10">
+            <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-[#563800]">Your rewards</p>
+            <h2 id="points-heading" class="font-display mt-2 text-lg font-bold">⭐ Your Points</h2>
+            @if (pointsLoading()) {
+              <p class="mt-2 text-sm font-semibold" role="status">Loading your points…</p>
+            } @else if (pointsError()) {
+              <p class="mt-2 text-sm font-semibold" role="status">Points are temporarily unavailable.</p>
+            } @else {
+              <p class="mt-1 text-4xl font-extrabold tabular-nums sm:text-5xl">{{ pointsSummary()?.individualPoints ?? 0 }}</p>
+              @if (pointsSummary()?.className && pointsSummary()?.classPoints !== null) {
+                <p class="mt-3 text-sm font-bold">Class {{ pointsSummary()?.className }}: {{ pointsSummary()?.classPoints }} pts</p>
+              }
+            }
+          </div>
+          <span class="pointer-events-none absolute -bottom-6 -right-2 text-8xl opacity-15" aria-hidden="true">⭐</span>
+        </article>
+        </div>
 
         <app-daily-challenge />
 
@@ -166,6 +186,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   protected readonly dashboardDataLoading = signal(true);
   protected readonly dashboardLoadingMessage = signal(randomLoadingMessage());
   protected readonly dashboardSummary = signal<{ currentStreak: number; streakFreezes: number } | null>(null);
+  protected readonly pointsSummary = signal<PointsSummary | null>(null);
+  protected readonly pointsLoading = signal(true);
+  protected readonly pointsError = signal(false);
   protected readonly earnedBadges = computed(() => {
     const earned = new Set((this.auth.currentUser()?.badges ?? '').split(',').map((badge) => badge.trim()).filter(Boolean));
     return Object.values(BADGE_CATALOG).filter((badge) => earned.has(badge.code));
@@ -239,6 +262,12 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       .subscribe({
         next: (summary) => this.dashboardSummary.set(summary),
         error: () => this.dashboardSummary.set(null),
+      });
+    this.http.get<PointsSummary>('/api/progress/points')
+      .pipe(finalize(() => this.pointsLoading.set(false)))
+      .subscribe({
+        next: (summary) => this.pointsSummary.set(summary),
+        error: () => this.pointsError.set(true),
       });
   }
 

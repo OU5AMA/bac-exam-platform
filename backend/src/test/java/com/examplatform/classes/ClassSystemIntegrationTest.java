@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -47,6 +48,25 @@ class ClassSystemIntegrationTest {
                         .content("{\"unitNumber\":1,\"skill\":\"VOCABULARY\",\"score\":8,\"maxScore\":10}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.score").value(8));
+
+        mockMvc.perform(get("/api/progress/points").cookie(member))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.individualPoints").value(8))
+                .andExpect(jsonPath("$.className").value("2Bac SM-A"))
+                .andExpect(jsonPath("$.classPoints").value(8));
+
+        mockMvc.perform(get("/api/progress/points").cookie(owner))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.individualPoints").value(0))
+                .andExpect(jsonPath("$.className").value("2Bac SM-A"))
+                .andExpect(jsonPath("$.classPoints").value(8));
+
+        Cookie ungrouped = registerAndLogin("classvisitor");
+        mockMvc.perform(get("/api/progress/points").cookie(ungrouped))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.individualPoints").value(0))
+                .andExpect(jsonPath("$.className").value(nullValue()))
+                .andExpect(jsonPath("$.classPoints").value(nullValue()));
 
         mockMvc.perform(get("/api/classes/leaderboard").cookie(owner))
                 .andExpect(status().isOk())

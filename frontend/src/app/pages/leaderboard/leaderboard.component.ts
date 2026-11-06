@@ -33,6 +33,13 @@ import { ClassApiService, ClassLeaderboardEntry } from '../../classes/class-api.
           <a routerLink="/dashboard" class="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-[#0A6B6B] px-5 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Go to My Class</a>
         </section>
       } @else {
+        @if (myClass(); as ownClass) {
+          <section aria-label="Your class points" class="mt-8 flex flex-col gap-2 rounded-2xl border border-[#F1C35B] bg-gradient-to-r from-[#FFF7DD] to-[#FFE9B3] p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div><p class="text-xs font-extrabold uppercase tracking-[0.16em] text-[#79530A]">Your class total</p><h2 class="font-display mt-1 break-words text-xl font-extrabold text-[#3E300E]">{{ ownClass.name }}</h2></div>
+            <p class="text-3xl font-extrabold tabular-nums text-[#5B410A] sm:text-4xl">{{ ownClass.totalPoints }} <span class="text-base font-bold">Points</span></p>
+          </section>
+        }
+
         @if (topThree().length) {
           <section aria-label="Top three classes" class="mt-8 grid items-end gap-3 sm:grid-cols-3 sm:gap-4">
             @for (entry of topThree(); track entry.id) {

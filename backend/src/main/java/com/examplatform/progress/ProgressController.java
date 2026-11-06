@@ -19,16 +19,23 @@ public class ProgressController {
     private final CurrentUserService currentUserService;
     private final StreakService streakService;
     private final ProgressService progressService;
+    private final PointsService pointsService;
 
-    public ProgressController(CurrentUserService currentUserService, StreakService streakService, ProgressService progressService) {
+    public ProgressController(CurrentUserService currentUserService, StreakService streakService, ProgressService progressService, PointsService pointsService) {
         this.currentUserService = currentUserService;
         this.streakService = streakService;
         this.progressService = progressService;
+        this.pointsService = pointsService;
     }
 
     @GetMapping("/dashboard")
     public StreakDashboardResponse dashboard() {
         return StreakDashboardResponse.from(currentUserService.getCurrentUser());
+    }
+
+    @GetMapping("/points")
+    public PointsResponse points() {
+        return pointsService.getPoints(currentUserService.getCurrentUser());
     }
 
     @PostMapping("/activity")
