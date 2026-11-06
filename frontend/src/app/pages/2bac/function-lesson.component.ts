@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { StreakService } from '../../auth/streak.service';
+import { randomLoadingMessage } from '../../shared/loading-messages';
 
 interface OpinionFeedback {
   annotatedText: string;
@@ -60,7 +61,7 @@ interface OpinionFeedback {
           <div class="mt-2 flex flex-wrap justify-between gap-2 text-sm text-[#5A6967]"><p id="writing-hint">Include an opinion starter and at least one supporting reason.</p><p>{{ text.length }} / 4000</p></div>
           @if (error()) { <p class="mt-4 rounded-xl border border-[#D9958C] bg-[#FFF0ED] p-4 text-sm font-medium text-[#7B261C]" role="alert">{{ error() }}</p> }
           <button type="button" (click)="getFeedback()" [disabled]="loading() || !text.trim()" [attr.aria-busy]="loading()" class="mt-5 inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-[#0A6B6B] px-6 py-3 font-bold text-white transition hover:bg-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B] disabled:cursor-not-allowed disabled:bg-[#879794]">
-            @if (loading()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true"></span><span>Getting feedback…</span> } @else { <span>Get Feedback</span> }
+            @if (loading()) { <span class="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true"></span><span>{{ loadingMessage() }}</span> } @else { <span>Get Feedback</span> }
           </button>
         </section>
 
@@ -92,12 +93,14 @@ export class FunctionLessonComponent {
   protected readonly connectors = ['because', 'since', 'for example', 'moreover', 'therefore'];
   protected text = '';
   protected readonly loading = signal(false);
+  protected readonly loadingMessage = signal(randomLoadingMessage());
   protected readonly feedback = signal<OpinionFeedback | null>(null);
   protected readonly error = signal('');
 
   protected getFeedback(): void {
     const text = this.text.trim();
     if (!text || this.loading()) return;
+    this.loadingMessage.set(randomLoadingMessage());
     this.loading.set(true);
     this.error.set('');
     this.feedback.set(null);
