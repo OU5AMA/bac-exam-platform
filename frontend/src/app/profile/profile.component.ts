@@ -27,12 +27,25 @@ const MAX_AVATAR_DIMENSION = 300;
             <dl class="mt-5 space-y-4">
               <div>
                 <dt class="text-xs font-bold uppercase tracking-wide text-[#647171]">Display name</dt>
-                <dd class="mt-2 flex flex-col gap-3 sm:flex-row">
-                  <input id="display-name" type="text" maxlength="80" autocomplete="name" placeholder="Add a display name" [value]="displayNameDraft()" (input)="displayNameDraft.set($any($event.target).value)" [attr.aria-describedby]="displayNameError() ? 'display-name-error' : null" [attr.aria-invalid]="displayNameError() ? 'true' : null" class="min-h-11 min-w-0 flex-1 rounded-lg border border-[#C9D1CF] bg-white px-3 text-sm text-[#173E3D] focus:border-[#0A6B6B] focus:outline-none focus:ring-4 focus:ring-[#0A6B6B]/15" />
-                  <button type="button" [disabled]="savingDisplayName() || !displayNameDraft().trim() || displayNameDraft().trim() === (user.displayName ?? '')" (click)="saveDisplayName()" class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-[#0A6B6B] px-4 text-sm font-bold text-white transition-colors hover:bg-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B] disabled:cursor-not-allowed disabled:opacity-50">{{ savingDisplayName() ? 'Saving…' : 'Save name' }}</button>
+                <dd class="mt-1">
+                  <div class="flex min-h-11 items-center gap-2">
+                    <span class="break-words text-base font-semibold text-[#12302F]">{{ user.displayName || 'Add a display name' }}</span>
+                    <button type="button" [attr.aria-label]="editingDisplayName() ? 'Close display name editor' : 'Edit display name'" aria-controls="display-name-editor" [attr.aria-expanded]="editingDisplayName()" (click)="toggleDisplayNameEdit(user.displayName)" class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#0A6B6B] transition-colors hover:bg-[#E8F2F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">
+                      <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12.8 3.2 4 4M3 17l3.7-.8L16.5 6.4a1.8 1.8 0 0 0-2.6-2.6L4.1 13.6 3 17Z" /></svg>
+                    </button>
+                  </div>
+                  <div id="display-name-editor" [hidden]="!editingDisplayName()" class="mt-3">
+                    <div class="flex flex-col gap-3 sm:flex-row">
+                      <input id="display-name" type="text" maxlength="80" autocomplete="name" [value]="displayNameDraft()" (input)="displayNameDraft.set($any($event.target).value)" [attr.aria-describedby]="displayNameError() ? 'display-name-error' : null" [attr.aria-invalid]="displayNameError() ? 'true' : null" class="min-h-11 min-w-0 flex-1 rounded-lg border border-[#C9D1CF] bg-white px-3 text-sm text-[#173E3D] focus:border-[#0A6B6B] focus:outline-none focus:ring-4 focus:ring-[#0A6B6B]/15" />
+                      <div class="flex gap-2">
+                        <button type="button" [disabled]="savingDisplayName() || !displayNameDraft().trim() || displayNameDraft().trim() === (user.displayName ?? '')" (click)="saveDisplayName()" class="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#0A6B6B] px-4 text-sm font-bold text-white transition-colors hover:bg-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B] disabled:cursor-not-allowed disabled:opacity-50">{{ savingDisplayName() ? 'Saving…' : 'Save' }}</button>
+                        <button type="button" [disabled]="savingDisplayName()" (click)="cancelDisplayNameEdit(user.displayName)" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#C9D1CF] bg-white px-4 text-sm font-bold text-[#173E3D] hover:bg-[#F7F5F0] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B] disabled:opacity-50">Cancel</button>
+                      </div>
+                    </div>
+                    @if (displayNameError()) { <p id="display-name-error" class="mt-2 text-sm font-semibold text-[#A61B1B]" role="alert">{{ displayNameError() }}</p> }
+                  </div>
+                  @if (displayNameMessage()) { <p class="mt-2 text-sm font-semibold text-[#0E7A55]" role="status">{{ displayNameMessage() }}</p> }
                 </dd>
-                @if (displayNameError()) { <p id="display-name-error" class="mt-2 text-sm font-semibold text-[#A61B1B]" role="alert">{{ displayNameError() }}</p> }
-                @if (displayNameMessage()) { <p class="mt-2 text-sm font-semibold text-[#0E7A55]" role="status">{{ displayNameMessage() }}</p> }
               </div>
               <div><dt class="text-xs font-bold uppercase tracking-wide text-[#647171]">Username</dt><dd class="mt-1 break-words text-base font-semibold text-[#12302F]">@{{ user.username }}</dd></div>
               <div><dt class="text-xs font-bold uppercase tracking-wide text-[#647171]">Email</dt><dd class="mt-1 break-words text-base font-semibold text-[#12302F]">{{ user.email }}</dd></div>
@@ -98,6 +111,7 @@ export class ProfileComponent {
   protected readonly preferredLanguage = signal<PreferredLanguage>('en');
   protected readonly languageMessage = signal('');
   protected readonly displayNameDraft = signal('');
+  protected readonly editingDisplayName = signal(false);
   protected readonly savingDisplayName = signal(false);
   protected readonly displayNameMessage = signal('');
   protected readonly displayNameError = signal('');
@@ -143,9 +157,31 @@ export class ProfileComponent {
         next: () => {
           this.displayNameDraft.set(displayName);
           this.displayNameMessage.set('Display name updated.');
+          this.editingDisplayName.set(false);
         },
         error: () => this.displayNameError.set('Could not update your display name. Please try again.'),
       });
+  }
+
+  protected beginDisplayNameEdit(displayName?: string): void {
+    this.displayNameDraft.set(displayName ?? '');
+    this.displayNameError.set('');
+    this.displayNameMessage.set('');
+    this.editingDisplayName.set(true);
+  }
+
+  protected cancelDisplayNameEdit(displayName?: string): void {
+    this.displayNameDraft.set(displayName ?? '');
+    this.displayNameError.set('');
+    this.editingDisplayName.set(false);
+  }
+
+  protected toggleDisplayNameEdit(displayName?: string): void {
+    if (this.editingDisplayName()) {
+      this.cancelDisplayNameEdit(displayName);
+    } else {
+      this.beginDisplayNameEdit(displayName);
+    }
   }
 
   protected handlePictureChange(event: Event): void {
