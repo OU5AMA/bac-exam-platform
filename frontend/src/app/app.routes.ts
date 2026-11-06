@@ -86,6 +86,11 @@ export const routes: Routes = [
         title: 'Dashboard · 9issemi',
         loadComponent: () => import('./dashboard/dashboard.component').then((m) => m.DashboardComponent),
       },
+      {
+        path: 'leaderboard',
+        title: 'Class Leaderboard · 9issemi',
+        loadComponent: () => import('./pages/leaderboard/leaderboard.component').then((m) => m.LeaderboardComponent),
+      },
       // future feature routes go here
     ],
   },

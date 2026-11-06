@@ -7,6 +7,7 @@ import { AuthService } from '../auth/auth.service';
 import { AVATAR_OPTIONS, avatarName, isAvatarEmoji } from '../shared/avatar-options';
 import { randomLoadingMessage } from '../shared/loading-messages';
 import { DailyChallengeComponent } from './daily-challenge.component';
+import { ClassPanelComponent } from '../classes/class-panel.component';
 
 type TimeRange = 'week' | 'month' | 'all';
 type MasterySkill = 'Vocabulary' | 'Grammar' | 'Reading' | 'Function' | 'Writing';
@@ -44,7 +45,7 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [DailyChallengeComponent],
+  imports: [DailyChallengeComponent, ClassPanelComponent],
   template: `
     <section aria-labelledby="dashboard-title">
       @if (auth.currentUser(); as user) {
@@ -129,6 +130,8 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
         </article>
 
         <app-daily-challenge />
+
+        <app-class-panel />
 
         <section aria-labelledby="achievements-heading" class="mt-8">
           <div>
