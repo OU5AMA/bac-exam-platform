@@ -13,7 +13,9 @@ public record AuthResponse(
         List<String> roles,
         String badges,
         String profilePictureUrl,
-        AccountStatus accountStatus
+        AccountStatus accountStatus,
+        int currentStreak,
+        int streakFreezes
 ) {
     public static AuthResponse from(User user) {
         return new AuthResponse(
@@ -24,7 +26,9 @@ public record AuthResponse(
                 List.of(user.getRole().name()),
                 user.getBadges() == null ? "" : user.getBadges(),
                 user.getProfilePictureUrl(),
-                user.getAccountStatus()
+                user.getAccountStatus(),
+                user.getCurrentStreak(),
+                user.getStreakFreezes()
         );
     }
 }

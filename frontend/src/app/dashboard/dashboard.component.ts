@@ -88,6 +88,23 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
           </div>
         }
 
+        <article aria-labelledby="streak-heading" class="mb-8 overflow-hidden rounded-2xl bg-[#0B3B3B] p-6 text-white shadow-sm sm:p-8">
+          <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#F5C56D]">Keep your momentum</p>
+              <h2 id="streak-heading" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] sm:text-4xl">🔥 {{ user.currentStreak }} Day Streak!</h2>
+              <p class="mt-3 max-w-xl text-sm leading-6 text-white/85">
+                @if (user.streakFreezes > 0) {
+                  You have {{ user.streakFreezes }} Streak Freeze{{ user.streakFreezes === 1 ? '' : 's' }}. Don't lose your chain!
+                } @else {
+                  Complete an exercise every day to keep your streak alive!
+                }
+              </p>
+            </div>
+            <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-4xl" aria-hidden="true">🔥</div>
+          </div>
+        </article>
+
         <section aria-labelledby="achievements-heading" class="mt-8">
           <div>
             <p class="text-xs font-bold uppercase tracking-[0.16em] text-[#0A6B6B]">Keep building your skills</p>
