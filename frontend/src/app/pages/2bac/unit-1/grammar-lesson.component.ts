@@ -239,7 +239,7 @@ export class GrammarLessonComponent {
   protected checkQuiz(): void {
     if (!this.quizComplete() || this.quizChecked()) return;
     this.quizChecked.set(true);
-    this.streak.recordActivity();
+    this.streak.recordProgress(1, 'GRAMMAR', this.quizScore(), this.quizQuestions.length);
   }
   protected quizScore(): number { return this.quizQuestions.filter((question) => this.quizAnswers()[question.id] === question.answer).length; }
   protected resetQuiz(): void { this.quizAnswers.set({}); this.quizChecked.set(false); }
