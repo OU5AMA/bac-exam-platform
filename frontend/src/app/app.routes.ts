@@ -31,6 +31,11 @@ export const routes: Routes = [
     title: 'Grammar · Unit 1 · 9issemi',
   },
   {
+    path: '2-bac/unit/1/grammar/exercises',
+    loadComponent: () => import('./pages/2bac/unit-1/grammar-exercises.component').then((m) => m.GrammarExercisesComponent),
+    title: 'Grammar Exercises · 9issemi',
+  },
+  {
     path: '2-bac/unit/1/function',
     loadComponent: () => import('./pages/2bac/function-lesson.component').then((m) => m.FunctionLessonComponent),
     title: 'Expressing Opinion · Unit 1 · 9issemi',

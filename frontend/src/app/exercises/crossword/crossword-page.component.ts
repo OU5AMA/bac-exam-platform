@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, computed, inject, input, signal, ViewChild } from '@angular/core';
+import confetti from 'canvas-confetti';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { RouterLink } from '@angular/router';
@@ -93,6 +94,12 @@ import { exercisePath } from '../../pages/2bac/unit-skill-routes';
                     }
                   </div>
                 }
+                @if (resultMessage()) {
+                  <div class="border-t border-[#E5E7E5] p-4 sm:p-6">
+                    <p class="rounded-xl border border-[#B8D7D0] bg-[#E8F2F0] p-4 text-base font-semibold text-[#084F4F]" role="status" aria-live="polite">{{ resultMessage() }}</p>
+                    <p class="mt-2 text-sm font-bold text-[#173E3D]">You scored {{ earnedScore() }} / {{ maxEarnedScore() }} points.</p>
+                  </div>
+                }
               </app-crossword-grid>
               @if (savingProgress()) {
                 <p class="mt-3 text-sm text-[#536363]" role="status">Saving your score…</p>
@@ -169,6 +176,12 @@ export class CrosswordPageComponent {
   readonly hasUsedWordBank = signal(false);
   readonly checkMessage = signal<string | null>(null);
   readonly answersChecked = signal(false);
+  readonly resultMessage = signal('');
+  readonly earnedScore = computed(() => this.crosswordScore() * (this.hasUsedWordBank() ? 1 : 2));
+  readonly maxEarnedScore = computed(() => this.placedWords().length * 2);
+  readonly crosswordScore = computed(() => this.placedWords().filter((word) =>
+    word.cells.every((cell, index) => this.filledLetters().get(`${cell.row},${cell.col}`)?.toUpperCase() === word.answer[index].toUpperCase()),
+  ).length);
   readonly savingProgress = signal(false);
   readonly progressSaved = signal(false);
   readonly progressError = signal<string | null>(null);
@@ -225,6 +238,7 @@ export class CrosswordPageComponent {
           this.revealedCells.set(new Set());
           this.checkedCells.set(new Map());
           this.answersChecked.set(false);
+          this.resultMessage.set('');
           this.checkMessage.set(null);
           this.lengthMismatch.set(null);
           this.selectedWord.set(null);
@@ -281,6 +295,7 @@ export class CrosswordPageComponent {
     this.checkedCells.set(new Map());
     this.checkMessage.set(null);
     this.answersChecked.set(false);
+    this.resultMessage.set('');
     const answer = event.answer.trim().toUpperCase();
     if (answer.length !== event.word.answer.length) {
       this.lengthMismatch.set(`That doesn't fit — the answer has ${event.word.answer.length} letters.`);
@@ -297,6 +312,7 @@ export class CrosswordPageComponent {
     this.checkedCells.set(new Map());
     this.checkMessage.set(null);
     this.answersChecked.set(false);
+    this.resultMessage.set('');
     const firstCell = word.cells[0];
     if (!firstCell) return;
 
@@ -346,6 +362,9 @@ export class CrosswordPageComponent {
     // ProgressSaveRequest stores integer scores, so double both values to retain exact half points.
     const score = rawScore * (this.hasUsedWordBank() ? 1 : 2);
     const maxScore = words.length * 2;
+    const percentage = maxScore ? (score / maxScore) * 100 : 0;
+    this.resultMessage.set(percentage === 100 ? 'Wow! You are a true champion. Perfect score! 🏆' : percentage >= 70 ? "Great job! You're getting really good at this. Keep it up! 💪" : percentage >= 40 ? "Not bad! A quick review of the lesson and you'll ace it next time. 📚" : "Don't worry, even Shakespeare made mistakes. Try again! ✍️");
+    if (percentage >= 70) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#0A6B6B', '#F5A623', '#1565C0'] });
     const puzzle = this.crossword();
     if (puzzle) {
       const parsedUnit = Number(puzzle.id.match(/unit-(\d+)/i)?.[1] ?? 1);
