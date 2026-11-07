@@ -36,6 +36,31 @@ export const routes: Routes = [
     title: 'Grammar Exercises · 9issemi',
   },
   {
+    path: '2-bac/unit/:unitId/:skill/lesson',
+    loadComponent: () => import('./pages/2bac/skill-lesson.component').then((m) => m.SkillLessonComponent),
+    title: 'Skill Lesson · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/:skill/exercises',
+    loadComponent: () => import('./pages/2bac/exercise-type-chooser.component').then((m) => m.ExerciseTypeChooserComponent),
+    title: 'Practice · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/vocabulary/exercises/crosswords',
+    loadComponent: () => import('./exercises/crossword/crossword-list.component').then((m) => m.CrosswordListComponent),
+    title: 'Crosswords · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/vocabulary/exercises/crosswords/puzzle',
+    loadComponent: () => import('./exercises/crossword/crossword-page.component').then((m) => m.CrosswordPageComponent),
+    title: 'Crossword · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/:skill/exercises/:type',
+    loadComponent: () => import('./pages/2bac/exercise-type-page.component').then((m) => m.ExerciseTypePageComponent),
+    title: 'Practice Activity · 9issemi',
+  },
+  {
     path: '2-bac/unit/1/function',
     loadComponent: () => import('./pages/2bac/function-lesson.component').then((m) => m.FunctionLessonComponent),
     title: 'Expressing Opinion · Unit 1 · 9issemi',

@@ -62,42 +62,35 @@ const BADGE_CATALOG: Record<string, BadgeDisplay> = {
           </div>
         }
 
-        <div class="mb-8 grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(16rem,1fr)]">
-        <article aria-labelledby="streak-heading" class="overflow-hidden rounded-2xl bg-[#0B3B3B] p-6 text-white shadow-sm sm:p-8">
-          <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#F5C56D]">Keep your momentum</p>
-              <h2 id="streak-heading" class="font-display mt-2 text-3xl font-extrabold tracking-[-0.04em] sm:text-4xl">🔥 {{ dashboardSummary()?.currentStreak ?? user.currentStreak }} Day Streak!</h2>
-              <p class="mt-3 max-w-xl text-sm leading-6 text-white/85">
-                @if ((dashboardSummary()?.streakFreezes ?? user.streakFreezes) > 0) {
-                  You have {{ dashboardSummary()?.streakFreezes ?? user.streakFreezes }} Streak Freeze{{ (dashboardSummary()?.streakFreezes ?? user.streakFreezes) === 1 ? '' : 's' }}. Don't lose your chain!
-                } @else {
-                  Complete an exercise every day to keep your streak alive!
-                }
-              </p>
-              @if (dashboardDataLoading()) { <p class="mt-2 text-sm font-semibold text-white/80" role="status">{{ dashboardLoadingMessage() }}</p> }
-            </div>
-            <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-4xl" aria-hidden="true">🔥</div>
-          </div>
-        </article>
-        <article aria-labelledby="points-heading" class="relative flex min-h-48 flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-[#F5A623] to-[#D97706] p-6 text-[#2E2718] shadow-sm sm:p-8">
+        <article aria-labelledby="rewards-heading" class="relative mb-8 overflow-hidden rounded-2xl bg-[#0B3B3B] p-6 text-white shadow-sm sm:p-8">
           <div class="relative z-10">
-            <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-[#563800]">Your rewards</p>
-            <h2 id="points-heading" class="font-display mt-2 text-lg font-bold">⭐ Your Points</h2>
-            @if (pointsLoading()) {
-              <p class="mt-2 text-sm font-semibold" role="status">Loading your points…</p>
-            } @else if (pointsError()) {
-              <p class="mt-2 text-sm font-semibold" role="status">Points are temporarily unavailable.</p>
-            } @else {
-              <p class="mt-1 text-4xl font-extrabold tabular-nums sm:text-5xl">{{ pointsSummary()?.individualPoints ?? 0 }}</p>
-              @if (pointsSummary()?.className && pointsSummary()?.classPoints !== null) {
-                <p class="mt-3 text-sm font-bold">Class {{ pointsSummary()?.className }}: {{ pointsSummary()?.classPoints }} pts</p>
-              }
-            }
+            <p class="text-xs font-bold uppercase tracking-[0.18em] text-[#F5C56D]">Keep your momentum</p>
+            <h2 id="rewards-heading" class="font-display mt-2 text-lg font-bold">Your rewards and streak</h2>
+            <div class="mt-5 flex flex-col gap-5 sm:flex-row sm:items-end sm:gap-10">
+              <div>
+                <p class="text-3xl font-extrabold tabular-nums tracking-tight sm:text-4xl">⭐ {{ pointsSummary()?.individualPoints ?? 0 }} <span class="text-lg font-bold">Points</span></p>
+                @if (pointsLoading()) {
+                  <p class="mt-1 text-sm text-white/80" role="status">Loading your points…</p>
+                } @else if (pointsError()) {
+                  <p class="mt-1 text-sm text-white/80" role="status">Points are temporarily unavailable.</p>
+                }
+                @if (!pointsLoading() && !pointsError() && pointsSummary()?.className && pointsSummary()?.classPoints !== null) {
+                  <p class="mt-2 text-sm font-semibold text-white/90">Contributing to {{ pointsSummary()?.className }} ({{ pointsSummary()?.classPoints }} pts)</p>
+                }
+              </div>
+              <div class="sm:border-l sm:border-white/20 sm:pl-8">
+                <p class="text-2xl font-extrabold tracking-tight sm:text-3xl">🔥 {{ dashboardSummary()?.currentStreak ?? user.currentStreak }} Day Streak!</p>
+                @if ((dashboardSummary()?.streakFreezes ?? user.streakFreezes) > 0) {
+                  <p class="mt-2 text-sm text-white/85">You have {{ dashboardSummary()?.streakFreezes ?? user.streakFreezes }} Streak Freeze{{ (dashboardSummary()?.streakFreezes ?? user.streakFreezes) === 1 ? '' : 's' }}. Don't lose your chain!</p>
+                } @else {
+                  <p class="mt-2 text-sm text-white/85">Complete an exercise every day to keep your streak alive!</p>
+                }
+                @if (dashboardDataLoading()) { <p class="mt-2 text-sm font-semibold text-white/80" role="status">{{ dashboardLoadingMessage() }}</p> }
+              </div>
+            </div>
           </div>
-          <span class="pointer-events-none absolute -bottom-6 -right-2 text-8xl opacity-15" aria-hidden="true">⭐</span>
+          <span class="pointer-events-none absolute -bottom-8 -right-2 text-8xl opacity-10" aria-hidden="true">⭐</span>
         </article>
-        </div>
 
         <app-daily-challenge />
 

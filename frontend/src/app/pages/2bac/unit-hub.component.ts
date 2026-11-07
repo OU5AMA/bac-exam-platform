@@ -50,7 +50,7 @@ interface UnitCard {
             <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               @for (card of cards(); track card.title) {
                 <article [class]="card.featured ? 'flex min-h-64 flex-col rounded-2xl bg-gradient-to-br from-[#F5A623] to-[#C96C13] p-0 text-white shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl' : 'flex min-h-64 flex-col rounded-2xl border border-[#E5E7E5] bg-white p-0 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md'">
-                  <a [routerLink]="lessonPath(selectedUnit.id, card.skill)" [attr.aria-label]="card.title + ' lesson'" class="flex flex-1 flex-col rounded-2xl p-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
+                  <a [routerLink]="lessonCardPath(selectedUnit.id, card.skill)" [attr.aria-label]="card.title + ' lesson'" class="flex flex-1 flex-col rounded-2xl p-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
                   <div class="flex items-start justify-between gap-3">
                     <span [class]="card.featured ? 'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/30 text-2xl' : 'flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E8F2F0] text-2xl text-[#0A6B6B]'" aria-hidden="true">{{ card.icon }}</span>
                     @if (card.featured) { <span class="rounded-full bg-white/90 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#4B0082]">Featured</span> }
@@ -61,7 +61,7 @@ interface UnitCard {
                   @if (card.subtitle) { <p [class]="card.featured ? 'mt-1 text-base font-semibold text-white' : 'mt-1 text-sm font-semibold text-[#5B3FA3]'">{{ card.subtitle }}</p> }
                   <p [class]="card.featured ? 'mt-2 flex-1 text-sm leading-6 text-white' : 'mt-2 flex-1 text-sm leading-6 text-[#4B5B5B]'">{{ card.description }}</p>
                   </a>
-                  <a [routerLink]="exercisesPath(selectedUnit.id, card.skill)" class="mx-6 mb-6 inline-flex min-h-11 w-fit items-center justify-center gap-2 rounded-lg bg-[#0A6B6B] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">Practice <span aria-hidden="true">→</span></a>
+                  <a [routerLink]="practicePath(selectedUnit.id, card.skill)" class="mx-6 mb-6 inline-flex min-h-11 w-fit items-center justify-center gap-2 rounded-lg bg-[#0A6B6B] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">Practice <span aria-hidden="true">→</span></a>
                 </article>
               }
             </div>
@@ -85,8 +85,16 @@ export class UnitHubComponent {
     return courseUnit ? { ...courseUnit, ...UNIT_DATA[id] } : null;
   });
 
-  protected readonly lessonPath = lessonPath;
-  protected readonly exercisesPath = exercisesPath;
+  protected lessonCardPath(unitId: number, skill: UnitSkill): string[] {
+    if (skill === 'grammar' || skill === 'function') return ['/2-bac', 'unit', String(unitId), skill];
+    return lessonPath(unitId, skill);
+  }
+
+  protected practicePath(unitId: number, skill: UnitSkill): string[] {
+    if (skill === 'vocabulary') return ['/2-bac', 'unit', String(unitId), 'vocabulary', 'exercises', 'crosswords'];
+    if (skill === 'grammar' && unitId === 1) return ['/2-bac/unit/1/grammar/exercises'];
+    return exercisesPath(unitId, skill);
+  }
 
   protected cards(): UnitCard[] {
     return [
