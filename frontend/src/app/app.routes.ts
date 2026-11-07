@@ -1,7 +1,9 @@
-import { Routes } from '@angular/router';
+import { CanMatchFn, Routes } from '@angular/router';
 
 import { authGuard } from './auth/auth.guard';
 import { ShellComponent } from './shell/shell.component';
+
+const excludeVocabularyFromGenericLessons: CanMatchFn = (_route, segments) => segments[3]?.path !== 'vocabulary';
 
 export const routes: Routes = [
   {
@@ -48,6 +50,7 @@ export const routes: Routes = [
   },
   {
     path: '2-bac/unit/:unitId/:skill/lesson',
+    canMatch: [excludeVocabularyFromGenericLessons],
     loadComponent: () => import('./pages/2bac/skill-lesson.component').then((m) => m.SkillLessonComponent),
     title: 'Skill Lesson · 9issemi',
   },
@@ -140,5 +143,9 @@ export const routes: Routes = [
       // future feature routes go here
     ],
   },
-  { path: '**', redirectTo: 'sign-in' },
+  {
+    path: '**',
+    loadComponent: () => import('./pages/not-found.component').then((m) => m.NotFoundComponent),
+    title: 'Page Not Found · 9issemi',
+  },
 ];

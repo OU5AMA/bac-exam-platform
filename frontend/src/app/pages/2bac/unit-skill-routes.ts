@@ -3,6 +3,7 @@ export const UNIT_SKILLS = ['vocabulary', 'grammar', 'reading', 'function', 'wri
 export type UnitSkill = (typeof UNIT_SKILLS)[number];
 
 export function lessonPath(unitId: number | string, skill: UnitSkill): string[] {
+  if (skill === 'vocabulary') return ['/2-bac', 'unit', String(unitId), 'vocabulary'];
   return ['/2-bac', 'unit', String(unitId), skill, 'lesson'];
 }
 
