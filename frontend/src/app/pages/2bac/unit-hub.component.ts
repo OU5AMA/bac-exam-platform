@@ -87,6 +87,7 @@ export class UnitHubComponent {
 
   protected lessonCardPath(unitId: number, skill: UnitSkill): string[] {
     if (skill === 'grammar' || skill === 'function') return ['/2-bac', 'unit', String(unitId), skill];
+    if (skill === 'vocabulary') return ['/2-bac', 'unit', String(unitId), 'vocabulary'];
     return lessonPath(unitId, skill);
   }
 

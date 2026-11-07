@@ -26,6 +26,17 @@ export const routes: Routes = [
     title: '2 Baccalaureate · 9issemi',
   },
   {
+    path: '2-bac/unit/:unitId/vocabulary',
+    loadComponent: () => import('./pages/2bac/unit-1/vocabulary-lesson.component').then((m) => m.VocabularyLessonComponent),
+    title: 'Vocabulary · Unit 1 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/vocabulary/exercises',
+    loadComponent: () => import('./pages/2bac/unit-placeholder.component').then((m) => m.UnitPlaceholderComponent),
+    data: { title: 'Vocabulary Practice', description: 'Vocabulary practice is coming soon. Unit 1 crosswords are ready to explore.' },
+    title: 'Vocabulary Practice · 9issemi',
+  },
+  {
     path: '2-bac/unit/1/grammar',
     loadComponent: () => import('./pages/2bac/unit-1/grammar-lesson.component').then((m) => m.GrammarLessonComponent),
     title: 'Grammar · Unit 1 · 9issemi',
