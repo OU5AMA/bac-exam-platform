@@ -1,5 +1,4 @@
-import { READING_ANSWER_KEYS } from './reading.answer-keys';
-import { AssessmentResult, QuestionResult, ReadingAnswers, ReadingExam, ReadingQuestion } from './reading.models';
+import { AnswerKey, AssessmentResult, QuestionResult, ReadingAnswers, ReadingExam, ReadingQuestion } from './reading.models';
 
 const normalize = (value: string): string => value.toLocaleLowerCase().trim().replace(/[’']/g, '').replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
 function withinOneEdit(a: string, b: string): boolean {
@@ -28,14 +27,15 @@ function containsAcceptedWithMinorTypo(actual: string, expected: string): boolea
     return true;
   });
 }
-export function scoreReadingExam(exam: ReadingExam, answers: ReadingAnswers): AssessmentResult {
+export function scoreReadingExam(exam: ReadingExam, answers: ReadingAnswers, answerKeys: Record<string, AnswerKey>): AssessmentResult {
   const results: QuestionResult[] = [];
-  for (const section of exam.sections) for (const question of section.questions) results.push(scoreQuestion(question, answers));
+  for (const section of exam.sections) for (const question of section.questions) results.push(scoreQuestion(question, answers, answerKeys));
   const score = Number(results.reduce((sum, question) => sum + question.earned, 0).toFixed(2));
   return { score, total: results.reduce((sum, question) => sum + question.possible, 0), questions: results };
 }
-function scoreQuestion(question: ReadingQuestion, answers: ReadingAnswers): QuestionResult {
-  const key = READING_ANSWER_KEYS[question.id];
+function scoreQuestion(question: ReadingQuestion, answers: ReadingAnswers, answerKeys: Record<string, AnswerKey>): QuestionResult {
+  const key = answerKeys[question.id];
+  if (!key) throw new Error(`Reading answer key not found: ${question.id}`);
   const base = { questionId: question.id, possible: question.marks, expected: key.expected, feedback: key.feedback };
   const value = (answers[question.id] ?? '').trim();
   if (question.type === 'true-false-justify') {

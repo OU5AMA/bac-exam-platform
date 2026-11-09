@@ -78,6 +78,7 @@ export const routes: Routes = [
   },
   {
     path: '2-bac/unit/1/reading',
+    data: { unitNumber: 1 },
     loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
     title: 'Reading · Unit 1 · 9issemi',
   },

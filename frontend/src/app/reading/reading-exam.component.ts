@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal }
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ReadingExam, ReadingQuestion, ReadingAnswers, ReadingSection, AssessmentResult, QuestionResult } from './reading.models';
-import { readingExamBySlug } from './reading.data';
+import { loadReading, loadReadingAnswerKeys } from './reading.registry';
 import { formatCountdown, secondsRemaining } from './reading-timer';
 import { StreakService } from '../auth/streak.service';
 
@@ -14,10 +14,12 @@ const YES_NO = [{ value: 'true', label: 'True' }, { value: 'false', label: 'Fals
   selector: 'app-reading-exam', standalone: true, imports: [FormsModule, RouterLink],
   styles: [`.reading-passage { line-height: 1.85; } .reading-mode { background: #fffcf4; } dialog::backdrop { background: rgb(11 35 35 / 48%); }`],
   template: `
-    @if (exam; as task) {
+    @if (loading()) {
+      <main class="min-h-screen bg-[#F7F5F0] px-5 py-10 text-[#0B3B3B]" role="status" aria-live="polite"><div class="mx-auto max-w-2xl rounded-2xl border border-[#E5E7E5] bg-white p-7">Loading reading task…</div></main>
+    } @else if (exam; as task) {
       <main class="min-h-screen bg-[#F7F5F0] px-4 py-5 text-[#344C4B] sm:px-6 sm:py-8 lg:px-10">
         <div class="mx-auto max-w-[1440px]">
-          <a routerLink="/2-bac/reading" class="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-[#0A6B6B] hover:text-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]"><span aria-hidden="true" class="mr-2 text-lg">←</span> Back to Reading Tasks</a>
+          <a [routerLink]="listUrl" class="inline-flex min-h-11 items-center rounded-sm text-sm font-semibold text-[#0A6B6B] hover:text-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]"><span aria-hidden="true" class="mr-2 text-lg">←</span> Back to Reading Tasks</a>
           <header class="mt-4 rounded-2xl border border-[#E0E7E3] bg-white p-5 shadow-sm sm:p-7">
             <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
               <div class="min-w-0">
@@ -87,7 +89,7 @@ const YES_NO = [{ value: 'true', label: 'True' }, { value: 'false', label: 'Fals
               <div class="mt-6 flex flex-wrap gap-3">
                 <button type="button" (click)="reviewOpen.set(!reviewOpen())" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#0A6B6B] px-5 text-sm font-bold text-[#075B5B] hover:bg-[#F0F7F4] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">{{ reviewOpen() ? 'Hide Answer Review' : 'Review Answers' }}</button>
                 <button type="button" (click)="retry()" class="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#0A6B6B] px-5 text-sm font-bold text-white hover:bg-[#084F4F] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Try Again</button>
-                <a routerLink="/2-bac/reading" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#D0DAD5] px-5 text-sm font-bold text-[#173E3D] hover:bg-[#F7F8F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Back to Reading Tasks</a>
+                <a [routerLink]="listUrl" class="inline-flex min-h-11 items-center justify-center rounded-lg border border-[#D0DAD5] px-5 text-sm font-bold text-[#173E3D] hover:bg-[#F7F8F6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">Back to Reading Tasks</a>
               </div>
               @if (reviewOpen()) {
                 <div class="mt-7 space-y-4" aria-label="Question-by-question review">
@@ -174,7 +176,10 @@ export class ReadingExamComponent implements OnDestroy {
   private readonly router = inject(Router);
   private readonly streak = inject(StreakService);
   @ViewChild('confirmDialog') private confirmDialog?: ElementRef<HTMLDialogElement>;
-  protected readonly exam: ReadingExam | undefined = readingExamBySlug(this.route.snapshot.paramMap.get('slug'));
+  private examValue: ReadingExam | undefined;
+  protected get exam(): ReadingExam | undefined { return this.examValue; }
+  protected readonly loading = signal(true);
+  protected readonly listUrl = this.safeListUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
   protected readonly answers = signal<ReadingAnswers>({});
   protected readonly activeIndex = signal(0);
   protected readonly submitted = signal(false);
@@ -186,8 +191,8 @@ export class ReadingExamComponent implements OnDestroy {
   protected readonly readingMode = signal(false);
   protected readonly marked = signal<Record<string, boolean>>({});
   protected readonly dialogMode = signal<'submit' | 'discard'>('submit');
-  protected readonly fontScale = signal(this.exam?.version === 'sen' ? 1.125 : 1);
-  protected readonly countdownOptions = this.exam?.version === 'sen' ? [25, 30, 40] : [25, 30];
+  protected readonly fontScale = signal(1);
+  protected countdownOptions = [25, 30];
   protected readonly selectedDurationMinutes = signal(30);
   protected readonly timerStarted = signal(false);
   protected readonly timerHidden = signal(false);
@@ -197,14 +202,30 @@ export class ReadingExamComponent implements OnDestroy {
   private timerInterval: ReturnType<typeof setInterval> | undefined;
   protected readonly yesNo = YES_NO;
   protected readonly math = Math;
-  private readonly storageKey = this.exam ? `reading-attempt:${this.exam.slug}` : '';
+  private readonly storageKey = this.route.snapshot.paramMap.get('slug') ? `reading-attempt:${this.route.snapshot.paramMap.get('slug')}` : '';
   protected readonly flatQuestions = computed<FlatQuestion[]>(() => this.exam?.sections.flatMap((section) => section.questions.map((question) => ({ section, question }))) ?? []);
   protected readonly current = computed(() => this.flatQuestions()[this.activeIndex()] ?? null);
   protected readonly answeredCount = computed(() => this.flatQuestions().filter(({ question }) => this.isAnswered(question)).length);
   protected readonly unansweredCount = computed(() => this.flatQuestions().length - this.answeredCount());
   protected readonly answeredPercent = computed(() => this.flatQuestions().length ? this.answeredCount() / this.flatQuestions().length * 100 : 0);
 
-  constructor() { this.restoreAttempt(); this.resumeCountdown(); }
+  constructor() { this.loadExam(); }
+
+  private safeListUrl(value: string | null): string {
+    return value?.startsWith('/2-bac/unit/') && !value.startsWith('//') ? value : '/2-bac/reading';
+  }
+
+  private loadExam(): void {
+    const slug = this.route.snapshot.paramMap.get('slug');
+    if (!slug) { this.loading.set(false); return; }
+    void loadReading(slug).then((exam) => {
+      this.examValue = exam;
+      this.fontScale.set(exam.version === 'sen' ? 1.125 : 1);
+      this.countdownOptions = exam.version === 'sen' ? [25, 30, 40] : [25, 30];
+      this.restoreAttempt();
+      this.resumeCountdown();
+    }).catch(() => undefined).finally(() => this.loading.set(false));
+  }
 
   ngOnDestroy(): void { this.stopTimerInterval(); }
 
@@ -237,8 +258,11 @@ export class ReadingExamComponent implements OnDestroy {
     if (this.submitted() || this.scoring() || !this.exam) return;
     this.scoring.set(true);
     try {
-      const { scoreReadingExam } = await import('./reading.assessment');
-      const scored = scoreReadingExam(this.exam, this.answers());
+      const [assessment, answerKeys] = await Promise.all([
+        import('./reading.assessment'),
+        loadReadingAnswerKeys(this.exam.slug),
+      ]);
+      const scored = assessment.scoreReadingExam(this.exam, this.answers(), answerKeys);
       this.result.set(scored); this.submitted.set(true); this.stopTimerInterval(); this.persist(); this.closeDialog(); this.activeIndex.set(0);
       if (scored.total > 0) this.streak.recordProgress(1, 'READING', scored.score, scored.total);
     } finally { this.scoring.set(false); }
@@ -262,7 +286,7 @@ export class ReadingExamComponent implements OnDestroy {
   }
   protected discardAttempt(): void {
     if (this.storageKey) localStorage.removeItem(this.storageKey);
-    this.closeDialog(); void this.router.navigateByUrl('/2-bac/reading');
+    this.closeDialog(); void this.router.navigateByUrl(this.listUrl);
   }
   private restoreAttempt(): void {
     if (!this.storageKey || typeof localStorage === 'undefined') return;
