@@ -47,6 +47,11 @@ export const routes: Routes = [
     title: 'Grammar Exercises · 9issemi',
   },
   {
+    path: '2-bac/unit/:unitId/writing/lesson/short-story',
+    loadComponent: () => import('./pages/2bac/writing-short-story.component').then((m) => m.WritingShortStoryComponent),
+    title: 'Short Story Writing · 9issemi',
+  },
+  {
     path: '2-bac/unit/:unitId/:skill/lesson',
     loadComponent: () => import('./pages/2bac/skill-lesson.component').then((m) => m.SkillLessonComponent),
     title: 'Skill Lesson · 9issemi',

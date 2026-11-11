@@ -31,6 +31,12 @@ const LESSONS = {
             </ol>
           </section>
           <a [routerLink]="exercisesPath(unitId(), skillKey())" class="mt-8 inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#F5A623] px-5 py-3 font-bold text-[#2E2718] transition hover:bg-[#E69A18] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">Go to Practice <span aria-hidden="true">→</span></a>
+          @if (skill() === 'writing') {
+            <a [routerLink]="['/2-bac', 'unit', unitId(), 'writing', 'lesson', 'short-story']" class="mt-6 flex min-h-24 items-center justify-between gap-4 rounded-2xl border border-[#D9E8E2] bg-[#F1F8F5] p-5 transition hover:border-[#0A6B6B] hover:bg-[#E8F2F0] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
+              <span><span class="block text-xs font-bold uppercase tracking-wider text-[#0A6B6B]">New lesson</span><span class="font-display mt-1 block text-xl font-extrabold text-[#0B3B3B]">Short Story Writing</span><span class="mt-1 block text-sm text-[#4B5B5B]">Plan, order, and revise a story with a surprising moment.</span></span>
+              <span aria-hidden="true" class="text-2xl font-bold text-[#0A6B6B]">→</span>
+            </a>
+          }
         } @else {
           <section class="mt-6" role="alert"><h1 class="font-display text-2xl font-bold text-[#0B3B3B]">Lesson not found</h1><p class="mt-2">Choose one of the five skills from your unit page.</p></section>
         }
