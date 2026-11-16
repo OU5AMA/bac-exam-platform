@@ -149,13 +149,13 @@ const entries: ReadingEntry[] = [
   },
   {
     unitNumber: 8,
-    meta: { id: 'unit-8-reading-international-organisations', slug: 'unit-8-reading-international-organisations', title: 'International Organisations', level: '2BAC English', unit: 'Ticket to English 2 · Unit 8 — International Organisations', version: 'normal', versionLabel: 'Normal Version', description: 'Reading content coming soon.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    meta: { id: 'unit-8-reading-international-organisations', slug: 'unit-8-reading-international-organisations', title: 'International Organisations: Working Together for a Better World', level: '2BAC English', unit: 'Ticket to English 2 · Unit 8 — International Organisations', version: 'normal', versionLabel: 'Normal Version', description: 'Read about how international organisations support peace, cooperation and development.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
     load: async () => (await import('./unit-8/text-1')).readingExam,
     loadKeys: loadUnit8Keys,
   },
   {
     unitNumber: 8,
-    meta: { id: 'unit-8-reading-international-organisations-sen', slug: 'unit-8-reading-international-organisations-sen', title: 'International Organisations', level: '2BAC English · Adapted practice', unit: 'Unit 8 — International Organisations', version: 'sen', versionLabel: 'SEN Version', description: 'Adapted reading content coming soon.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    meta: { id: 'unit-8-reading-international-organisations-sen', slug: 'unit-8-reading-international-organisations-sen', title: 'International Organisations and Their Work', level: '2BAC English · Adapted practice', unit: 'Unit 8 — International Organisations', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about international organisations in an adapted text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-8/text-1-sen')).readingExam,
     loadKeys: loadUnit8Keys,
   },
@@ -173,13 +173,13 @@ const entries: ReadingEntry[] = [
   },
   {
     unitNumber: 10,
-    meta: { id: 'unit-10-reading-brain-drain', slug: 'unit-10-reading-brain-drain', title: 'Brain Drain', level: '2BAC English', unit: 'Ticket to English 2 · Unit 10 — Brain Drain', version: 'normal', versionLabel: 'Normal Version', description: 'Reading content coming soon.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    meta: { id: 'unit-10-reading-brain-drain', slug: 'unit-10-reading-brain-drain', title: 'Brain Drain: When Talented People Leave Their Countries', level: '2BAC English', unit: 'Ticket to English 2 · Unit 10 — Brain Drain', version: 'normal', versionLabel: 'Normal Version', description: 'Read about the causes, effects and possible responses to brain drain.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
     load: async () => (await import('./unit-10/text-1')).readingExam,
     loadKeys: loadUnit10Keys,
   },
   {
     unitNumber: 10,
-    meta: { id: 'unit-10-reading-brain-drain-sen', slug: 'unit-10-reading-brain-drain-sen', title: 'Brain Drain', level: '2BAC English · Adapted practice', unit: 'Unit 10 — Brain Drain', version: 'sen', versionLabel: 'SEN Version', description: 'Adapted reading content coming soon.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    meta: { id: 'unit-10-reading-brain-drain-sen', slug: 'unit-10-reading-brain-drain-sen', title: 'Brain Drain: Why Do Skilled People Leave?', level: '2BAC English · Adapted practice', unit: 'Unit 10 — Brain Drain', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about brain drain in an adapted text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-10/text-1-sen')).readingExam,
     loadKeys: loadUnit10Keys,
   },
