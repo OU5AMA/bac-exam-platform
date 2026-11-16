@@ -8,13 +8,13 @@ const UNIT_DATA: Record<number, { title: string; function: string }> = {
   1: { title: 'The Gifts of Youth', function: 'Expressing Opinion' },
   2: { title: 'Humour', function: 'Expressing Opinion' },
   3: { title: 'Education', function: 'Expressing Opinion' },
-  4: { title: 'Cultural Issues and Values', function: 'Expressing Opinion' },
-  5: { title: 'Citizenship', function: 'Expressing Opinion' },
-  6: { title: 'Women and Power', function: 'Expressing Opinion' },
-  7: { title: 'Science and Technology', function: 'Expressing Opinion' },
-  8: { title: 'The Media', function: 'Expressing Opinion' },
-  9: { title: 'Global Issues', function: 'Expressing Opinion' },
-  10: { title: 'Cultural Values (Review)', function: 'Expressing Opinion' },
+  4: { title: 'Sustainable Development', function: 'Expressing Opinion' },
+  5: { title: 'Women and Power', function: 'Expressing Opinion' },
+  6: { title: 'Cultural Values', function: 'Expressing Opinion' },
+  7: { title: 'Citizenship', function: 'Expressing Opinion' },
+  8: { title: 'International Organisations', function: 'Expressing Opinion' },
+  9: { title: 'Science and Technology', function: 'Expressing Opinion' },
+  10: { title: 'Brain Drain', function: 'Expressing Opinion' },
 };
 
 interface UnitCard {

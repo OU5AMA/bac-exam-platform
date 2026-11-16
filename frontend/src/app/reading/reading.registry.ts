@@ -29,6 +29,9 @@ const loadUnit2Keys = async (): Promise<Record<string, AnswerKey>> =>
 const loadUnit3Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-3/keys')).READING_ANSWER_KEYS;
 
+const loadUnit4Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-4/keys')).READING_ANSWER_KEYS;
+
 const loadUnit5Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-5/keys')).READING_ANSWER_KEYS;
 
@@ -38,8 +41,14 @@ const loadUnit6Keys = async (): Promise<Record<string, AnswerKey>> =>
 const loadUnit7Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-7/keys')).READING_ANSWER_KEYS;
 
+const loadUnit8Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-8/keys')).READING_ANSWER_KEYS;
+
 const loadUnit9Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-9/keys')).READING_ANSWER_KEYS;
+
+const loadUnit10Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-10/keys')).READING_ANSWER_KEYS;
 
 const entries: ReadingEntry[] = [
   {
@@ -91,6 +100,18 @@ const entries: ReadingEntry[] = [
     loadKeys: loadUnit3Keys,
   },
   {
+    unitNumber: 4,
+    meta: { id: 'unit-4-reading-sustainable-development', slug: 'unit-4-reading-sustainable-development', title: 'Sustainable Development', level: '2BAC English', unit: 'Ticket to English 2 · Unit 4 — Sustainable Development', version: 'normal', versionLabel: 'Normal Version', description: 'Reading content coming soon.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-4/text-1')).readingExam,
+    loadKeys: loadUnit4Keys,
+  },
+  {
+    unitNumber: 4,
+    meta: { id: 'unit-4-reading-sustainable-development-sen', slug: 'unit-4-reading-sustainable-development-sen', title: 'Sustainable Development', level: '2BAC English · Adapted practice', unit: 'Unit 4 — Sustainable Development', version: 'sen', versionLabel: 'SEN Version', description: 'Adapted reading content coming soon.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-4/text-1-sen')).readingExam,
+    loadKeys: loadUnit4Keys,
+  },
+  {
     unitNumber: 5,
     meta: { id: 'unit-5-reading-women-power', slug: 'unit-5-reading-women-power', title: 'Women: Breaking Barriers and Making a Difference', level: '2BAC English', unit: 'Ticket to English 2 · Unit 5 — Women and Power', version: 'normal', versionLabel: 'Normal Version', description: 'Read about women’s equality, empowerment, and contributions to society.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
     load: async () => (await import('./unit-5/text-1')).readingExam,
@@ -127,6 +148,18 @@ const entries: ReadingEntry[] = [
     loadKeys: loadUnit7Keys,
   },
   {
+    unitNumber: 8,
+    meta: { id: 'unit-8-reading-international-organisations', slug: 'unit-8-reading-international-organisations', title: 'International Organisations', level: '2BAC English', unit: 'Ticket to English 2 · Unit 8 — International Organisations', version: 'normal', versionLabel: 'Normal Version', description: 'Reading content coming soon.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-8/text-1')).readingExam,
+    loadKeys: loadUnit8Keys,
+  },
+  {
+    unitNumber: 8,
+    meta: { id: 'unit-8-reading-international-organisations-sen', slug: 'unit-8-reading-international-organisations-sen', title: 'International Organisations', level: '2BAC English · Adapted practice', unit: 'Unit 8 — International Organisations', version: 'sen', versionLabel: 'SEN Version', description: 'Adapted reading content coming soon.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-8/text-1-sen')).readingExam,
+    loadKeys: loadUnit8Keys,
+  },
+  {
     unitNumber: 9,
     meta: { id: 'unit-9-reading-science-technology', slug: 'unit-9-reading-science-technology', title: 'Science and Technology: Opportunities and Challenges', level: '2BAC English', unit: 'Ticket to English 2 · Unit 9 — Science and Technology', version: 'normal', versionLabel: 'Normal Version', description: 'Read about the benefits and challenges of science and technology.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
     load: async () => (await import('./unit-9/text-1')).readingExam,
@@ -137,6 +170,18 @@ const entries: ReadingEntry[] = [
     meta: { id: 'unit-9-reading-science-technology-sen', slug: 'unit-9-reading-science-technology-sen', title: 'Science and Technology in Our Lives', level: '2BAC English · Adapted practice', unit: 'Unit 9 — Science and Technology', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about science and technology in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-9/text-1-sen')).readingExam,
     loadKeys: loadUnit9Keys,
+  },
+  {
+    unitNumber: 10,
+    meta: { id: 'unit-10-reading-brain-drain', slug: 'unit-10-reading-brain-drain', title: 'Brain Drain', level: '2BAC English', unit: 'Ticket to English 2 · Unit 10 — Brain Drain', version: 'normal', versionLabel: 'Normal Version', description: 'Reading content coming soon.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-10/text-1')).readingExam,
+    loadKeys: loadUnit10Keys,
+  },
+  {
+    unitNumber: 10,
+    meta: { id: 'unit-10-reading-brain-drain-sen', slug: 'unit-10-reading-brain-drain-sen', title: 'Brain Drain', level: '2BAC English · Adapted practice', unit: 'Unit 10 — Brain Drain', version: 'sen', versionLabel: 'SEN Version', description: 'Adapted reading content coming soon.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-10/text-1-sen')).readingExam,
+    loadKeys: loadUnit10Keys,
   },
 ];
 
