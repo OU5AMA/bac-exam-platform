@@ -32,6 +32,9 @@ const loadUnit3Keys = async (): Promise<Record<string, AnswerKey>> =>
 const loadUnit4Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-4/keys')).READING_ANSWER_KEYS;
 
+const loadUnit5Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-5/keys')).READING_ANSWER_KEYS;
+
 const entries: ReadingEntry[] = [
   {
     unitNumber: 1,
@@ -92,6 +95,18 @@ const entries: ReadingEntry[] = [
     meta: { id: 'unit-4-reading-culture-sen', slug: 'unit-4-reading-culture-sen', title: 'Respecting Different Cultures', level: '2BAC English · Adapted practice', unit: 'Unit 4 — Cultural Issues and Values', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about respecting cultures in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-4/text-1-sen')).readingExam,
     loadKeys: loadUnit4Keys,
+  },
+  {
+    unitNumber: 5,
+    meta: { id: 'unit-5-reading-citizenship', slug: 'unit-5-reading-citizenship', title: 'Being a Responsible Citizen', level: '2BAC English', unit: 'Ticket to English 2 · Unit 5 — Citizenship', version: 'normal', versionLabel: 'Normal Version', description: 'Read about responsible citizenship and community participation.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-5/text-1')).readingExam,
+    loadKeys: loadUnit5Keys,
+  },
+  {
+    unitNumber: 5,
+    meta: { id: 'unit-5-reading-citizenship-sen', slug: 'unit-5-reading-citizenship-sen', title: 'A Good Citizen', level: '2BAC English · Adapted practice', unit: 'Unit 5 — Citizenship', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about good citizenship in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-5/text-1-sen')).readingExam,
+    loadKeys: loadUnit5Keys,
   },
 ];
 

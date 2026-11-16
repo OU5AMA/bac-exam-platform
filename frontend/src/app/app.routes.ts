@@ -121,6 +121,12 @@ export const routes: Routes = [
     title: 'Reading · Unit 4 · 9issemi',
   },
   {
+    path: '2-bac/unit/5/reading',
+    data: { unitNumber: 5 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 5 · 9issemi',
+  },
+  {
     path: '2-bac/unit/1/exam',
     data: { title: 'Exam Simulator', description: 'The Unit 1 exam simulator will be available here soon.' },
     loadComponent: () => import('./pages/2bac/unit-placeholder.component').then((m) => m.UnitPlaceholderComponent),
