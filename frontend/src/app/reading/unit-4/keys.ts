@@ -76,9 +76,9 @@ export const READING_ANSWER_KEYS: Record<string, AnswerKey> = {
   },
   's-b1': {
     groupsRequired: 2,
-    groups: [['pollution'], ['climate change'], ['poverty']],
-    expected: 'Pollution and climate change (poverty is also acceptable).',
-    feedback: 'The first paragraph lists pollution, poverty, and climate change as problems.',
+    groups: [['pollution'], ['climate change']],
+    expected: 'Pollution and climate change.',
+    feedback: 'The first paragraph identifies pollution and climate change as environmental problems.',
   },
   's-b2': {
     groupsRequired: 2,
