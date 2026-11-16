@@ -38,6 +38,9 @@ const loadUnit5Keys = async (): Promise<Record<string, AnswerKey>> =>
 const loadUnit6Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-6/keys')).READING_ANSWER_KEYS;
 
+const loadUnit7Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-7/keys')).READING_ANSWER_KEYS;
+
 const entries: ReadingEntry[] = [
   {
     unitNumber: 1,
@@ -122,6 +125,18 @@ const entries: ReadingEntry[] = [
     meta: { id: 'unit-6-reading-women-power-sen', slug: 'unit-6-reading-women-power-sen', title: 'Women and Equal Opportunities', level: '2BAC English · Adapted practice', unit: 'Unit 6 — Women and Power', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about women and equal opportunities in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-6/text-1-sen')).readingExam,
     loadKeys: loadUnit6Keys,
+  },
+  {
+    unitNumber: 7,
+    meta: { id: 'unit-7-reading-science-technology', slug: 'unit-7-reading-science-technology', title: 'Science and Technology: Opportunities and Challenges', level: '2BAC English', unit: 'Ticket to English 2 · Unit 7 — Science and Technology', version: 'normal', versionLabel: 'Normal Version', description: 'Read about the benefits and challenges of science and technology.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-7/text-1')).readingExam,
+    loadKeys: loadUnit7Keys,
+  },
+  {
+    unitNumber: 7,
+    meta: { id: 'unit-7-reading-science-technology-sen', slug: 'unit-7-reading-science-technology-sen', title: 'Science and Technology in Our Lives', level: '2BAC English · Adapted practice', unit: 'Unit 7 — Science and Technology', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about science and technology in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-7/text-1-sen')).readingExam,
+    loadKeys: loadUnit7Keys,
   },
 ];
 
