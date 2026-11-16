@@ -29,6 +29,9 @@ const loadUnit2Keys = async (): Promise<Record<string, AnswerKey>> =>
 const loadUnit3Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-3/keys')).READING_ANSWER_KEYS;
 
+const loadUnit4Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-4/keys')).READING_ANSWER_KEYS;
+
 const entries: ReadingEntry[] = [
   {
     unitNumber: 1,
@@ -77,6 +80,18 @@ const entries: ReadingEntry[] = [
     meta: { id: 'unit-3-reading-education-sen', slug: 'unit-3-reading-education-sen', title: 'Three Ways of Learning', level: '2BAC English · Adapted practice', unit: 'Unit 3 — Education', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about three types of education in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-3/text-1-sen')).readingExam,
     loadKeys: loadUnit3Keys,
+  },
+  {
+    unitNumber: 4,
+    meta: { id: 'unit-4-reading-culture', slug: 'unit-4-reading-culture', title: 'Understanding and Respecting Different Cultures', level: '2BAC English', unit: 'Ticket to English 2 · Unit 4 — Cultural Issues and Values', version: 'normal', versionLabel: 'Normal Version', description: 'Read about cultural diversity, respect, and inclusion.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-4/text-1')).readingExam,
+    loadKeys: loadUnit4Keys,
+  },
+  {
+    unitNumber: 4,
+    meta: { id: 'unit-4-reading-culture-sen', slug: 'unit-4-reading-culture-sen', title: 'Respecting Different Cultures', level: '2BAC English · Adapted practice', unit: 'Unit 4 — Cultural Issues and Values', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about respecting cultures in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-4/text-1-sen')).readingExam,
+    loadKeys: loadUnit4Keys,
   },
 ];
 
