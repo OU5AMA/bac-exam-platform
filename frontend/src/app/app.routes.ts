@@ -47,6 +47,26 @@ export const routes: Routes = [
     title: 'Grammar Exercises · 9issemi',
   },
   {
+    path: '2-bac/unit/:unitId/writing/lesson/short-story',
+    loadComponent: () => import('./pages/2bac/writing-short-story.component').then((m) => m.WritingShortStoryComponent),
+    title: 'Short Story Writing · 9issemi',
+  },
+  {
+    path: '2-bac/unit/:unitId/reading/exercises',
+    redirectTo: '2-bac/unit/:unitId/reading',
+    pathMatch: 'full',
+  },
+  {
+    path: '2-bac/unit/:unitId/reading/exercises/:type',
+    redirectTo: '2-bac/unit/:unitId/reading',
+    pathMatch: 'full',
+  },
+  {
+    path: '2-bac/unit/:unitId/reading/lesson',
+    redirectTo: '2-bac/unit/:unitId/reading',
+    pathMatch: 'full',
+  },
+  {
     path: '2-bac/unit/:unitId/:skill/lesson',
     loadComponent: () => import('./pages/2bac/skill-lesson.component').then((m) => m.SkillLessonComponent),
     title: 'Skill Lesson · 9issemi',
@@ -78,8 +98,45 @@ export const routes: Routes = [
   },
   {
     path: '2-bac/unit/1/reading',
+    data: { unitNumber: 1 },
     loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
     title: 'Reading · Unit 1 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/2/reading',
+    data: { unitNumber: 2 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 2 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/3/reading',
+    data: { unitNumber: 3 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 3 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/5/reading',
+    data: { unitNumber: 5 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 5 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/6/reading',
+    data: { unitNumber: 6 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 6 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/7/reading',
+    data: { unitNumber: 7 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 7 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/9/reading',
+    data: { unitNumber: 9 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 9 · 9issemi',
   },
   {
     path: '2-bac/unit/1/exam',

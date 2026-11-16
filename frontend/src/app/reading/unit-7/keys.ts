@@ -1,0 +1,25 @@
+import { AnswerKey } from '../reading.models';
+
+export const READING_ANSWER_KEYS: Record<string, AnswerKey> = {
+  'n-a1': { correctValue: 'b', expected: 'B · Being a Responsible Citizen.', feedback: 'The passage explains what it means to be a responsible citizen.' },
+  'n-b1': { accepted: ['being an active and responsible member of society respecting rights and responsibilities and helping the community', 'being an active and responsible member of society', 'respecting rights and responsibilities and helping the community'], expected: 'Being an active and responsible member of society, respecting rights and responsibilities, and helping the community.', feedback: 'Responsible citizenship includes active participation, respecting rights and responsibilities, and contributing to the community.' },
+  'n-b2': { groupsRequired: 2, groups: [['throwing rubbish in the streets', 'throwing rubbish'], ['damaging public facilities', 'damaging public property'], ['wasting water']], expected: 'Any two: throwing rubbish in the streets, damaging public facilities or wasting water.', feedback: 'These actions can negatively affect the whole community.' },
+  'n-b3': { accepted: ['by taking part in school projects and environmental campaigns', 'by joining school projects environmental campaigns and community activities', 'by taking part in school projects', 'by joining environmental campaigns'], expected: 'By taking part in school projects, environmental campaigns and community activities.', feedback: 'The passage gives school projects and environmental campaigns as ways young people can contribute.' },
+  'n-c1': { correctValue: 'false', justification: ['not only about having a nationality', 'also means being an active and responsible member of society'], expected: 'FALSE. Citizenship also means being an active and responsible member of society.', feedback: 'The first paragraph says citizenship is more than nationality or an identity card.' },
+  'n-c2': { correctValue: 'true', justification: ['express their opinions peacefully', 'respect different points of view'], expected: 'TRUE. Citizens should express their opinions peacefully and respect different points of view.', feedback: 'The fourth paragraph directly states this responsibility.' },
+  'n-d1': { accepted: ['volunteers'], expected: 'Volunteers.', feedback: 'People can volunteer in local organisations.' },
+  'n-d2': { accepted: ['solidarity'], expected: 'Solidarity.', feedback: 'The passage says these activities develop solidarity.' },
+  'n-e1': { accepted: ['volunteering in local organisations donating clothes to families in need cleaning public spaces and supporting elderly neighbours', 'volunteering donating clothes cleaning public spaces supporting elderly neighbours'], expected: 'Volunteering in local organisations, donating clothes, cleaning public spaces and supporting elderly neighbours.', feedback: '“These activities” refers to the examples of community support in paragraph 3.' },
+  'n-e2': { accepted: ['citizens'], expected: 'Citizens.', feedback: '“They” refers to citizens.' },
+
+  's-a1': { correctValue: 'a', expected: 'A · Being a good citizen.', feedback: 'The text describes what a good citizen does.' },
+  's-b1': { groupsRequired: 2, groups: [['respecting others', 'respect others'], ['following the law', 'follow the law'], ['protecting the environment', 'protect the environment']], expected: 'Respecting others and following the law; protecting the environment is also acceptable.', feedback: 'These are responsibilities described in the passage.' },
+  's-b2': { accepted: ['by helping people cleaning neighbourhoods or donating clothes', 'helping people', 'cleaning neighbourhoods', 'donating clothes', 'by giving clothes helping old people or cleaning neighbourhoods'], expected: 'By helping people, cleaning neighbourhoods or donating clothes.', feedback: 'The passage gives these examples of helping a community.' },
+  's-b3': { accepted: ['peacefully'], expected: 'Peacefully.', feedback: 'Citizens should express their opinions peacefully.' },
+  's-c1': { correctValue: 'true', expected: 'TRUE.', feedback: 'The passage says citizens should protect the environment.' },
+  's-c2': { correctValue: 'false', expected: 'FALSE.', feedback: 'The passage says citizens should respect public places, not damage public property.' },
+  's-d1': { accepted: ['neighbourhood', 'neighbourhoods'], expected: 'Neighbourhood.', feedback: 'The passage uses “neighbourhoods” for the area around our homes.' },
+  's-d2': { accepted: ['responsibilities'], expected: 'Responsibilities.', feedback: 'The first paragraph says good citizens know their rights and responsibilities.' },
+  's-e1': { accepted: ['good citizens', 'people'], expected: 'Good citizens / people.', feedback: '“They” refers to good citizens, or people.' },
+  's-e2': { accepted: ['expressing their opinions', 'to express their opinions', 'express their opinions'], expected: 'Expressing their opinions.', feedback: '“It” refers to expressing their opinions.' },
+};

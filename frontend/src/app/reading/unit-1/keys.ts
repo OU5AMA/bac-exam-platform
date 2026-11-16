@@ -1,7 +1,5 @@
-export interface AnswerKey {
-  accepted?: string[]; groups?: string[][]; groupsRequired?: number; expected: string; feedback: string;
-  correctValue?: string; justification?: string[]; allowMinorSpellingErrors?: boolean;
-}
+import { AnswerKey } from '../reading.models';
+
 // This key is separate from the student-facing question data and is never rendered in the exam UI.
 export const READING_ANSWER_KEYS: Record<string, AnswerKey> = {
   'n-a1': { accepted: ['the importance of life skills in personal development and success', 'life skills help young people develop and succeed', 'developing life skills leads to personal development and success'], expected: 'Life skills help young people develop and succeed.', feedback: 'The passage explains that gifts need to be supported by life skills to help a young person succeed.' },

@@ -184,7 +184,7 @@ export class SignInComponent {
   private onSuccess(user: AuthUser): void {
     switch (user.accountStatus) {
       case 'ACTIVE':
-        void this.router.navigate(['/dashboard']);
+        void this.router.navigateByUrl(this.safeReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl')));
         break;
       case 'PENDING_APPROVAL':
         // Credentials were correct, so this is not an error: the session exists,
@@ -199,6 +199,10 @@ export class SignInComponent {
         );
         break;
     }
+  }
+
+  private safeReturnUrl(value: string | null): string {
+    return value?.startsWith('/') && !value.startsWith('//') ? value : '/dashboard';
   }
 
   private messageFor(err: HttpErrorResponse): string {

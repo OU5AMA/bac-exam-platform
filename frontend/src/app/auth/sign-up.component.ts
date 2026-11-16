@@ -8,7 +8,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { AuthShellComponent } from './auth-shell.component';
@@ -59,7 +59,7 @@ const passwordsMatch: ValidatorFn = (group: AbstractControl): ValidationErrors |
                 </p>
               }
             }
-            <a routerLink="/sign-in" class="auth-btn mt-8 no-underline">Go to sign in</a>
+            <a routerLink="/sign-in" [queryParams]="returnUrl ? { returnUrl } : null" class="auth-btn mt-8 no-underline">Go to sign in</a>
           </div>
         } @else {
           <h1 class="font-display mt-4 text-[2rem] font-extrabold leading-tight tracking-[-0.035em] text-[#0B3B3B] sm:text-4xl">
@@ -212,7 +212,7 @@ const passwordsMatch: ValidatorFn = (group: AbstractControl): ValidationErrors |
 
           <p class="mt-8 text-center text-sm text-[#4B5B5B]">
             Already have an account?
-            <a routerLink="/sign-in" class="auth-link">Sign in</a>
+            <a routerLink="/sign-in" [queryParams]="returnUrl ? { returnUrl } : null" class="auth-link">Sign in</a>
           </p>
         }
       </div>
@@ -222,6 +222,7 @@ const passwordsMatch: ValidatorFn = (group: AbstractControl): ValidationErrors |
 export class SignUpComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
+  protected readonly returnUrl = inject(ActivatedRoute).snapshot.queryParamMap.get('returnUrl');
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   protected readonly roleOptions: { value: UserRole; label: string }[] = [

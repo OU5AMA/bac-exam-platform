@@ -11,3 +11,7 @@ export type ReadingAnswers = Record<string, string>;
 export type ResultStatus = 'correct' | 'partial' | 'incorrect' | 'unanswered' | 'review';
 export interface QuestionResult { questionId: string; earned: number; possible: number; status: ResultStatus; expected: string; feedback: string; }
 export interface AssessmentResult { score: number; total: number; questions: QuestionResult[]; }
+export interface AnswerKey {
+  accepted?: string[]; groups?: string[][]; groupsRequired?: number; expected: string; feedback: string;
+  correctValue?: string; justification?: string[]; allowMinorSpellingErrors?: boolean;
+}
