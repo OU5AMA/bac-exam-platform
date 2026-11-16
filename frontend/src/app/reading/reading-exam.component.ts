@@ -118,7 +118,7 @@ const YES_NO = [{ value: 'true', label: 'True' }, { value: 'false', label: 'Fals
                 </div>
                 @if (passageOpen()) {
                   <div class="reading-passage max-h-[55vh] overflow-y-auto p-5 sm:p-7 lg:max-h-[calc(100vh-360px)]" [class.reading-mode]="readingMode()" [style.font-size.rem]="fontScale()">
-                    @for (paragraph of task.passage; track $index) { <p class="mb-5 last:mb-0">{{ paragraph }}</p> }
+                    @for (paragraph of task.passage; track $index) { <p class="mb-5 last:mb-0" [innerHTML]="paragraph"></p> }
                   </div>
                 }
               </section>

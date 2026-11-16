@@ -7,8 +7,8 @@ export const readingExam: ReadingExam = {
     duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace',
     passage: [
       'Salma is a 17-year-old student. She believes that young people have many gifts, such as creativity, energy, and ambition. She thinks that they can use these gifts to help others.',
-      'One day, Salma decided to organize a campaign to clean her neighbourhood. At first, she was worried because she thought her classmates would not help. However, she invited her friends, and they agreed to join her.',
-      'Salma made a simple timetable and divided the tasks. Her friend Hamza designed posters to invite more students. They worked together and helped each other. Although they faced some problems, they did not give up.',
+      'One day, Salma decided to organize a campaign to clean her neighbourhood. At first, she was worried because she thought her classmates would not help. However, <strong>she</strong> invited her friends, and they agreed to join her.',
+      'Salma made a simple timetable and divided the tasks. Her friend Hamza designed posters to invite more students. <strong>They</strong> worked together and helped each other. Although they faced some problems, they did not give up.',
       'At the end of the campaign, the neighbourhood was cleaner. The students felt proud and happy. They learned important life skills, such as teamwork, responsibility, and cooperation.',
       'Salma believes that young people should take action. Even small actions can make a big difference.',
     ],

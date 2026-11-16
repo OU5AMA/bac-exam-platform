@@ -13,7 +13,7 @@ export const readingExam: ReadingExam = {
   supportLevel: 'Adapted text · flexible pace',
   passage: [
     'Humour is an important part of our lives. It makes people laugh and feel happy. We can find humour in jokes, funny stories, cartoons and comedy films. Sometimes, laughing helps us forget our problems and feel better.',
-    'Humour is also good for our health. It helps us relax and reduces stress. In some hospitals, clowns visit sick children. They tell jokes and make funny performances to make children smile and feel less afraid.',
+    'Humour is also good for our health. <strong>It</strong> helps us relax and reduces stress. In some hospitals, clowns visit sick children. <strong>They</strong> tell jokes and make funny performances to make children smile and feel less afraid.',
     'At school, humour can make lessons more enjoyable. A teacher who tells funny stories can make students feel comfortable and interested in learning. Humour can also help people make friends and build good relationships.',
     "However, some jokes can hurt people. Making fun of someone's appearance or weaknesses is not good. We should use humour to make people happy, not to make them feel sad or embarrassed.",
     'In conclusion, humour is important because it brings people together and makes life more enjoyable.',

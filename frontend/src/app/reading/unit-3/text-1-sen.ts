@@ -14,8 +14,8 @@ export const readingExam: ReadingExam = {
   passage: [
     'Education is important in our lives. It helps us learn new things and develop useful skills. However, we do not learn only at school. There are three types of education: formal, non-formal and informal education.',
     'Formal education takes place at schools, colleges and universities. Students learn different subjects such as English, mathematics and science. Teachers explain lessons and give students tests and examinations. At the end, students can get certificates or diplomas.',
-    'Non-formal education takes place outside traditional schools. It includes language courses, computer classes, workshops and sports activities. People join these activities to learn new skills. For example, someone can take a computer course to learn how to use a computer.',
-    'Informal education happens in everyday life. People learn from their parents, friends and personal experiences. For example, children can learn how to cook by watching their parents. People can also learn new words by talking to others or watching television.',
+    'Non-formal education takes place outside traditional schools. It includes language courses, computer classes, workshops and sports activities. People join <strong>these activities</strong> to learn new skills. For example, someone can take a computer course to learn how to use a computer.',
+    'Informal education happens in everyday life. People learn from their parents, friends and personal experiences. For example, children can learn how to cook by watching their parents. <strong>They</strong> can also learn new words by talking to others or watching television.',
     'All three types of education are useful. Formal education gives us knowledge, non-formal education helps us develop skills, and informal education teaches us through daily experiences.',
   ],
   sections: [
@@ -37,7 +37,7 @@ export const readingExam: ReadingExam = {
     ] },
     { id: 'e', title: 'Section E · References', instructions: 'What do the following words refer to?', questions: [
       { id: 's-e1', prompt: '“These activities” (paragraph 3).', marks: 1, type: 'short' },
-      { id: 's-e2', prompt: '“People” (paragraph 4).', marks: 1, type: 'short' },
+      { id: 's-e2', prompt: '“They” (paragraph 4).', marks: 1, type: 'short' },
     ] },
   ],
 };
