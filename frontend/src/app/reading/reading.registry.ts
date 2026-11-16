@@ -35,6 +35,9 @@ const loadUnit4Keys = async (): Promise<Record<string, AnswerKey>> =>
 const loadUnit5Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-5/keys')).READING_ANSWER_KEYS;
 
+const loadUnit6Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-6/keys')).READING_ANSWER_KEYS;
+
 const entries: ReadingEntry[] = [
   {
     unitNumber: 1,
@@ -107,6 +110,18 @@ const entries: ReadingEntry[] = [
     meta: { id: 'unit-5-reading-citizenship-sen', slug: 'unit-5-reading-citizenship-sen', title: 'A Good Citizen', level: '2BAC English · Adapted practice', unit: 'Unit 5 — Citizenship', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about good citizenship in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-5/text-1-sen')).readingExam,
     loadKeys: loadUnit5Keys,
+  },
+  {
+    unitNumber: 6,
+    meta: { id: 'unit-6-reading-women-power', slug: 'unit-6-reading-women-power', title: 'Women: Breaking Barriers and Making a Difference', level: '2BAC English', unit: 'Ticket to English 2 · Unit 6 — Women and Power', version: 'normal', versionLabel: 'Normal Version', description: 'Read about women’s equality, empowerment, and contributions to society.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-6/text-1')).readingExam,
+    loadKeys: loadUnit6Keys,
+  },
+  {
+    unitNumber: 6,
+    meta: { id: 'unit-6-reading-women-power-sen', slug: 'unit-6-reading-women-power-sen', title: 'Women and Equal Opportunities', level: '2BAC English · Adapted practice', unit: 'Unit 6 — Women and Power', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about women and equal opportunities in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-6/text-1-sen')).readingExam,
+    loadKeys: loadUnit6Keys,
   },
 ];
 
