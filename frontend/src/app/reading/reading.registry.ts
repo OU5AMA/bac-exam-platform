@@ -29,9 +29,6 @@ const loadUnit2Keys = async (): Promise<Record<string, AnswerKey>> =>
 const loadUnit3Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-3/keys')).READING_ANSWER_KEYS;
 
-const loadUnit4Keys = async (): Promise<Record<string, AnswerKey>> =>
-  (await import('./unit-4/keys')).READING_ANSWER_KEYS;
-
 const loadUnit5Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-5/keys')).READING_ANSWER_KEYS;
 
@@ -40,6 +37,9 @@ const loadUnit6Keys = async (): Promise<Record<string, AnswerKey>> =>
 
 const loadUnit7Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-7/keys')).READING_ANSWER_KEYS;
+
+const loadUnit9Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-9/keys')).READING_ANSWER_KEYS;
 
 const entries: ReadingEntry[] = [
   {
@@ -91,52 +91,52 @@ const entries: ReadingEntry[] = [
     loadKeys: loadUnit3Keys,
   },
   {
-    unitNumber: 4,
-    meta: { id: 'unit-4-reading-culture', slug: 'unit-4-reading-culture', title: 'Understanding and Respecting Different Cultures', level: '2BAC English', unit: 'Ticket to English 2 · Unit 4 — Cultural Issues and Values', version: 'normal', versionLabel: 'Normal Version', description: 'Read about cultural diversity, respect, and inclusion.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
-    load: async () => (await import('./unit-4/text-1')).readingExam,
-    loadKeys: loadUnit4Keys,
-  },
-  {
-    unitNumber: 4,
-    meta: { id: 'unit-4-reading-culture-sen', slug: 'unit-4-reading-culture-sen', title: 'Respecting Different Cultures', level: '2BAC English · Adapted practice', unit: 'Unit 4 — Cultural Issues and Values', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about respecting cultures in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
-    load: async () => (await import('./unit-4/text-1-sen')).readingExam,
-    loadKeys: loadUnit4Keys,
-  },
-  {
     unitNumber: 5,
-    meta: { id: 'unit-5-reading-citizenship', slug: 'unit-5-reading-citizenship', title: 'Being a Responsible Citizen', level: '2BAC English', unit: 'Ticket to English 2 · Unit 5 — Citizenship', version: 'normal', versionLabel: 'Normal Version', description: 'Read about responsible citizenship and community participation.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    meta: { id: 'unit-5-reading-women-power', slug: 'unit-5-reading-women-power', title: 'Women: Breaking Barriers and Making a Difference', level: '2BAC English', unit: 'Ticket to English 2 · Unit 5 — Women and Power', version: 'normal', versionLabel: 'Normal Version', description: 'Read about women’s equality, empowerment, and contributions to society.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
     load: async () => (await import('./unit-5/text-1')).readingExam,
     loadKeys: loadUnit5Keys,
   },
   {
     unitNumber: 5,
-    meta: { id: 'unit-5-reading-citizenship-sen', slug: 'unit-5-reading-citizenship-sen', title: 'A Good Citizen', level: '2BAC English · Adapted practice', unit: 'Unit 5 — Citizenship', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about good citizenship in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    meta: { id: 'unit-5-reading-women-power-sen', slug: 'unit-5-reading-women-power-sen', title: 'Women and Equal Opportunities', level: '2BAC English · Adapted practice', unit: 'Unit 5 — Women and Power', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about women and equal opportunities in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-5/text-1-sen')).readingExam,
     loadKeys: loadUnit5Keys,
   },
   {
     unitNumber: 6,
-    meta: { id: 'unit-6-reading-women-power', slug: 'unit-6-reading-women-power', title: 'Women: Breaking Barriers and Making a Difference', level: '2BAC English', unit: 'Ticket to English 2 · Unit 6 — Women and Power', version: 'normal', versionLabel: 'Normal Version', description: 'Read about women’s equality, empowerment, and contributions to society.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    meta: { id: 'unit-6-reading-culture', slug: 'unit-6-reading-culture', title: 'Understanding and Respecting Different Cultures', level: '2BAC English', unit: 'Ticket to English 2 · Unit 6 — Cultural Issues and Values', version: 'normal', versionLabel: 'Normal Version', description: 'Read about cultural diversity, respect, and inclusion.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
     load: async () => (await import('./unit-6/text-1')).readingExam,
     loadKeys: loadUnit6Keys,
   },
   {
     unitNumber: 6,
-    meta: { id: 'unit-6-reading-women-power-sen', slug: 'unit-6-reading-women-power-sen', title: 'Women and Equal Opportunities', level: '2BAC English · Adapted practice', unit: 'Unit 6 — Women and Power', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about women and equal opportunities in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    meta: { id: 'unit-6-reading-culture-sen', slug: 'unit-6-reading-culture-sen', title: 'Respecting Different Cultures', level: '2BAC English · Adapted practice', unit: 'Unit 6 — Cultural Issues and Values', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about respecting cultures in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-6/text-1-sen')).readingExam,
     loadKeys: loadUnit6Keys,
   },
   {
     unitNumber: 7,
-    meta: { id: 'unit-7-reading-science-technology', slug: 'unit-7-reading-science-technology', title: 'Science and Technology: Opportunities and Challenges', level: '2BAC English', unit: 'Ticket to English 2 · Unit 7 — Science and Technology', version: 'normal', versionLabel: 'Normal Version', description: 'Read about the benefits and challenges of science and technology.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    meta: { id: 'unit-7-reading-citizenship', slug: 'unit-7-reading-citizenship', title: 'Being a Responsible Citizen', level: '2BAC English', unit: 'Ticket to English 2 · Unit 7 — Citizenship', version: 'normal', versionLabel: 'Normal Version', description: 'Read about responsible citizenship and community participation.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
     load: async () => (await import('./unit-7/text-1')).readingExam,
     loadKeys: loadUnit7Keys,
   },
   {
     unitNumber: 7,
-    meta: { id: 'unit-7-reading-science-technology-sen', slug: 'unit-7-reading-science-technology-sen', title: 'Science and Technology in Our Lives', level: '2BAC English · Adapted practice', unit: 'Unit 7 — Science and Technology', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about science and technology in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    meta: { id: 'unit-7-reading-citizenship-sen', slug: 'unit-7-reading-citizenship-sen', title: 'A Good Citizen', level: '2BAC English · Adapted practice', unit: 'Unit 7 — Citizenship', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about good citizenship in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-7/text-1-sen')).readingExam,
     loadKeys: loadUnit7Keys,
+  },
+  {
+    unitNumber: 9,
+    meta: { id: 'unit-9-reading-science-technology', slug: 'unit-9-reading-science-technology', title: 'Science and Technology: Opportunities and Challenges', level: '2BAC English', unit: 'Ticket to English 2 · Unit 9 — Science and Technology', version: 'normal', versionLabel: 'Normal Version', description: 'Read about the benefits and challenges of science and technology.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-9/text-1')).readingExam,
+    loadKeys: loadUnit9Keys,
+  },
+  {
+    unitNumber: 9,
+    meta: { id: 'unit-9-reading-science-technology-sen', slug: 'unit-9-reading-science-technology-sen', title: 'Science and Technology in Our Lives', level: '2BAC English · Adapted practice', unit: 'Unit 9 — Science and Technology', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about science and technology in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-9/text-1-sen')).readingExam,
+    loadKeys: loadUnit9Keys,
   },
 ];
 

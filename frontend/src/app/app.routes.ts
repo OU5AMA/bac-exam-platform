@@ -115,12 +115,6 @@ export const routes: Routes = [
     title: 'Reading · Unit 3 · 9issemi',
   },
   {
-    path: '2-bac/unit/4/reading',
-    data: { unitNumber: 4 },
-    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
-    title: 'Reading · Unit 4 · 9issemi',
-  },
-  {
     path: '2-bac/unit/5/reading',
     data: { unitNumber: 5 },
     loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
@@ -137,6 +131,12 @@ export const routes: Routes = [
     data: { unitNumber: 7 },
     loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
     title: 'Reading · Unit 7 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/9/reading',
+    data: { unitNumber: 9 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 9 · 9issemi',
   },
   {
     path: '2-bac/unit/1/exam',

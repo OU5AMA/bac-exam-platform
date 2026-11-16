@@ -1,43 +1,43 @@
 import { ReadingExam } from '../reading.models';
 
 export const readingExam: ReadingExam = {
-  id: 'unit-6-reading-women-power-sen',
-  slug: 'unit-6-reading-women-power-sen',
-  title: 'Women and Equal Opportunities',
+  id: 'unit-6-reading-culture-sen',
+  slug: 'unit-6-reading-culture-sen',
+  title: 'Respecting Different Cultures',
   level: '2BAC English · Adapted practice',
-  unit: 'Unit 6 — Women and Power',
+  unit: 'Unit 6 — Cultural Issues and Values',
   version: 'sen',
   versionLabel: 'SEN Version',
-  description: 'Practise reading about women and equal opportunities in a simpler text.',
+  description: 'Practise reading about respecting cultures in a simpler text.',
   duration: '25–30 minutes · extra time may be used',
   supportLevel: 'Adapted text · flexible pace',
   passage: [
-    'Women are important members of society. They work in schools, hospitals, companies and governments. In the past, many women did not have the same opportunities as men. Some girls could not go to school, and some women could not choose their jobs.',
-    'Today, many women are successful in different fields. <strong>They</strong> become teachers, doctors, scientists and business leaders. They also take part in politics and help make important decisions. Women can achieve great things when they have equal opportunities.',
-    "However, gender inequality still exists. In some places, women earn less money than men for similar work. Some people also believe that certain jobs are only for men or only for women. <strong>These ideas</strong> are unfair and limit people's choices.",
-    "Everyone can help promote equality. Governments should protect women's rights. Schools should teach boys and girls to respect each other. Families should encourage both boys and girls to follow their dreams.",
-    'Women and men should have equal opportunities in education, work and society. When everyone is treated fairly, society becomes stronger.',
+    'Culture is part of our identity. It includes our language, food, clothes, music and traditions. People around the world have different cultures. They may eat different food, wear different clothes and celebrate different festivals. These differences make our world beautiful.',
+    "We should respect other people's cultures. For example, some people have special ways of greeting others or celebrating weddings. We should not laugh at <strong>their</strong> traditions. We should try to understand and accept them.",
+    'Sometimes, people have negative ideas about other cultures. These ideas are called stereotypes. Some people also treat others badly because of their language, religion or nationality. <strong>This</strong> is called discrimination. It is unfair and can hurt people.',
+    'Schools and families can teach children important values such as respect, tolerance and kindness. Students can learn about other cultures through festivals, classroom activities and cultural exchanges.',
+    'Different cultures make our world richer. We should accept differences and treat everyone with respect.',
   ],
   sections: [
     { id: 'a', title: 'Section A · Choose the correct answer', instructions: 'Choose the correct answer.', questions: [
-      { id: 's-a1', prompt: 'The text is about:', marks: 1, type: 'choice', options: [{ value: 'a', label: "a. Women's rights and equal opportunities" }, { value: 'b', label: 'b. The importance of travelling' }, { value: 'c', label: 'c. Different school subjects' }] },
+      { id: 's-a1', prompt: 'The text is about:', marks: 1, type: 'choice', options: [{ value: 'a', label: 'a. Different school subjects' }, { value: 'b', label: 'b. Respecting different cultures' }, { value: 'c', label: 'c. Learning foreign languages only' }] },
     ] },
     { id: 'b', title: 'Section B · Answer the questions', instructions: 'Answer the questions using information from the text.', questions: [
-      { id: 's-b1', prompt: 'Mention two jobs women do.', marks: 1, type: 'short' },
-      { id: 's-b2', prompt: 'Give one example of gender inequality from the text.', marks: 1, type: 'short' },
-      { id: 's-b3', prompt: 'What should schools teach boys and girls?', marks: 1, type: 'short' },
+      { id: 's-b1', prompt: 'Mention two things that are part of culture.', marks: 1, type: 'short' },
+      { id: 's-b2', prompt: 'What should we do when we meet people with different traditions?', marks: 1, type: 'short' },
+      { id: 's-b3', prompt: 'Who can teach children respect and tolerance?', marks: 1, type: 'short' },
     ] },
     { id: 'c', title: 'Section C · True or False', instructions: 'Choose True or False.', questions: [
-      { id: 's-c1', prompt: 'In the past, all women had the same opportunities as men.', marks: 1, type: 'true-false' },
-      { id: 's-c2', prompt: 'Families should encourage both boys and girls to follow their dreams.', marks: 1, type: 'true-false' },
+      { id: 's-c1', prompt: 'People around the world have different cultures.', marks: 1, type: 'true-false' },
+      { id: 's-c2', prompt: 'Discrimination means treating everyone fairly.', marks: 1, type: 'true-false' },
     ] },
     { id: 'd', title: 'Section D · Vocabulary', instructions: 'Find words in the text that mean the following.', questions: [
-      { id: 's-d1', prompt: 'The chance to do something.', marks: 1, type: 'short' },
-      { id: 's-d2', prompt: 'To protect or support something.', marks: 1, type: 'short' },
+      { id: 's-d1', prompt: 'The way people speak.', marks: 1, type: 'short' },
+      { id: 's-d2', prompt: 'Accepting and respecting differences.', marks: 1, type: 'short' },
     ] },
-    { id: 'e', title: 'Section E · References', instructions: 'What do the following expressions refer to?', questions: [
-      { id: 's-e1', prompt: '“They” (paragraph 2).', marks: 1, type: 'short' },
-      { id: 's-e2', prompt: '“These ideas” (paragraph 3).', marks: 1, type: 'short' },
+    { id: 'e', title: 'Section E · References', instructions: 'What do the following words refer to?', questions: [
+      { id: 's-e1', prompt: '“Their” (paragraph 2).', marks: 1, type: 'short' },
+      { id: 's-e2', prompt: '“This” (paragraph 3).', marks: 1, type: 'short' },
     ] },
   ],
 };

@@ -1,43 +1,43 @@
 import { ReadingExam } from '../reading.models';
 
 export const readingExam: ReadingExam = {
-  id: 'unit-5-reading-citizenship',
-  slug: 'unit-5-reading-citizenship',
-  title: 'Being a Responsible Citizen',
+  id: 'unit-5-reading-women-power',
+  slug: 'unit-5-reading-women-power',
+  title: 'Women: Breaking Barriers and Making a Difference',
   level: '2BAC English',
-  unit: 'Ticket to English 2 · Unit 5 — Citizenship',
+  unit: 'Ticket to English 2 · Unit 5 — Women and Power',
   version: 'normal',
   versionLabel: 'Normal Version',
-  description: 'Read about responsible citizenship and community participation.',
+  description: 'Read about women’s equality, empowerment, and contributions to society.',
   duration: '25–30 minutes',
   supportLevel: 'Standard exam practice',
   passage: [
-    'Citizenship is not only about having a nationality or carrying an identity card. It also means being an active and responsible member of society. Good citizens understand their rights, respect their responsibilities and contribute to making their communities better places to live.',
-    'One important responsibility of citizens is respecting the law and the rights of others. People should respect public property, follow traffic rules and protect the environment. For example, throwing rubbish in the streets, damaging public facilities or wasting water can negatively affect the whole community. Responsible citizens understand that their actions have consequences.',
-    'Citizenship also involves helping others and participating in community activities. People can volunteer in local organisations, donate clothes to families in need, clean public spaces or support elderly neighbours. Young people can also make a difference by taking part in school projects and environmental campaigns. <strong>These activities</strong> develop solidarity and encourage people to work together.',
-    'However, being a good citizen does not mean accepting every situation without question. Citizens should express their opinions peacefully, respect different points of view and take part in decisions that affect their communities. <strong>They</strong> should also be aware of social problems and look for positive ways to solve them.',
-    "In conclusion, building a better society is everyone's responsibility. Small actions, such as helping a neighbour, keeping streets clean or respecting others, can create positive changes. A responsible citizen does not simply ask what society can do for them, but also considers what they can do for society.",
+    'Throughout history, women have played important roles in society. They have contributed to education, science, politics, business and many other fields. However, in many parts of the world, women have faced discrimination and unequal opportunities. Some were prevented from receiving an education, choosing their careers or participating in important decisions.',
+    'Today, many women are working hard to overcome these barriers. In education, more girls are attending schools and universities. In business, women are starting companies and managing large organisations. In politics, female leaders are participating in decision-making and defending the rights of their communities. <strong>These achievements</strong> show that women can make valuable contributions when they have equal opportunities.',
+    "Despite this progress, gender inequality still exists. In some societies, women receive lower salaries than men for doing similar jobs. Others face difficulties finding employment or reaching leadership positions. In addition, traditional stereotypes sometimes suggest that certain professions are suitable only for men or only for women. <strong>Such beliefs</strong> limit people's choices and prevent societies from benefiting from everyone's abilities.",
+    "Governments, schools and families all have a role to play in promoting gender equality. Governments should protect women's rights and ensure equal opportunities. Schools should teach boys and girls to respect one another, while families should encourage children to follow their interests without judging them according to gender. Women should also have opportunities to develop their skills and participate fully in society.",
+    'In conclusion, empowering women does not mean giving them more rights than men. It means ensuring that everyone has the same opportunities to learn, work and participate in decision-making. A society that values both women and men is more likely to become fair, successful and developed.',
   ],
   sections: [
     { id: 'a', title: 'Section A · Choose the best title', instructions: 'Choose the best title for the text.', questions: [
-      { id: 'n-a1', prompt: 'Choose the best title for the text.', marks: 1, type: 'choice', options: [{ value: 'a', label: 'a. The Importance of Travelling' }, { value: 'b', label: 'b. Being a Responsible Citizen' }, { value: 'c', label: 'c. The Problems of Modern Technology' }] },
+      { id: 'n-a1', prompt: 'Choose the best title for the text.', marks: 1, type: 'choice', options: [{ value: 'a', label: 'a. The History of Education' }, { value: 'b', label: 'b. Women, Equality and Empowerment' }, { value: 'c', label: 'c. The Challenges of Modern Technology' }] },
     ] },
     { id: 'b', title: 'Section B · Answer the questions', instructions: 'Answer the questions using information from the text.', questions: [
-      { id: 'n-b1', prompt: 'What does being a responsible citizen mean?', marks: 1, type: 'short' },
-      { id: 'n-b2', prompt: 'Mention two actions that can negatively affect a community.', marks: 1, type: 'short' },
-      { id: 'n-b3', prompt: 'How can young people contribute to their communities?', marks: 1, type: 'short' },
+      { id: 'n-b1', prompt: 'Mention two fields in which women have made important contributions.', marks: 1, type: 'short' },
+      { id: 'n-b2', prompt: 'Give two examples of gender inequality mentioned in the text.', marks: 1, type: 'short' },
+      { id: 'n-b3', prompt: 'What should schools do to promote gender equality?', marks: 1, type: 'short' },
     ] },
     { id: 'c', title: 'Section C · True or False', instructions: 'Choose True or False and justify your answer from the text.', questions: [
-      { id: 'n-c1', prompt: 'Citizenship is only about having a nationality.', marks: 1, type: 'true-false-justify' },
-      { id: 'n-c2', prompt: "Citizens should express their opinions peacefully and respect others' points of view.", marks: 1, type: 'true-false-justify' },
+      { id: 'n-c1', prompt: 'Women have always enjoyed the same opportunities as men.', marks: 1, type: 'true-false-justify' },
+      { id: 'n-c2', prompt: "Gender stereotypes can limit people's choices.", marks: 1, type: 'true-false-justify' },
     ] },
     { id: 'd', title: 'Section D · Vocabulary', instructions: 'Find words or expressions in the text that mean the following.', questions: [
-      { id: 'n-d1', prompt: 'People who freely offer to help others without being paid (paragraph 3).', marks: 1, type: 'short' },
-      { id: 'n-d2', prompt: 'Working together and supporting one another (paragraph 3).', marks: 1, type: 'short' },
+      { id: 'n-d1', prompt: 'Unfair treatment of people (paragraph 1).', marks: 1, type: 'short' },
+      { id: 'n-d2', prompt: 'The process of giving someone more control, confidence or opportunities (paragraph 5).', marks: 1, type: 'short' },
     ] },
     { id: 'e', title: 'Section E · References', instructions: 'What do the following expressions refer to?', questions: [
-      { id: 'n-e1', prompt: '“These activities” (paragraph 3).', marks: 1, type: 'short' },
-      { id: 'n-e2', prompt: '“They” (paragraph 4).', marks: 1, type: 'short' },
+      { id: 'n-e1', prompt: '“These achievements” (paragraph 2).', marks: 1, type: 'short' },
+      { id: 'n-e2', prompt: '“Such beliefs” (paragraph 3).', marks: 1, type: 'short' },
     ] },
   ],
 };
