@@ -26,6 +26,9 @@ const loadUnit1Keys = async (): Promise<Record<string, AnswerKey>> =>
 const loadUnit2Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-2/keys')).READING_ANSWER_KEYS;
 
+const loadUnit3Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-3/keys')).READING_ANSWER_KEYS;
+
 const entries: ReadingEntry[] = [
   {
     unitNumber: 1,
@@ -62,6 +65,18 @@ const entries: ReadingEntry[] = [
     meta: { id: 'unit-2-reading-humour-sen', slug: 'unit-2-reading-humour-sen', title: 'Why Is Humour Important?', level: '2BAC English · Adapted practice', unit: 'Unit 2 — Humour', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading with a shorter, simpler text about humour.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-2/text-1-sen')).readingExam,
     loadKeys: loadUnit2Keys,
+  },
+  {
+    unitNumber: 3,
+    meta: { id: 'unit-3-reading-education', slug: 'unit-3-reading-education', title: 'Education Beyond the Classroom', level: '2BAC English', unit: 'Ticket to English 2 · Unit 3 — Education', version: 'normal', versionLabel: 'Normal Version', description: 'Explore formal, non-formal and informal education.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-3/text-1')).readingExam,
+    loadKeys: loadUnit3Keys,
+  },
+  {
+    unitNumber: 3,
+    meta: { id: 'unit-3-reading-education-sen', slug: 'unit-3-reading-education-sen', title: 'Three Ways of Learning', level: '2BAC English · Adapted practice', unit: 'Unit 3 — Education', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading about three types of education in a simpler text.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-3/text-1-sen')).readingExam,
+    loadKeys: loadUnit3Keys,
   },
 ];
 

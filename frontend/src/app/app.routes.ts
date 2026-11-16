@@ -52,6 +52,21 @@ export const routes: Routes = [
     title: 'Short Story Writing · 9issemi',
   },
   {
+    path: '2-bac/unit/:unitId/reading/exercises',
+    redirectTo: '2-bac/unit/:unitId/reading',
+    pathMatch: 'full',
+  },
+  {
+    path: '2-bac/unit/:unitId/reading/exercises/:type',
+    redirectTo: '2-bac/unit/:unitId/reading',
+    pathMatch: 'full',
+  },
+  {
+    path: '2-bac/unit/:unitId/reading/lesson',
+    redirectTo: '2-bac/unit/:unitId/reading',
+    pathMatch: 'full',
+  },
+  {
     path: '2-bac/unit/:unitId/:skill/lesson',
     loadComponent: () => import('./pages/2bac/skill-lesson.component').then((m) => m.SkillLessonComponent),
     title: 'Skill Lesson · 9issemi',
@@ -92,6 +107,12 @@ export const routes: Routes = [
     data: { unitNumber: 2 },
     loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
     title: 'Reading · Unit 2 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/3/reading',
+    data: { unitNumber: 3 },
+    loadComponent: () => import('./reading/reading-list.component').then((m) => m.ReadingListComponent),
+    title: 'Reading · Unit 3 · 9issemi',
   },
   {
     path: '2-bac/unit/1/exam',
