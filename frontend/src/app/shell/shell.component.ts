@@ -1,119 +1,14 @@
-import { Component, ElementRef, HostListener, ViewChild, inject, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { finalize } from 'rxjs';
-
-import { AuthService } from '../auth/auth.service';
-import { EasterEggService } from '../shared/easter-egg.service';
-import { avatarName, isAvatarEmoji } from '../shared/avatar-options';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterOutlet],
   template: `
-    <div class="min-h-screen bg-[#F7F5F0] text-[#4B5B5B]">
-      <header class="sticky top-0 z-30 border-b border-[#E5E7E5] bg-[#F7F5F0]/95 backdrop-blur">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
-          <a routerLink="/" (click)="easterEgg.registerLogoClick()" aria-label="9issemi home" class="inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
-            <img src="tiny_logo.png" alt="" class="h-10 w-auto object-contain" />
-            <span class="font-display text-xl font-extrabold tracking-[-0.04em] text-[#0B3B3B]">9issemi</span>
-          </a>
-
-          <nav aria-label="Dashboard navigation" class="hidden h-full items-center gap-7 md:flex">
-            <a routerLink="/dashboard" routerLinkActive="text-[#0A6B6B] after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-[#0A6B6B]" [routerLinkActiveOptions]="{ exact: true }" class="relative inline-flex h-full items-center text-sm font-semibold text-[#4B5B5B] transition-colors hover:text-[#0A6B6B]">Dashboard</a>
-            <a href="#" class="inline-flex h-full items-center text-sm font-medium text-[#4B5B5B] transition-colors hover:text-[#0A6B6B]">Classes</a>
-            <a href="#" class="inline-flex h-full items-center text-sm font-medium text-[#4B5B5B] transition-colors hover:text-[#0A6B6B]">Exams</a>
-            <a href="#" class="inline-flex h-full items-center text-sm font-medium text-[#4B5B5B] transition-colors hover:text-[#0A6B6B]">Progress</a>
-          </nav>
-
-          <div #menuBoundary class="relative">
-            <button
-              #menuButton
-              type="button"
-              aria-label="Open user menu"
-              aria-controls="user-menu"
-              [attr.aria-expanded]="menuOpen()"
-              (click)="menuOpen.update((open) => !open)"
-              class="inline-flex max-w-[min(48vw,20rem)] items-center gap-2 rounded-full border border-[#E5E7E5] bg-white py-1.5 pl-1.5 pr-3 text-sm font-semibold text-[#12302F] transition-colors hover:border-[#0A6B6B]/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F5A623]"
-            >
-              @if (auth.currentUser()?.profilePictureUrl; as profilePictureUrl) {
-                @if (isAvatarEmoji(profilePictureUrl)) {
-                  <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7E5] bg-[#FFF7E5] text-xl" role="img" [attr.aria-label]="avatarName(profilePictureUrl) + ' avatar'">{{ profilePictureUrl }}</span>
-                } @else {
-                  <img [src]="profilePictureUrl" [alt]="((auth.currentUser()?.displayName || auth.currentUser()?.username) ?? 'User') + ' profile picture'" class="h-8 w-8 shrink-0 rounded-full border border-[#E5E7E5] object-cover" />
-                }
-              } @else {
-                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7E5] bg-[#0A6B6B] text-sm font-bold text-white" aria-hidden="true">{{ initial() }}</span>
-              }
-              <span class="hidden truncate sm:inline">{{ auth.currentUser()?.displayName || auth.currentUser()?.username }}</span>
-              @if ((auth.currentUser()?.currentStreak ?? 0) > 0) {
-                <span class="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#FFF0D5] px-2 py-1 text-xs font-bold text-[#71420C]" [attr.aria-label]="auth.currentUser()?.currentStreak + ' day streak'">🔥 {{ auth.currentUser()?.currentStreak }}</span>
-              }
-              <svg class="h-4 w-4 shrink-0 text-[#4B5B5B]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 7.47a.75.75 0 0 1 1.06 0L10 11.19l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 8.53a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
-            </button>
-
-            @if (menuOpen()) {
-              <div id="user-menu" role="menu" aria-label="User account" class="absolute right-0 top-full z-40 mt-2 w-64 overflow-hidden rounded-xl border border-[#E5E7E5] bg-white shadow-lg shadow-[#0B3B3B]/10">
-                <div class="border-b border-[#E5E7E5] px-4 py-3">
-                  <a routerLink="/profile" role="menuitem" (click)="menuOpen.set(false)" class="block truncate rounded-sm text-sm font-semibold text-[#12302F] hover:text-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">{{ auth.currentUser()?.displayName || auth.currentUser()?.username }}</a>
-                  <p class="mt-1 text-xs font-medium text-[#4B5B5B]">{{ auth.currentUser()?.roles?.[0] ?? 'Member' }}</p>
-                </div>
-                <div class="p-2">
-                  <a routerLink="/dashboard" role="menuitem" (click)="menuOpen.set(false)" class="flex min-h-10 items-center rounded-lg px-3 text-sm font-semibold text-[#12302F] hover:bg-[#F7F5F0] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#0A6B6B]">My Dashboard</a>
-                  <button type="button" role="menuitem" (click)="signOut()" class="flex min-h-10 w-full items-center rounded-lg px-3 text-left text-sm font-semibold text-[#0A6B6B] hover:bg-[#F7F5F0] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#0A6B6B]">Sign out</button>
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      </header>
-
-      <main class="mx-auto w-full max-w-7xl px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
-        <router-outlet />
-      </main>
-      @if (easterEgg.secretFound()) {
-        <div class="fixed bottom-5 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center justify-between gap-4 rounded-2xl border border-[#F5C56D] bg-[#0B3B3B] px-5 py-4 text-white shadow-xl" role="status" aria-live="polite">
-          <p class="font-semibold">🤫 You found the secret! +50 Bonus Points!</p>
-          <button type="button" (click)="easterEgg.dismiss()" aria-label="Dismiss secret found message" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">×</button>
-        </div>
-      }
-    </div>
+    <main class="mx-auto w-full max-w-7xl px-5 py-8 text-[#4B5B5B] sm:px-8 sm:py-10 lg:px-12 lg:py-12">
+      <router-outlet />
+    </main>
   `,
 })
-export class ShellComponent {
-  protected readonly auth = inject(AuthService);
-  protected readonly easterEgg = inject(EasterEggService);
-  protected readonly isAvatarEmoji = isAvatarEmoji;
-  protected readonly avatarName = avatarName;
-  private readonly router = inject(Router);
-  protected readonly menuOpen = signal(false);
-
-  @ViewChild('menuBoundary') private menuBoundary?: ElementRef<HTMLDivElement>;
-  @ViewChild('menuButton') private menuButton?: ElementRef<HTMLButtonElement>;
-
-  protected initial(): string {
-    return this.auth.currentUser()?.username?.charAt(0).toUpperCase() || '?';
-  }
-
-  protected signOut(): void {
-    this.auth
-      .logout()
-      .pipe(finalize(() => this.menuOpen.set(false)))
-      .subscribe({ next: () => void this.router.navigate(['/sign-in']) });
-  }
-
-  @HostListener('document:click', ['$event'])
-  protected closeOnOutsideClick(event: MouseEvent): void {
-    if (!this.menuBoundary?.nativeElement.contains(event.target as Node)) {
-      this.menuOpen.set(false);
-    }
-  }
-
-  @HostListener('document:keydown.escape')
-  protected closeOnEscape(): void {
-    if (this.menuOpen()) {
-      this.menuOpen.set(false);
-      this.menuButton?.nativeElement.focus();
-    }
-  }
-}
+export class ShellComponent {}

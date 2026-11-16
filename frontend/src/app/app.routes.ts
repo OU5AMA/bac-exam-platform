@@ -47,6 +47,21 @@ export const routes: Routes = [
     title: 'Grammar Exercises · 9issemi',
   },
   {
+    path: '2-bac/unit/2/grammar',
+    loadComponent: () => import('./pages/2bac/unit-2/grammar-lesson.component').then((m) => m.Unit2GrammarLessonComponent),
+    title: 'Grammar · Unit 2 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/2/grammar/exercises/:exerciseId',
+    loadComponent: () => import('./pages/2bac/unit-2/grammar-exercise.component').then((m) => m.GrammarExerciseComponent),
+    title: 'Grammar Exercise · Unit 2 · 9issemi',
+  },
+  {
+    path: '2-bac/unit/2/grammar/exercises',
+    loadComponent: () => import('./pages/2bac/unit-2/grammar-exercise-list.component').then((m) => m.GrammarExerciseListComponent),
+    title: 'Grammar Exercises · Unit 2 · 9issemi',
+  },
+  {
     path: '2-bac/unit/:unitId/writing/lesson/short-story',
     loadComponent: () => import('./pages/2bac/writing-short-story.component').then((m) => m.WritingShortStoryComponent),
     title: 'Short Story Writing · 9issemi',
