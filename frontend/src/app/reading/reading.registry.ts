@@ -23,6 +23,9 @@ interface ReadingEntry {
 const loadUnit1Keys = async (): Promise<Record<string, AnswerKey>> =>
   (await import('./unit-1/keys')).READING_ANSWER_KEYS;
 
+const loadUnit2Keys = async (): Promise<Record<string, AnswerKey>> =>
+  (await import('./unit-2/keys')).READING_ANSWER_KEYS;
+
 const entries: ReadingEntry[] = [
   {
     unitNumber: 1,
@@ -47,6 +50,18 @@ const entries: ReadingEntry[] = [
     meta: { id: 'reading-small-actions-sen', slug: '2bac-small-actions-big-changes-sen', title: 'Small Actions, Big Changes', level: '2BAC English · Adapted practice', unit: 'Unit 1 — The Gifts of Youth', version: 'sen', versionLabel: 'SEN – Adapted Version', description: 'Practise reading comprehension with a shorter text, simpler questions, and accessible instructions.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
     load: async () => (await import('./unit-1/text-2-sen')).readingExam,
     loadKeys: loadUnit1Keys,
+  },
+  {
+    unitNumber: 2,
+    meta: { id: 'unit-2-reading-humour', slug: 'unit-2-reading-humour', title: 'Humour: More Than Just Making People Laugh', level: '2BAC English', unit: 'Ticket to English 2 · Unit 2 — Humour', version: 'normal', versionLabel: 'Normal Version', description: 'Read about the benefits and responsible use of humour.', duration: '25–30 minutes', supportLevel: 'Standard exam practice' },
+    load: async () => (await import('./unit-2/text-1')).readingExam,
+    loadKeys: loadUnit2Keys,
+  },
+  {
+    unitNumber: 2,
+    meta: { id: 'unit-2-reading-humour-sen', slug: 'unit-2-reading-humour-sen', title: 'Why Is Humour Important?', level: '2BAC English · Adapted practice', unit: 'Unit 2 — Humour', version: 'sen', versionLabel: 'SEN Version', description: 'Practise reading with a shorter, simpler text about humour.', duration: '25–30 minutes · extra time may be used', supportLevel: 'Adapted text · flexible pace' },
+    load: async () => (await import('./unit-2/text-1-sen')).readingExam,
+    loadKeys: loadUnit2Keys,
   },
 ];
 

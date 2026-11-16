@@ -264,7 +264,8 @@ export class ReadingExamComponent implements OnDestroy {
       ]);
       const scored = assessment.scoreReadingExam(this.exam, this.answers(), answerKeys);
       this.result.set(scored); this.submitted.set(true); this.stopTimerInterval(); this.persist(); this.closeDialog(); this.activeIndex.set(0);
-      if (scored.total > 0) this.streak.recordProgress(1, 'READING', scored.score, scored.total);
+      const unitNumber = Number(this.exam.unit.match(/\bUnit\s+(\d+)\b/i)?.[1] ?? 1);
+      if (scored.total > 0) this.streak.recordProgress(unitNumber, 'READING', scored.score, scored.total);
     } finally { this.scoring.set(false); }
   }
   protected resultFor(id: string): QuestionResult | undefined { return this.result()?.questions.find((item) => item.questionId === id); }
