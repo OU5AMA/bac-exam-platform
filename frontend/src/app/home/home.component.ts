@@ -3,46 +3,13 @@ import { RouterLink } from '@angular/router';
 import { catchError, finalize, of } from 'rxjs';
 
 import { AuthService } from '../auth/auth.service';
-import { GoogleButtonComponent } from '../auth/google-button.component';
-import { EasterEggService } from '../shared/easter-egg.service';
-import { avatarName, isAvatarEmoji } from '../shared/avatar-options';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, GoogleButtonComponent],
+  imports: [RouterLink],
   template: `
     <div class="min-h-screen bg-[#F7F5F0] text-[#4B5B5B]">
-      <header class="sticky top-0 z-20 border-b border-[#E5E7E5] bg-[#F7F5F0]/95 backdrop-blur">
-        <nav aria-label="Main navigation" class="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
-          <a routerLink="/" (click)="easterEgg.registerLogoClick()" aria-label="9issemi home" class="inline-flex cursor-pointer items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B]">
-            <img src="tiny_logo.svg" alt="" class="h-10 w-auto object-contain" />
-            <span class="font-display text-xl font-extrabold tracking-[-0.04em] text-[#0B3B3B]">9issemi</span>
-          </a>
-          <div class="flex items-center gap-3 sm:gap-6">
-            @if (sessionLoading()) {
-              <span role="status" aria-label="Checking sign-in status" class="h-10 w-36 animate-pulse rounded-full bg-white"></span>
-            } @else if (auth.currentUser(); as user) {
-              <a routerLink="/dashboard" aria-label="Open dashboard" class="inline-flex min-h-11 max-w-[min(48vw,20rem)] items-center gap-2 rounded-full border border-[#E5E7E5] bg-white px-4 text-sm font-semibold text-[#12302F] transition-colors hover:border-[#0A6B6B]/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0A6B6B]">
-                @if (user.profilePictureUrl) {
-                  @if (isAvatarEmoji(user.profilePictureUrl)) {
-                    <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#E5E7E5] bg-[#FFF7E5] text-lg" role="img" [attr.aria-label]="avatarName(user.profilePictureUrl) + ' avatar'">{{ user.profilePictureUrl }}</span>
-                  } @else {
-                    <img [src]="user.profilePictureUrl" [alt]="((user.displayName || user.username) ?? 'User') + ' profile picture'" class="h-7 w-7 shrink-0 rounded-full border border-[#E5E7E5] object-cover" />
-                  }
-                } @else {
-                  <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#E5E7E5] bg-[#0A6B6B] text-xs font-bold text-white" aria-hidden="true">{{ user.username.charAt(0).toUpperCase() }}</span>
-                }
-                <span class="truncate">{{ user.username }}</span>
-              </a>
-            } @else {
-              <a routerLink="/sign-in" class="hidden whitespace-nowrap rounded-sm text-sm font-semibold text-[#4B5B5B] transition-colors hover:text-[#0A6B6B] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0A6B6B] sm:inline">Sign in</a>
-              <app-google-button class="w-auto min-w-48" />
-            }
-          </div>
-        </nav>
-      </header>
-
       <main>
         <section aria-labelledby="hero-title" class="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-20 lg:grid-cols-[1.05fr_.95fr] lg:gap-16 lg:px-12 lg:py-24">
           <div class="max-w-2xl">
@@ -121,20 +88,11 @@ import { avatarName, isAvatarEmoji } from '../shared/avatar-options';
           </nav>
         </div>
       </footer>
-      @if (easterEgg.secretFound()) {
-        <div class="fixed bottom-5 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center justify-between gap-4 rounded-2xl border border-[#F5C56D] bg-[#0B3B3B] px-5 py-4 text-white shadow-xl" role="status" aria-live="polite">
-          <p class="font-semibold">🤫 You found the secret! +50 Bonus Points!</p>
-          <button type="button" (click)="easterEgg.dismiss()" aria-label="Dismiss secret found message" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lg hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">×</button>
-        </div>
-      }
     </div>
   `,
 })
 export class HomeComponent {
   protected readonly auth = inject(AuthService);
-  protected readonly easterEgg = inject(EasterEggService);
-  protected readonly isAvatarEmoji = isAvatarEmoji;
-  protected readonly avatarName = avatarName;
   protected readonly sessionLoading = signal(true);
 
   constructor() {

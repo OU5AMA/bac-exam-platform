@@ -88,9 +88,10 @@ export class UnitHubComponent {
   protected lessonCardPath(unitId: number, skill: UnitSkill): string[] {
     if (skill === 'grammar' || skill === 'function') {
       if (unitId === 1) return ['/2-bac', 'unit', String(unitId), skill];
+      if (skill === 'grammar' && unitId === 2) return ['/2-bac', 'unit', '2', 'grammar'];
       return lessonPath(unitId, skill);
     }
-    if (skill === 'reading' && unitId === 2) return ['/2-bac', 'unit', '2', 'reading'];
+    if (skill === 'reading') return ['/2-bac', 'unit', String(unitId), 'reading'];
     if (skill === 'vocabulary') return ['/2-bac', 'unit', String(unitId), 'vocabulary'];
     return lessonPath(unitId, skill);
   }
@@ -98,7 +99,7 @@ export class UnitHubComponent {
   protected practicePath(unitId: number, skill: UnitSkill): string[] {
     if (skill === 'vocabulary') return ['/2-bac', 'unit', String(unitId), 'vocabulary', 'exercises', 'crosswords'];
     if (skill === 'grammar' && unitId === 1) return ['/2-bac/unit/1/grammar/exercises'];
-    if (skill === 'reading' && unitId === 2) return ['/2-bac', 'unit', '2', 'reading'];
+    if (skill === 'reading') return ['/2-bac', 'unit', String(unitId), 'reading'];
     return exercisesPath(unitId, skill);
   }
 
